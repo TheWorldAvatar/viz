@@ -94,6 +94,24 @@ nextApp.prepare().then(async () => {
         const keycloak = new Keycloak({ store: store });
         expressServer.use(keycloak.middleware());
 
+        expressServer.post('/api/upload', keycloak.protect(), async (req, res, next) => {
+            try {
+                const refreshGrant = Object.create(req.kauth.grant);
+                refreshGrant.isExpired = () => true;
+
+                const refreshedGrant = await keycloak.grantManager.ensureFreshness(refreshGrant);
+                keycloak.storeGrant(refreshedGrant, req, res);
+                req.kauth.grant = refreshedGrant;
+                return next();
+            } catch (error) {
+                console.error('Error refreshing authentication token for file upload:', error);
+                return res.status(401).json({
+                    apiVersion: '1.0.0',
+                    error: { code: 401, message: 'Unable to refresh authentication token' },
+                });
+            }
+        });
+
         expressServer.get('/api/userinfo', keycloak.protect(), (req, res) => {
             // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles
             const { name, resource_access } = req.kauth.grant.access_token.content;
