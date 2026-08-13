@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStageMap } from "@/types/form";
-import { TableColumnOption } from "@/types/settings";
+import { RegistryExportSettings, TableColumnOption } from "@/types/settings";
 import ClearAllFiltersButton from "@/ui/graphic/table/action/clear-all-filters-button";
 import ColumnToggle from "@/ui/graphic/table/action/column-toggle";
 import RegistryTable from "@/ui/graphic/table/registry/registry-table";
@@ -22,6 +22,7 @@ import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScr
 
 interface InvoiceFormComponentProps {
     entityType: string;
+    exports: RegistryExportSettings[];
     accountType: string;
     tableColumnOptions: TableColumnOption[];
 }
@@ -30,6 +31,7 @@ interface InvoiceFormComponentProps {
  * Renders a form container for invoices.
  *
  * @param {string} entityType The type of entity.
+ * @param {RegistryExportSettings[]} exports The export options available for this table.
  * @param {string} accountType The type of account.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
@@ -107,6 +109,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         {tableDescriptor.data?.length > 0 && (
                             <RegistryTable
                                 recordType={props.entityType}
+                                exports={props.exports}
                                 lifecycleStage={LifecycleStageMap.BILLABLE}
                                 disableRowAction={true}
                                 tableDescriptor={tableDescriptor}
