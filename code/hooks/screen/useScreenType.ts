@@ -9,11 +9,12 @@ export const useScreenType = (): ScreenType => {
 
   useEffect(() => {
     const handleResize = () => {
-      const width = window.innerWidth;
+      const width: number = window.innerWidth;
+      const isCoarsePointer: boolean = window.matchMedia("(pointer: coarse)").matches;
 
-      if (width < 768) {
+      if (width < 768 && isCoarsePointer) {
         setScreenType(ScreenTypeMap.MOBILE);
-      } else if (width < 1024) {
+      } else if (width < 1024 && isCoarsePointer) {
         setScreenType(ScreenTypeMap.TABLET);
       } else {
         setScreenType(ScreenTypeMap.DESKTOP);
