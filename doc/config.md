@@ -89,7 +89,7 @@ Note that resources are optional and their configuration options can differ from
 
 #### Export options
 
-The `exports` array defines the download options available in registry or billing tables. Each entry represents an export option and renders a download button in the row action menu, or in the bulk action menu when multiple rows are selected. Export options are only displayed for tables that match the configured `stage` and/or `recordType`.
+The `exports` array defines the download options available in registry or billing tables. Each entry represents an export option and renders a download button in the row action menu, or in the bulk action menu when multiple rows are selected. Export options are only displayed for tables that match the configured `stage` or `recordType`.
 
 Note that each `resource` must correspond to a route configured in the export agent, which is targeted through the `FILE_EXPORTER_URL` environment variable. A report declared here but missing from that agent will fail when downloaded.
 
@@ -101,7 +101,7 @@ Each entry must be configured as a JSON object format:
 - `permission`: REQUIRED. The permission required in order to view this button IF authentication is enabled.
 - `isBulk`: OPTIONAL. Set to `true` if the export route accepts more than one record. Defaults to `false`, which hides the button from the bulk action menu.
 - `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Omit this parameter to show at any stage.
-- `recordType`: OPTIONAL. An array of the record types where the export action is available. Omit this parameter to show for all entity types. Note that all the entities who share the `general` stage require this parameter to tell them apart.
+- `recordType`: OPTIONAL. An array of the record types where the export action is available. Omit this parameter to show for all entity types.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
@@ -163,8 +163,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
           "format": "csv",
           "caption": "Export",
           "permission": "export",
-          "stage": ["general"], // Can be omited on General stage , but record type has to be provided
-          "recordType": ["cash_job"] // Optional: the type of the record   
+          "recordType": ["service_site"] // Optional: the type of the record   
         }]
     },
     "scenario": {
