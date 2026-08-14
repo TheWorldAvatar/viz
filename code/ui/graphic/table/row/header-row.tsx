@@ -179,7 +179,6 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
                         getRowRecordId(row.original))}
                       variant="ghost"
-                      isBulkSelection={true}
                       disabled={isLoading}
                       onComplete={() => setIsActionMenuOpen(false)}
                     />

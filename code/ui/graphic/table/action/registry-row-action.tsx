@@ -388,7 +388,6 @@ export default function RegistryRowAction(
           />}
           <FileDownloadButton
             targetId={recordId}
-            isBulkSelection={false}
             disabled={isLoading}
             variant="ghost"
             className="w-full justify-start"

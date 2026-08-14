@@ -11,7 +11,6 @@ import { queryFileExportAPI } from "@/utils/internal-api-services";
 
 interface FileDownloadButtonsProps extends ButtonProps {
   targetId: string | string[];
-  isBulkSelection: boolean;
   onComplete?: () => void;
 }
 
@@ -19,14 +18,13 @@ interface FileDownloadButtonsProps extends ButtonProps {
  * This component renders a download button for every export option available in the current table.
  *
  * @param {string | string[]} targetId The record id(s) to export.
- * @param {boolean} isBulkSelection Indicates if multiple records are being exported at once.
- * @param {boolean} disabled Optional disabled state for the buttons.
  * @param onComplete An optional function to run after the file download is complete.
  */
 export default function FileDownloadButton({
-  targetId, isBulkSelection, disabled, onComplete, ...rest
+  targetId, disabled, onComplete, ...rest
 }: Readonly<FileDownloadButtonsProps>) {
   const { lifecycleStage, recordType, exports } = useTableSession();
+  const isBulkSelection: boolean = Array.isArray(targetId);
   const exportOptions: RegistryExportSettings[] = useExportOptions(exports, lifecycleStage, recordType, isBulkSelection);
   // Only the export option currently downloading should display a loading state
   const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
