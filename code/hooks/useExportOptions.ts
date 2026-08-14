@@ -18,11 +18,11 @@ export function useExportOptions(
 ): RegistryExportSettings[] {
     const isPermitted = usePermissionGuard();
 
-    return exports.filter((report) => {
-        const isValidStage: boolean = !report.stage?.length || report.stage.includes(lifecycleStage);
-        const isValidRecordType: boolean = !report.recordType?.length || report.recordType.includes(recordType);
-        // A bulk selection can only use reports that accept more than one record
-        const isValidSelection: boolean = !isBulkSelection || !!report.isBulk;
-        return isPermitted(report.permission) && isValidStage && isValidRecordType && isValidSelection;
+    return exports.filter((exportOption) => {
+        const isValidStage: boolean = !exportOption.stage?.length || exportOption.stage.includes(lifecycleStage);
+        const isValidRecordType: boolean = !exportOption.recordType?.length || exportOption.recordType.includes(recordType);
+        // A bulk selection can only use export options that accept more than one record
+        const isValidSelection: boolean = !isBulkSelection || !!exportOption.isBulk;
+        return isPermitted(exportOption.permission) && isValidStage && isValidRecordType && isValidSelection;
     });
 }
