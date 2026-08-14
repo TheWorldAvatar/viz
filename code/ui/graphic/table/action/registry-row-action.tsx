@@ -386,14 +386,14 @@ export default function RegistryRowAction(
               setIsOpenBillingModal(true);
             }}
           />}
-          <FileDownloadButtons
+          {exportOptions.length > 0 && <FileDownloadButtons
             targetId={recordId}
             exportOptions={exportOptions}
             disabled={isLoading}
             variant="ghost"
             className="w-full justify-start"
             onComplete={() => setIsActionMenuOpen(false)}
-          />
+          />}
           {isActionAllowed("DRAFT_TEMPLATE") &&
             <DraftTemplateButton
               rowId={[props.row.id]}

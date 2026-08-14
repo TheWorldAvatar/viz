@@ -174,7 +174,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                         }}
                       />
                     )}
-                  {!tableDescriptor.isBulkDispatchEdit && (
+                  {!tableDescriptor.isBulkDispatchEdit && exportOptions.length > 0 && (
                     <FileDownloadButtons
                       targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
                         getRowRecordId(row.original))}
