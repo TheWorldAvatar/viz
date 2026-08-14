@@ -26,7 +26,7 @@ export default function FileDownloadButton({
   const { lifecycleStage, recordType, exports } = useTableSession();
   const isBulkSelection: boolean = Array.isArray(targetId);
   const exportOptions: RegistryExportSettings[] = useExportOptions(exports, lifecycleStage, recordType, isBulkSelection);
-  // Only the export option currently downloading should display a loading state
+  // The key of the export option that is currently downloading, if any
   const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
 
   const downloadFile = async (exportOption: RegistryExportSettings, exportKey: string): Promise<void> => {
@@ -47,6 +47,8 @@ export default function FileDownloadButton({
       {exportOptions.map((exportOption, index) => {
         const exportKey: string = `${exportOption.resource}-${exportOption.format}-${index}`;
         return (
+          // Only the button that was clicked displays the spinner, while the remaining buttons are
+          // disabled until the download completes.
           <Button
             key={exportKey}
             leftIcon="download"
