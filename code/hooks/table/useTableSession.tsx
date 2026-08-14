@@ -30,9 +30,9 @@ const useTableSession = (): useTableSessionReturn => {
     // An export option targets either a lifecycle stage or a record type.
     const exportOptions: RegistryExportSettings[] = tableSession.exports.filter((exportOption) => {
         const isValidStage: boolean = tableSession.lifecycleStage !== LifecycleStageMap.GENERAL &&
-            !!exportOption.stage?.includes(tableSession.lifecycleStage);
+            exportOption.stage?.includes(tableSession.lifecycleStage);
         const isValidRecordType: boolean = !!tableSession.recordType &&
-            !!exportOption.recordType?.includes(tableSession.recordType);
+            exportOption.recordType?.includes(tableSession.recordType);
         return isPermitted(exportOption.permission) && (isValidStage || isValidRecordType);
     });
 
