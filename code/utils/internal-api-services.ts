@@ -292,7 +292,7 @@ export async function queryDefaultFileExportAPI(id: string, selectedDate: DateRa
 /**
  * Queries the file export API to retrieve the file download object and name.
  * 
- * @param {string | string[]} id The target ID(s) of the resource.
+ * @param {string} id The target ID of the resource.
  * @param {string} resource The resource type.
  * @param {"csv" | "pdf"} format The file format (csv or pdf).
  */
