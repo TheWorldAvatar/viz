@@ -48,7 +48,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
-  const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted, onBulkEditSubmit } = useTableSession();
+  const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted, exportOptions, onBulkEditSubmit } = useTableSession();
   const numberOfSelectedRows: number = tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
@@ -178,6 +178,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                     <FileDownloadButton
                       targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
                         getRowRecordId(row.original))}
+                      exportOptions={exportOptions.filter((exportOption) => exportOption.isBulk)}
                       variant="ghost"
                       disabled={isLoading}
                       onComplete={() => setIsActionMenuOpen(false)}

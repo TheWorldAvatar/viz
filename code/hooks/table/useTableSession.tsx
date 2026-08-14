@@ -1,16 +1,19 @@
 'use client';
 
+import { usePermissionGuard } from '@/hooks/auth/usePermissionGuard';
 import useOperationStatus from '@/hooks/useOperationStatus';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { AgentResponseBody, InternalApiIdentifierMap } from '@/types/backend-agent';
 import { FormTypeMap, LifecycleStageMap } from '@/types/form';
+import { RegistryExportSettings } from '@/types/settings';
 import { toast } from '@/ui/interaction/action/toast/toast';
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from '@/utils/internal-api-services';
 import { TableSessionContext, TableSessionState } from '@/utils/table/TableSessionContext';
 
 interface useTableSessionReturn extends TableSessionState {
     isBulkActionPermitted: boolean;
+    exportOptions: RegistryExportSettings[];
     onBulkEditSubmit: () => void;
 }
 
@@ -22,6 +25,16 @@ const useTableSession = (): useTableSessionReturn => {
     if (!tableSession) {
         throw new Error("useTableSessionReturn must be used within a TableSessionContextProvider");
     }
+
+    const isPermitted = usePermissionGuard();
+    // An export option targets either a lifecycle stage or a record type.
+    const exportOptions: RegistryExportSettings[] = tableSession.exports.filter((exportOption) => {
+        const isValidStage: boolean = tableSession.lifecycleStage !== LifecycleStageMap.GENERAL &&
+            !!exportOption.stage?.includes(tableSession.lifecycleStage);
+        const isValidRecordType: boolean = !!tableSession.recordType &&
+            !!exportOption.recordType?.includes(tableSession.recordType);
+        return isPermitted(exportOption.permission) && (isValidStage || isValidRecordType);
+    });
 
     const { startLoading, stopLoading } = useOperationStatus();
     const onBulkEditSubmit = async () => {
@@ -46,6 +59,7 @@ const useTableSession = (): useTableSessionReturn => {
         isBulkActionPermitted: tableSession.lifecycleStage === LifecycleStageMap.PENDING || tableSession.lifecycleStage === LifecycleStageMap.ACTIVE
             || tableSession.lifecycleStage === LifecycleStageMap.ARCHIVE || tableSession.lifecycleStage === LifecycleStageMap.OUTSTANDING || tableSession.lifecycleStage === LifecycleStageMap.SCHEDULED
             || tableSession.lifecycleStage === LifecycleStageMap.CLOSED || tableSession.lifecycleStage === LifecycleStageMap.BILLABLE,
+        exportOptions,
         onBulkEditSubmit,
     };
 };

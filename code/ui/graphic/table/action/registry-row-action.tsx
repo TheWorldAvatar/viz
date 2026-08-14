@@ -48,7 +48,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
-  const { addEntity } = useTableSession();
+  const { addEntity, exportOptions } = useTableSession();
 
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -388,6 +388,7 @@ export default function RegistryRowAction(
           />}
           <FileDownloadButton
             targetId={recordId}
+            exportOptions={exportOptions}
             disabled={isLoading}
             variant="ghost"
             className="w-full justify-start"

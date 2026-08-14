@@ -296,9 +296,9 @@ export async function queryDefaultFileExportAPI(id: string, selectedDate: DateRa
  * @param {string} resource The resource type.
  * @param {"csv" | "pdf"} format The file format (csv or pdf).
  */
-export async function queryFileExportAPI(id: string | string[], resource: string, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
+export async function queryFileExportAPI(id: string, resource: string, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
   const searchParams: URLSearchParams = new URLSearchParams({
-    id: Array.isArray(id) ? id.join(",") : id,
+    id,
     resource
   });
   return execFileExportAPI(searchParams, format);
