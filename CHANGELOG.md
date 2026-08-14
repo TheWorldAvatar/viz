@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.84.3
+
+### Changes
+
+- Updated ui-settings.json to extend the existing resources configuration so that export actions can be defined and consumed by the Export Agent.
+- Added a download button in the row and bulk action menus for every configured export option
+- Export options are filtered by user permissions, lifecycle stage and record type
+- Updated documentation `config.md`
+
 ## 5.84.2
 
 ### Changes

@@ -89,11 +89,6 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
         status: [],
     },
-    VIEW_INVOICE: {
-        permission: "invoice",
-        stage: [LifecycleStageMap.INVOICE],
-        status: [],
-    },
     DELETE: {
         permission: "delete",
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.GENERAL, LifecycleStageMap.ACCOUNT, LifecycleStageMap.PRICING],

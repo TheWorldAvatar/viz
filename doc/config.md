@@ -62,6 +62,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
     - `url`: optional that is only used with scenario and dashboard resources
     - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
     - `paths`: optional array of configuration options for the registry resources
+    - `exports`: optional array of export options for the registry and billing resources
 
 Note that resources are optional and their configuration options can differ from each other. Please note the list of available resources and their possible options as follows:
 
@@ -72,6 +73,7 @@ Note that resources are optional and their configuration options can differ from
 - Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
   - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
+  - `exports`: OPTIONAL: An array of the export options available from the file export agent. See [Export options](#export-options).
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `caption`: Optional language dictionary to display a message on the table for the general registries. Only `en` and `de` are permitted at this moment.
@@ -83,6 +85,23 @@ Note that resources are optional and their configuration options can differ from
     - `type`: Must be either `account`, `pricing`, or `activity`
     - `key`: The entity type of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
+  - `exports`: OPTIONAL: An array of the export reports available from the file exporter agent. See [Export options](#export-options).
+
+#### Export options
+
+The `exports` array defines the download options available in registry or billing tables. Each entry represents an export option and renders a download button in the row action menu, or in the bulk action menu when multiple rows are selected. Export options are only displayed for tables that match the configured `stage` or `recordType`.
+
+Note that each `resource` must correspond to a route configured in the export agent, which is targeted through the `FILE_EXPORTER_URL` environment variable. A report declared here but missing from that agent will fail when downloaded.
+
+Each entry must be configured as a JSON object format:
+
+- `resource`: REQUIRED. The export route of the export agent, which is requested at `/export/{resource}`.
+- `format`: REQUIRED. The export format. Must be either `csv` or `pdf`.
+- `caption`: REQUIRED. The label displayed on the download button.
+- `permission`: REQUIRED. The permission required in order to view this button IF authentication is enabled.
+- `isBulk`: OPTIONAL. Set to `true` if the export route accepts more than one record. Defaults to `false`, which hides the button from the bulk action menu.
+- `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Please note that if omitted, the option will not show up on any lifecycle stages.
+- `recordType`: OPTIONAL. An array of the record types where the export action is available. Please note that if omitted, the option will not show up on any general registry table.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
@@ -131,6 +150,20 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
           "add": "type" // Optional; adds a row action to create this entity
         },{
           "type": "resource_two" // resource name from backend     
+        }],
+      "exports": [{
+          "resource": "invoice", // The resource being exported
+          "format": "csv", // Export format 
+          "caption": "Export", // Button label
+          "permission": "export", // only for users with export permissions
+          "isBulk": true, // Optional: the route accepts more than one record
+          "stage": ["closed"] // Optional: only shown on the closed task table
+        },{
+          "resource": "resource_one",
+          "format": "csv",
+          "caption": "Export",
+          "permission": "export",
+          "recordType": ["service_site"] // Optional: the type of the record   
         }]
     },
     "scenario": {

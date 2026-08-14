@@ -35,6 +35,7 @@ export default function BillingAccountsPage() {
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
       lifecycleStage={LifecycleStageMap.ACCOUNT}
       tableColumnOptions={tableColumnSettings}
+      exports={uiSettings.resources?.billing?.exports ?? []}
     />
   );
 }

@@ -44,6 +44,7 @@ export default async function ActiveRegistryPage(props: ActiveRegistryPageProps)
       entityType={decodedType}
       lifecycleStage={LifecycleStageMap.ACTIVE}
       tableColumnOptions={tableColumnSettings}
+      exports={uiSettings.resources?.registry?.exports ?? []}
     />
   );
 }
