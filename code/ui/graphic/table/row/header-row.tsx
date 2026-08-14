@@ -26,6 +26,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/int
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
+import { RegistryExportSettings } from "@/types/settings";
 
 interface HeaderRowProps {
   accountType: string;
@@ -53,6 +54,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const hasAmendedStatus: boolean = tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
   );
+
+  const bulkExportOptions: RegistryExportSettings[] = exportOptions.filter((exportOption) => exportOption.isBulk);
 
   const handleBulkAction = async (action: "approve" | "resubmit") => {
     const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
@@ -174,11 +177,11 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                         }}
                       />
                     )}
-                  {!tableDescriptor.isBulkDispatchEdit && exportOptions.length > 0 && (
+                  {!tableDescriptor.isBulkDispatchEdit && bulkExportOptions.length > 0 && (
                     <FileDownloadButtons
                       targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
                         getRowRecordId(row.original))}
-                      exportOptions={exportOptions.filter((exportOption) => exportOption.isBulk)}
+                      exportOptions={bulkExportOptions}
                       variant="ghost"
                       disabled={isLoading}
                       onComplete={() => setIsActionMenuOpen(false)}
