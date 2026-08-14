@@ -9,7 +9,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "@/types/form";
 import { JsonObject } from "@/types/json";
-import FileDownloadButton from "@/ui/interaction/action/download/file-download";
+import FileDownloadButtons from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
@@ -386,7 +386,7 @@ export default function RegistryRowAction(
               setIsOpenBillingModal(true);
             }}
           />}
-          <FileDownloadButton
+          <FileDownloadButtons
             targetId={recordId}
             exportOptions={exportOptions}
             disabled={isLoading}

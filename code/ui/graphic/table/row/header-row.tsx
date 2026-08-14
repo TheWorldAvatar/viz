@@ -14,7 +14,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStageMap, RegistryTaskOption } from "@/types/form";
 import { JsonObject } from "@/types/json";
-import FileDownloadButton from "@/ui/interaction/action/download/file-download";
+import FileDownloadButtons from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
@@ -175,7 +175,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       />
                     )}
                   {!tableDescriptor.isBulkDispatchEdit && (
-                    <FileDownloadButton
+                    <FileDownloadButtons
                       targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
                         getRowRecordId(row.original))}
                       exportOptions={exportOptions.filter((exportOption) => exportOption.isBulk)}

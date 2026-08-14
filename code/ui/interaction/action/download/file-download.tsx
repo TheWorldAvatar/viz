@@ -20,7 +20,7 @@ interface FileDownloadButtonsProps extends ButtonProps {
  * @param {RegistryExportSettings[]} exportOptions All export options declared in the UI settings.
  * @param onComplete An optional function to run after the file download is complete.
  */
-export default function FileDownloadButton({
+export default function FileDownloadButtons({
   targetId, exportOptions, disabled, onComplete, ...rest
 }: Readonly<FileDownloadButtonsProps>) {
   // The key of the export option that is currently downloading, if any
