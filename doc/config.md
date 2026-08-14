@@ -100,7 +100,7 @@ Each entry must be configured as a JSON object format:
 - `caption`: REQUIRED. The label displayed on the download button.
 - `permission`: REQUIRED. The permission required in order to view this button IF authentication is enabled.
 - `isBulk`: OPTIONAL. Set to `true` if the export route accepts more than one record. Defaults to `false`, which hides the button from the bulk action menu.
-- `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Omit this parameter to show at any stage.
+- `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Please note that if omitted, the option will not show up on any lifecycle stages.
 - `recordType`: OPTIONAL. An array of the record types where the export action is available. Please note that if omitted, the option will not show up on any general registry table.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
