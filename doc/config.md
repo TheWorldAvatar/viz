@@ -95,13 +95,13 @@ Note that each `resource` must correspond to a route configured in the export ag
 
 Each entry must be configured as a JSON object format:
 
-- `resource`: REQUIRED. The export route of the file exporter agent, which is requested at `/export/{resource}`.
-- `format`: REQUIRED. The file format to download. Must be either `csv` or `pdf`.
+- `resource`: REQUIRED. The export route of the export agent, which is requested at `/export/{resource}`.
+- `format`: REQUIRED. The export format. Must be either `csv` or `pdf`.
 - `caption`: REQUIRED. The label displayed on the download button.
 - `permission`: REQUIRED. The permission required in order to view this button IF authentication is enabled.
 - `isBulk`: OPTIONAL. Set to `true` if the export route accepts more than one record. Defaults to `false`, which hides the button from the bulk action menu.
-- `stage`: OPTIONAL. An array of the lifecycle stages to which you want to show the export buttons. Omit this parameter to show at any stage.
-- `recordType`: OPTIONAL. An array of the record types to which you want to show the export buttons. Omit this parameter to show for all entity types. Note that all the entities who share the `general` stage require this parameter to tell them apart.
+- `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Omit this parameter to show at any stage.
+- `recordType`: OPTIONAL. An array of the record types where the export action is available. Omit this parameter to show for all entity types. Note that all the entities who share the `general` stage require this parameter to tell them apart.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
@@ -152,19 +152,19 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
           "type": "resource_two" // resource name from backend     
         }],
       "exports": [{
-          "resource": "invoice", // route for the export agent - /export/invoice
-          "format": "csv", // File format 
+          "resource": "invoice", // The resource being exported
+          "format": "csv", // Export format 
           "caption": "Export", // Button label
           "permission": "export", // only for users with export permissions
-          "isBulk": true, // the route accepts more than one record
-          "stage": ["closed"] // only shown on the closed task table
+          "isBulk": true, // Optional: the route accepts more than one record
+          "stage": ["closed"] // Optional: only shown on the closed task table
         },{
           "resource": "resource_one",
           "format": "csv",
           "caption": "Export",
           "permission": "export",
           "stage": ["general"], // Can be omited on General stage , but record type has to be provided
-          "recordType": ["cash_job"] // the type of the record   
+          "recordType": ["cash_job"] // Optional: the type of the record   
         }]
     },
     "scenario": {
