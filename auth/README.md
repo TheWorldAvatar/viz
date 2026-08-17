@@ -40,7 +40,7 @@ Do not commit exported realms anywhere.
 
 - First, enable Keycloak authorisation by setting the KEYCLOAK environment variable to true in your viz-app's docker compose file or `twa-vis-platform/code/[.env|.env.local]`  (if running a local node server in development).s
 - This is a Keycloak dev container. This is *not* suitable for production but is useful for testing the authentication flow of your web app and to create realm settings to be later exported.
-- The Keycloak admin console will be running at `http://localhost:8081`.
+- The Keycloak admin console will be running at `http://localhost:8080`.
 - There is a `twa-test` sample realm in this directory that is imported on startup. Use the keycloak UI to create a your own one specific to your use case. This can be later exporteed and imported for the production deployment.
 - Users must be created manually. Set a name and password. Assigning a user a `protected` role will allow them to access the role-protected pages.
 - Ensure that the `keycloak.json` file correctly points to the address of the auth server. This can be `localhost` if running a node server on the bare metal but should be a host that is valid from within the web container. This can be `host.docker.internal` (docker's alias for your host machine) the direct hostname or its IPv4 address
@@ -83,8 +83,6 @@ The store is in place to store and cache user sessions specific to the viz. User
 
 The sample `realm.json` includes predefined client roles (in the `viz` client), which are mandatory for the `viz` platform to function correctly. These core roles must be present in any custom configuration. To support other backend services, it is recommended to leverage the predefined core roles. But if they are unsuitable for your application, users can define and incorporate additional custom roles. Below is a list of these core roles:
 
-1) admin: Grants unrestricted access to all features and functionalities.
-2) sales: Provides access to sales-related functionalities.
-3) finance: Provides access to finance-related functionalities.
-4) operations: Provides access to operation-related functionalities.
-5) task-viewer: Permits users to view, report on, and complete tasks only.
+1) finance: Provides access to finance-related functionalities.
+2) operations: Provides access to operation-related functionalities.
+3) task-viewer: Permits users to view and complete tasks only.

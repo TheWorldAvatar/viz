@@ -1,0 +1,178 @@
+import fieldStyles from "../field/field.module.css";
+
+import { Control, Controller, FieldError, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+
+import { useDictionary } from "@/hooks/useDictionary";
+import { Dictionary } from "@/types/dictionary";
+import {
+  BillingEntityTypes,
+  FormTypeMap,
+  ID_KEY,
+  LABEL_KEY,
+  PropertyShape,
+  useLiveFormOptionReturn,
+  VALUE_KEY
+} from "@/types/form";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
+import {
+  getId,
+  interpolate,
+  parseStringsForUrls
+} from "@/utils/client-utils";
+import { getRegisterOptions } from "../form-utils";
+
+import { useFormQuickView } from "@/hooks/form/useFormQuickView";
+import useFormSession from "@/hooks/form/useFormSession";
+import { browserStorageManager } from "@/state/browser-storage-manager";
+import FormQuickViewBody from "@/ui/interaction/accordion/form-quick-view-body";
+import FormQuickViewHeader from "@/ui/interaction/accordion/form-quick-view-header";
+import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
+import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
+import React, { useEffect, useState } from "react";
+import FormInputContainer from "../field/form-input-container";
+
+interface DependentFormSectionProps {
+  dependentProp: PropertyShape;
+  form: UseFormReturn;
+  billingStore?: BillingEntityTypes;
+  isArray?: boolean;
+  resetArray?: () => void;
+}
+
+/**
+ * This component renders a form section that has dependencies on related entities.
+ *
+ * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
+ * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
+ * @param {boolean} isArray Whether the field is an array.
+ * @param resetArray An optional function to reset the array.
+ */
+export function DependentFormSection(
+  props: Readonly<DependentFormSectionProps>
+) {
+  const dict: Dictionary = useDictionary();
+  const { formType, formCount, frozenFields, updateInvoiceAccount } = useFormSession();
+  const [search, setSearch] = useState<string>("");
+  const fieldName: string = props.dependentProp?.fieldId;
+  const label: string = props.dependentProp.name[VALUE_KEY];
+  const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
+  const control: Control = props.form.control;
+
+  const currentParentOption: string = useWatch<FieldValues>({
+    control,
+    name: props.dependentProp?.dependentOn?.[ID_KEY] ?? "",
+  });
+
+  const currentOption: string = useWatch<FieldValues>({
+    control,
+    name: fieldName,
+  });
+
+  const previousParentOption: React.RefObject<string> = React.useRef<string>(currentParentOption);
+
+  useEffect(() => {
+    const parentChanged: boolean = previousParentOption.current !== currentParentOption;
+    previousParentOption.current = currentParentOption;
+
+    if (parentChanged && currentParentOption) {
+      setSearch("");
+      if (props.isArray) {
+        props.resetArray();
+      } else {
+        props.form.setValue(fieldName, "");
+      }
+    }
+  }, [currentParentOption, fieldName, props.form]);
+
+  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], currentOption,
+    props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "", currentParentOption, search, formType, dict);
+
+  const {
+    id,
+    selectedEntityId,
+    quickViewGroups,
+    isQuickViewLoading,
+    isQuickViewOpen,
+    setIsQuickViewOpen,
+  } = useFormQuickView(currentOption, queryEntityType);
+  // Disables both selector and quick view actions
+  const disable: boolean = (fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount)
+    // Disable all inputs except the pricing field itself
+    || (formType == FormTypeMap.ADJUST_PRICE && props.billingStore.pricing != queryEntityType)
+    // Disable account field on assign price form page
+    || (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
+  return (
+    <div className="rounded-lg">
+      <div className="flex flex-col w-full gap-2">
+        <FormInputContainer
+          field={props.dependentProp}
+          error={props.form.formState.errors[fieldName] as FieldError}
+          labelStyles={["flex flex-row items-center",
+            fieldStyles["form-input-label"],
+          ]}
+        >
+          <Controller
+            name={fieldName}
+            control={props.form.control}
+            defaultValue={""}
+            rules={getRegisterOptions(props.dependentProp, formType, dict)}
+            render={({ field: { onChange, value } }) => {
+              return (
+                liveFormOptions?.options && <SimpleSelector
+                  key={`${fieldName}-${currentParentOption}-${value}`}
+                  options={liveFormOptions.options}
+                  defaultVal={value}
+                  onChange={(option) => {
+                    // When on the invoice form, update the invoice account for filtering
+                    if (formType == FormTypeMap.INVOICE && props.billingStore?.accountField === props.dependentProp.fieldId) {
+                      updateInvoiceAccount((option as SelectOptionType).label);
+                    }
+                    setSearch("");
+                    onChange((option as SelectOptionType).value);
+                  }}
+                  onInputChange={(newValue, actionMeta) => {
+                    if (actionMeta.action === "input-change") {
+                      setSearch(newValue);
+                    }
+                  }}
+                  ariaLabel={interpolate(dict.action.selectItem, label)}
+                  hasLimits={true}
+                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
+                    // Disable if parent field has no value
+                    (props.dependentProp.dependentOn?.[ID_KEY] != undefined && !currentParentOption)}
+                  reqNotApplicableOption={props.dependentProp.minCount?.[VALUE_KEY] === "0"}
+                  menuPortalTarget={formType === FormTypeMap.MASS_EDIT ? document.body : undefined}
+                  noOptionMessage={dict.message.noInstances}
+                />
+              );
+            }}
+          />
+        </FormInputContainer>
+        {formType != FormTypeMap.SEARCH && formType != FormTypeMap.MASS_EDIT && <FormQuickViewHeader
+          id={id}
+          title={dict.title.quickView}
+          selectedEntityId={selectedEntityId}
+          entityType={queryEntityType}
+          fieldLabel={label}
+          isOpen={isQuickViewOpen}
+          setIsOpen={setIsQuickViewOpen}
+          accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
+          accountType={props.billingStore?.account}
+          pricingType={props.billingStore?.pricing}
+          form={props.form}
+          disableActions={disable}
+        />}
+        {currentOption &&
+          isQuickViewOpen &&
+          (isQuickViewLoading ? (
+            <div className="flex justify-center p-4">
+              <LoadingSpinner size="sm" />
+            </div>
+          ) : (
+            <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
+          ))}
+      </div>
+    </div>
+  );
+}

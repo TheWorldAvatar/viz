@@ -2,11 +2,12 @@
 
 Given that the platform is designed to be generalisable, this directory exists to allow users to customise their web contents according to their needs. It acts as the target for a Docker volume or bind mount, and should be mounted to the `/twa/public` directory within the deployed container. Files within it can then be accessed using the `$HOST/...` URL route.
 
-The uploaded content provided by the deploying developer should match the directory structure below. Please read the respective sections for the specific instructions. Do note that the example configuration are intended to disseminate information and may not be functional (i.e. to set up the platform). If you require sample files of a working example, please have a look over at the [example](../example/) directory.
+The uploaded content provided by the deploying developer should match the directory structure below. Please read the respective sections for the specific instructions. Do note that the example configuration are intended to disseminate information and may not be functional (i.e. to set up the platform). If you require sample files of a working example, please have a look over at the [example](../code/public/) directory.
 
 - [`config/`](#1-configuration): Contains config/settings files.
 - [`images/`](#2-assets): Custom image files.
 - [`optional-pages/`](#3-optional-pages): Markdown files for optional static content (with metadata from [gray-matter](https://www.npmjs.com/package/gray-matter)).
+- [`manifest_[lang].json`](#4-app-manifests): App manifests for Progressive Web Apps functionality based on language.
 
 ## Table of Contents
 
@@ -20,11 +21,12 @@ The uploaded content provided by the deploying developer should match the direct
         - [Dataset: Defining a group](#dataset-defining-a-group)
         - [Dataset: Defining a source](#dataset-defining-a-source)
         - [Dataset: Defining a layer](#dataset-defining-a-layer)
-    - [1.3 Table Column Order](#13-table-column-order)
+    - [1.3 Table Column Settings](#13-table-column-settings)
   - [2. Assets](#2-assets)
   - [3. Optional Pages](#3-optional-pages)
     - [3.1 Fields](#31-fields)
     - [3.2 Sample](#32-sample)
+  - [4. App Manifests](#4-app-manifests)
 
 ## 1. Configuration
 
@@ -33,7 +35,7 @@ The platform requires the following [JSON](https://en.wikipedia.org/wiki/JSON) c
 - [`ui-settings.json`](#11-ui-settings): UI configuration settings; **[MANDATORY]**.
 - [`data-settings.json`](#121-general-settings): Specifies the urls of datasets for mapping the data sources and layers; **[OPTIONAL]**
 - [`map-settings.json`](#122-map-data-settings): Non-data specific configuration for maps; **[OPTIONAL]**
-- [`table-column-order.json`](#13-table-column-order): Custom column ordering for tables by entity type or lifecycle stage; **[OPTIONAL]**
+- [`table-column-settings.json`](#13-table-column-settings): Custom column settings for tables by entity type or lifecycle stage; **[OPTIONAL]**
 
 ### 1.1 UI Settings
 
@@ -57,9 +59,10 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario, registry, billing
-    - `url`: REQUIRED. url of the resource
+    - `url`: optional that is only used with scenario and dashboard resources
     - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
-    - `paths`: optional array of strings to denote the names of the registry resources
+    - `paths`: optional array of configuration options for the registry resources
+    - `exports`: optional array of export options for the registry and billing resources
 
 Note that resources are optional and their configuration options can differ from each other. Please note the list of available resources and their possible options as follows:
 
@@ -67,18 +70,38 @@ Note that resources are optional and their configuration options can differ from
 - Scenario: Enables scenario selection in the `map` page
   - `url`: This is a required field that specifies the URL from which the scenarios and their settings can be retrieved. In this example, the URL points to a stack deployed on theworldavatar.io platform.
   - `data`: This required field indicates the target dataset that should be accessible to the user from the central stack. In the given example, the data field is set to "water", indicating that the scenario contains information only on water assets and not power nor telecoms etc.
-- Registry: Activate the `registry` page based on the backend resource indicated in the `url` parameter. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). Note that this will require at least one of the `data` or `paths` property to be valid.
-  - `url`: The registry agent endpoint (close it without /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
+- Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
+  - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
+  - `exports`: OPTIONAL: An array of the export options available from the file export agent. See [Export options](#export-options).
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
+    - `caption`: Optional language dictionary to display a message on the table for the general registries. Only `en` and `de` are permitted at this moment.
     - `icon`: Optional parameter to display an icon from the icon library.
-- Billing: Activate the `billing` page based on the backend resource indicated in the `url` parameter. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). 
-  - `url`: The registry agent endpoint (close it without /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
+    - `permission`: Optional parameter to set the permission required in order to view the registry page on the nav bar IF authentication is enabled.
+    - `add`: Optional entity type that can be added directly from each row of this registry. When set, every row gains an `Add <entity>` action that opens the add form for that entity. The value must be an entity type that is mapped to the backend, and is also used for the action's label. Omit this parameter to hide the action.
+- Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
     - `type`: Must be either `account`, `pricing`, or `activity`
     - `key`: The entity type of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
+  - `exports`: OPTIONAL: An array of the export reports available from the file exporter agent. See [Export options](#export-options).
+
+#### Export options
+
+The `exports` array defines the download options available in registry or billing tables. Each entry represents an export option and renders a download button in the row action menu, or in the bulk action menu when multiple rows are selected. Export options are only displayed for tables that match the configured `stage` or `recordType`.
+
+Note that each `resource` must correspond to a route configured in the export agent, which is targeted through the `FILE_EXPORTER_URL` environment variable. A report declared here but missing from that agent will fail when downloaded.
+
+Each entry must be configured as a JSON object format:
+
+- `resource`: REQUIRED. The export route of the export agent, which is requested at `/export/{resource}`.
+- `format`: REQUIRED. The export format. Must be either `csv` or `pdf`.
+- `caption`: REQUIRED. The label displayed on the download button.
+- `permission`: REQUIRED. The permission required in order to view this button IF authentication is enabled.
+- `isBulk`: OPTIONAL. Set to `true` if the export route accepts more than one record. Defaults to `false`, which hides the button from the bulk action menu.
+- `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Please note that if omitted, the option will not show up on any lifecycle stages.
+- `recordType`: OPTIONAL. An array of the record types where the export action is available. Please note that if omitted, the option will not show up on any general registry table.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
@@ -114,9 +137,34 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "url": "" // Edit dashboard url here
     },
     "registry": {
-      "url": "http://sample.org/agent/", // Edit registry agent's API here
       "data": "type", // Specify only the type to reach the registry page of interest
-      "paths": ["resource one", "resource two"] // Specify the resource names on the backend
+      "settings": "table-column-settings.json", // Optional table column settings file in /config
+      "paths": [{
+          "type": "resource_one", // resource name from backend
+          "icon": "people",
+          "caption": { // A caption dictionary to display table message
+            "en": "Example", // Only shows up on german site
+            "de": "Beispiel" // Only shows up on german site
+            },
+          "permission": "operation", // only for users with operation permissions
+          "add": "type" // Optional; adds a row action to create this entity
+        },{
+          "type": "resource_two" // resource name from backend     
+        }],
+      "exports": [{
+          "resource": "invoice", // The resource being exported
+          "format": "csv", // Export format 
+          "caption": "Export", // Button label
+          "permission": "export", // only for users with export permissions
+          "isBulk": true, // Optional: the route accepts more than one record
+          "stage": ["closed"] // Optional: only shown on the closed task table
+        },{
+          "resource": "resource_one",
+          "format": "csv",
+          "caption": "Export",
+          "permission": "export",
+          "recordType": ["service_site"] // Optional: the type of the record   
+        }]
     },
     "scenario": {
       "url": "https://theworldavatar.io/demos/credo-ofwat/central/CentralStackAgent", // Edit scenario url here
@@ -398,22 +446,54 @@ Instructions:
 
 1. Filters: Developers may add a filter for the entire layer by adding [Mapbox Expressions](https://docs.mapbox.com/style-spec/reference/expressions/) to the `filter` key, which is found at the root level of the layer specification. This is especially relevant for layers with searchable parameters and they should display only a subset of feature by default
 
-### 1.3 Table Column Order
+### 1.3 Table Column Settings
 
-The `config/table-column-order.json` file is optional and can be used to override the default column order for  registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views(`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `activity`, `pricing`).
+The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or specific views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `invoice`, `billable`).
 
-- Any columns not listed remain available and will fall back to the platform's default ordering.
+There is a special `mobile` table key for users who can only view outstanding tasks in their entire portal. This will defined the fields they can see and filter by.
+
+Each table key maps to an array of column configuration objects. The supported object fields are:
+
+- `name` (required): The backend column identifier.
+- `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
+- `visible` (optional): Hides or shows the column at the start. Default to `true` if not set explicitly. Set to `false` to hide the column.
+- `sorting` (optional): Pre-sorts the table by this column on load. Accepted values are `"asc"` (ascending) or `"desc"` (descending). A maximum of 3 columns per table can have sorting configured.
+
+Additional notes:
+
+- Any columns not listed remain available and fall back to the platform's default ordering and sizing.
 - You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.
-- Only existing column names will be rendered. If you include a column ID that does not exist for that table, it will be ignored (and will not be shown).
+- Only existing column names are applied. Unknown `name` values are ignored.
+- You may disable the date filter on the **closed task page** by adding `{ "name": "filter", "visible": false }` to the `closed` key
 
-Example `table-column-order.json`:
+Example:
 
 ```json
 {
-  "bin": ["bin_type", "name", "id"],
-  "driver": ["name", "id", "start", "last_name", "end", "plate_number", "truck_type"],
-  "outstanding": ["client" , "status"],
-  "scheduled": ["status" , "client" , "driver"]
+  "bin": [
+    { "name": "bin_type", "width": 180 },
+    { "name": "name", "width": 220 },
+    { "name": "id", "visible": false }
+  ],
+  "driver": [
+    { "name": "name", "width": 180 },
+    { "name": "id", "width": 240 },
+    { "name": "start" },
+    { "name": "last_name" },
+    { "name": "end" },
+    { "name": "plate_number", "visible": false },
+    { "name": "truck_type" }
+  ],
+  "outstanding": [
+    { "name": "client", "visible": false },
+    { "name": "status", "width": 160 }
+  ],
+  "scheduled": [
+    { "name": "status" },
+    { "name": "client", "sorting": "asc" },
+    { "name": "driver" },
+    { "name": "start_date", "width": 60, "sorting": "desc" }
+  ]
 }
 ```
 
@@ -450,3 +530,13 @@ slug: landing // This must always be set to landing for the landing page
 
 Insert your content here
 ```
+
+## 4. App manifests
+
+The viz platform can be deployed as a `Progressive Web App` by including `manifest_[lang].json`, where `[lang]` is the translated language version based on the user's browser language. It is recommended for developers to only customise the following fields:
+
+- `name`: The name of the app. Please translate them in different versions if required.
+- `description`: The description of the app when installing it on the browser. Please translate them in different versions.
+- `start_url`: Typically `/` for local developments, but on deployment, it should follow the `ASSET_PREFIX` parameter. Use of `scope` is also possible to restrict to the specific path(s).
+- `icons`: Use only a `svg` icon to resize them.
+- `screenshots`: Change the `src` image placeholder for different previews in the downloading prompt. Note that the url should include `ASSET_PREFIX` for static assets in the viz.

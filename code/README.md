@@ -23,6 +23,7 @@ This document is split into three key sections: [Architecture](#1-architecture),
     - [2.2 Code conventions](#22-code-conventions)
     - [React components](#react-components)
     - [2.3 Client-Side](#23-client-side)
+    - [2.4 Colour Usage](#24-colour-usage)
   - [3. Local Development Workflow](#3-local-development-workflow)
     - [3.1 Requirements](#31-requirements)
   - [3.2 Installation](#32-installation)
@@ -33,10 +34,10 @@ This document is split into three key sections: [Architecture](#1-architecture),
 
 The code architecture adheres to industry-standard practices for Next.js and React. It is worth noting, though, that the TWA-ViP is a work in progress and not a perfect, static codebase. A brief breakdown is given below, but more detailed information can be seen within the code (and the code's comments) itself.
 
-The project structure should match the recommended Next.js project structure (you can read about that [here](https://nextjs.org/docs/getting-started/project-structure)), utilising the optional `src` directory. More details can be found on the Next.js website, but a brief rundown is presented below.
+The project structure should match the recommended Next.js project structure (you can read about that [here](https://nextjs.org/docs/getting-started/project-structure)). More details can be found on the Next.js website, but a brief rundown is presented below.
 
-- `src/`: Contains the application's source code, primarily in Typescript.
-  - `_tests/`: Jest based unit tests
+- The application's source code is primarily in Typescript, organised into the following directories:
+  - `__tests__/`: Jest based unit tests
   - `app`: The app router directory contains publicly discoverable pages and API routes
   - `io`: Logic classes for input/output handling
   - `map`: Map container and their related utility methods
@@ -44,26 +45,26 @@ The project structure should match the recommended Next.js project structure (yo
   - `types`: Custom data types used in the project
   - `ui`: Custom UI components
   - `utils`: Common utilities
-- `.eslintrc.js`: Configuration for ESLint
-- `next-env.d.ts`: Exports Next.js types for the Typescript compiler
-- `next.config.js`: Configuration module for Next.js projects
-- `package.json`: Node project configuration file (also contains configuration for Jest)
-- `server.js`: Starts a custom HTTP server that allows hosting of additional static-resource directories
-- `tsconfig.json`: Configuration for the Typescript compiler
+  - `.eslintrc.js`: Configuration for ESLint
+  - `next-env.d.ts`: Exports Next.js types for the Typescript compiler
+  - `next.config.js`: Configuration module for Next.js projects
+  - `package.json`: Node project configuration file (also contains configuration for Jest)
+  - `server.js`: Starts a custom HTTP server that allows hosting of additional static-resource directories
+  - `tsconfig.json`: Configuration for the Typescript compiler
 
-CSS colors, font and icon sizes are standardised and available as variables in `src/ui/css/globals.css`. If you require additional colors or sizes, add them to the file. Having global css variables is preferable to accommodate dark and light themes while improving maintainence.
+CSS colors, font and icon sizes are standardised and available as variables in `ui/css/globals.css`. If you require additional colors or sizes, add them to the file. Having global css variables is preferable to accommodate dark and light themes while improving maintainence.
 
 ### 1.1 Routing
 
-Following Next.js' current routing system (known as the `AppRouter`), rather than the older `PagesRouter`, the [app/page.tsx](./src/app/page.tsx) file acts as the entry point to the application when accessed by the user via a web browser. This reads the UI settings file on the server and then proceeds to load the Landing Page or, if disabled, the Map container.
+Following Next.js' current routing system (known as the `AppRouter`), rather than the older `PagesRouter`, the [app/[lang]/page.tsx](./app/[lang]/page.tsx) file acts as the entry point to the application when accessed by the user via a web browser. This reads the UI settings file on the server and then proceeds to load the Landing Page or, if disabled, the Map container.
 
 The current design of the application presents a number of different pages, each with their own URL route. This includes pages such as the landing page, the visualisation page, and a number of optional additional pages (generated from user-provided Markdown files). It's worth noting, however, that this could also be accomplished by presenting the application as a single page, with these components swapping in and out. Whilst this would remove the ability to bookmark/provide a link for a particular page, it may be more efficient and should be investigated.
 
-The [LandingPage](./src/ui/pages/landing.tsx) child component contains a landing page with static content pulled from an optional markdown file (which can be provided at runtime, e.g. in a Docker volume) along with links to [StaticContentPage](./src/ui/content/static-content-page.tsx) instances each also reading from optional markdown files.
+The [LandingPage](./ui/pages/landing.tsx) child component contains a landing page with static content pulled from an optional markdown file (which can be provided at runtime, e.g. in a Docker volume) along with links to [StaticContentPage](./ui/pages/static-content-page.tsx) instances each also reading from optional markdown files.
 
 ### 1.2 Component Hierarchy
 
-Next.js offers standardised special files to adhere to their **established component hierarchy**. Notably, `layout.tsx` provides a common layout for both existing routes and directly nested routes. `loading.tsx` serves as a fallback UI displayed immediately when navigating the application in the event of longer rendering. The component hierarchy is established as **Layout -> Loading -> Page**. Within the `layout` component, the [GlobalContainer](./src/ui/global-container.tsx) child component acts as a wrapper for all pages within the application. It provides global functionality such as a custom right-click menu, navigation bar, and Redux store provider (see [here](#14-state-management)).
+Next.js offers standardised special files to adhere to their **established component hierarchy**. Notably, `layout.tsx` provides a common layout for both existing routes and directly nested routes. `loading.tsx` serves as a fallback UI displayed immediately when navigating the application in the event of longer rendering. The component hierarchy is established as **Layout -> Loading -> Page**. Within the `layout` component, the [GlobalContainer](./ui/global-container.tsx) child component acts as a wrapper for all pages within the application. It provides global functionality such as a custom right-click menu, navigation bar, and Redux store provider (see [here](#14-state-management)).
 
 ### 1.3 Server vs Client components
 
@@ -158,6 +159,43 @@ class Button extends React.Component<ButtonProps> {
 ### 2.3 Client-Side
 
 Additionally, reusable components are provided to facilitate this. For navigation, `AppLink` is available at `ui/navigation/link/link.tsx`. For graphics, use the default `<Image>` element provided by next
+
+### 2.4 Colour Usage
+
+All colours are declared as CSS custom properties in `ui/css/globals.css` with light and dark variants. The `@theme` block maps each variable to a Tailwind utility class — **always prefer these Tailwind classes in `.tsx` files** (e.g. `bg-primary`, `text-muted-foreground`). Use raw `var(--…)` only in `.module.css` or inline styles.
+
+When a colour is defined as a pair, use the full pair together for colour usage: combine the related background and foreground variables or the related Tailwind classes unless a component has a specific reason not to. For example, use `--primary` with `--primary-foreground`, `bg-primary` with `text-primary-foreground`, and `--status-open-bg` with `--status-open-text`.
+
+| Group | Description | Variable | Tailwind Class |
+| --- | --- | --- | --- |
+| Core Background & Text | Main page background colour. Use in pair with `--foreground`. | `--background` | `bg-background` |
+| Core Background & Text | Main text colour. Use in pair with `--background`. | `--foreground` | `text-foreground` |
+| Core Background & Text | Secondary background surfaces such as nav bars, sidebars, and cards. Pair with `--muted-foreground` for supporting text or with `--foreground` for primary text. | `--muted` | `bg-muted` |
+| Core Background & Text | Lower-emphasis text colour for descriptions, hints, and other supporting copy. | `--muted-foreground` | `text-muted-foreground` |
+| Core Background & Text | Highlight background for interactive controls such as toggles and tabs. | `--ring` | `bg-ring` |
+| Core Background & Text | Semi-transparent inverse background used as a modal overlay backdrop. | `--background-inverse-primary` | `bg-inverse-primary` |
+| Actions & Interactions | Primary call-to-action buttons and key links. Use the foreground pair together with the background token. | `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` |
+| Actions & Interactions | Secondary or supporting actions. Use the foreground pair together with the background token. | `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` |
+| Actions & Interactions | Background for delete, cancel, or error-related actions. | `--destructive` | `bg-destructive` |
+| Borders & Focus States | Default border colour. | `--border` | `border-border` |
+| Borders & Focus States | Keyboard focus ring colour for interactive elements. In Tailwind, use with `focus-visible`; for example `focus-visible:ring-focus focus-visible:ring-[2px]`, where `ring-[2px]` sets the ring width (border thickness) so the focus ring is visible. | `--focus` | `ring-focus` |
+| Miscellaneous | Non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use the background, text, and border tokens together. | `--info-background` / `--info-foreground` / `--info-border` | `bg-info-background`, `text-info-foreground`, `border-info-border` |
+| Miscellaneous | Default colours used when a state is undefined, neutral, or not applicable. Always apply the background and foreground pair together for proper contrast. | `--neutral-background`/`--neutral-foreground` | `bg-neutral-background`, `text-neutral-foreground` |
+| Miscellaneous | Colours used to highlight warnings, caution states, or situations that may require user attention. Always apply the background and foreground pair together. | `--warning-background`/`--warning-foreground` | `bg-warning-background`, `text-warning-foreground` |
+| Miscellaneous | Colours used to represent errors, failures, or terminated states. Also used for error notifications and toast messages. Always apply the background and foreground pair together. | `--error-background`/`--error-foreground` | `bg-error-background`, `text-error-foreground` |
+| Miscellaneous | Colours used to indicate successful outcomes, completed actions, or active/available states. Also used for success notifications and toast messages. Always apply the background and foreground pair together. | `--success-background`/`--success-foreground` | `bg-success-background`, `text-success-foreground` |
+
+#### Legacy Variables
+
+These live in `globals.css` but are consumed **only** in `.module.css` files. Migrate to Tailwind classes when touching these components.
+
+| Variable | Used By |
+| --- | --- |
+| `--background-secondary`, `--background-tertiary` | Scrollbars, context menus, map panels, ribbons |
+| `--background-inverse-primary` | Dropdown selectors |
+| `--text-color-primary`, `--text-color-secondary` | Floating panels, info trees, dropdowns |
+| `--text-color-links`, `--text-color-links-hover` | Link colours  |
+| `--border-primary`, `--border-secondary`, `--border-tertiary` | Context menus, info trees, floating panels |
 
 ## 3. Local Development Workflow
 
