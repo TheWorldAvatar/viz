@@ -16,7 +16,7 @@ import AttributeRoot from './attribute-root';
 import InfoTabs from './info-tabs';
 import TimeSeriesPanel from './time-series-panel';
 import { Map } from "mapbox-gl";
-import { DataStore } from 'io/data/data-store';
+import { DataStore } from '@/io/data/data-store';
 
 interface InfoTreeProps {
   attributes: AttributeGroup;

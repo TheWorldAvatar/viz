@@ -21,7 +21,7 @@ import {
 import { JsonObject } from "@/types/json";
 import { ToastConfig, ToastType } from "@/types/toast";
 import { Map } from "mapbox-gl";
-import { DataLayer } from 'io/data/data-layer';
+import { DataLayer } from '@/io/data/data-layer';
 
 /**
  * Open full screen mode.
@@ -188,7 +188,7 @@ export function getInitialDateFromLifecycleStage(
     // When disabled, get the maximum possible range
     if (disableDateFilter) {
       return { from: new Date("1950-01-01"), to: new Date("2100-12-31") };
-  }
+    }
     // Get the first day of the current month
     const startOfMonth: Date = new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
     // Get the last day of the current month by passing the 0th day of the next month

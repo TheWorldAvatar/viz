@@ -9,7 +9,7 @@ import GroupDropdownField from '@/ui/interaction/dropdown/group-dropdown';
 import { setSelectedFeature, highlightFeature } from '@/utils/client-utils';
 import { useDictionary } from '@/hooks/useDictionary';
 import { Map } from "mapbox-gl";
-import { DataStore } from 'io/data/data-store';
+import { DataStore } from '@/io/data/data-store';
 
 interface FeatureSelectorProps {
   features: MapFeaturePayload[];
