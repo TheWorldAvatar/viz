@@ -31,6 +31,7 @@ export default async function AddInvoiceFormPage() {
       entityType={uiSettings?.resources?.registry?.data}
       accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
       tableColumnOptions={tableColumnSettings}
+      exports={uiSettings.resources?.billing?.exports ?? []}
     />
   );
 }

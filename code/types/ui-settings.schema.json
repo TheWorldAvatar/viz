@@ -118,6 +118,41 @@
                                     }
                                 }
                             }
+                        },
+                        "exports": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "resource": {
+                                        "type": "string"
+                                    },
+                                    "format": {
+                                        "type": "string"
+                                    },
+                                    "caption": {
+                                        "type": "string"
+                                    },
+                                    "permission": {
+                                        "type": "string"
+                                    },
+                                    "isBulk": {
+                                        "type": "boolean"
+                                    },
+                                    "stage": {
+                                        "type": "array"
+                                    },
+                                    "recordType": {
+                                        "type": "array"
+                                    }
+                                },
+                                "required": [
+                                    "resource",
+                                    "format",
+                                    "caption",
+                                    "permission"
+                                ]
+                            }
                         }
                     },
                     "required": [
@@ -149,6 +184,41 @@
                                         "type": "string"
                                     }
                                 }
+                            }
+                        },
+                        "exports": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "resource": {
+                                        "type": "string"
+                                    },
+                                    "format": {
+                                        "type": "string"
+                                    },
+                                    "caption": {
+                                        "type": "string"
+                                    },
+                                    "permission": {
+                                        "type": "string"
+                                    },
+                                    "isBulk": {
+                                        "type": "boolean"
+                                    },
+                                    "stage": {
+                                        "type": "array"
+                                    },
+                                    "recordType": {
+                                        "type": "array"
+                                    }
+                                },
+                                "required": [
+                                    "resource",
+                                    "format",
+                                    "caption",
+                                    "permission"
+                                ]
                             }
                         }
                     },

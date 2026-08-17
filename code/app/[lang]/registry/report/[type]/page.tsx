@@ -34,6 +34,7 @@ export default function RegistryReportPage() {
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={LifecycleStageMap.REPORT}
         tableColumnOptions={tableColumnSettings}
+        exports={uiSettings.resources?.registry?.exports ?? []}
       />
     );
   } else {

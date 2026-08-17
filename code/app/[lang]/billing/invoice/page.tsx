@@ -32,6 +32,7 @@ export default function InvoicesPage() {
             entityType={LifecycleStageMap.INVOICE}
             lifecycleStage={LifecycleStageMap.INVOICE}
             tableColumnOptions={tableColumnSettings}
+            exports={uiSettings.resources?.billing?.exports ?? []}
         />
     );
 }

@@ -37,6 +37,7 @@ export default function RegistryTaskByDatePage() {
         accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
         pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
         tableColumnOptions={tableColumnSettings}
+        exports={uiSettings.resources?.registry?.exports ?? []}
       />
     );
   } else {
