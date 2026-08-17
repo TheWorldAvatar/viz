@@ -14,6 +14,13 @@ interface ToastProps {
   type?: ToastType;
 }
 
+const MESSAGE_PREVIEW_LENGTH: number = 200;
+const MESSAGE_PREVIEW_LINES: number = 3;
+
+const isLongMessage = (message: string): boolean =>
+  message.length > MESSAGE_PREVIEW_LENGTH ||
+  message.split(/\r?\n/).length > MESSAGE_PREVIEW_LINES;
+
 /**
  * Sets off a toast notification based on the message and type.
  *
@@ -23,7 +30,7 @@ interface ToastProps {
 export function toast(message: string, type: ToastType) {
   return sonnerToast.custom(
     (id) => <Toast id={id} message={message} type={type} />,
-    { duration: type === "error" || type === "loading" ? 1000000000 : 5000 }
+    { duration: type === "error" || type === "loading" || isLongMessage(message) ? 1000000000 : 5000 }
   );
 }
 
@@ -47,6 +54,19 @@ function Toast(props: Readonly<ToastProps>) {
   const { message, id, type } = props;
   const dict: Dictionary = useDictionary();
   const toastConfig: ToastConfig = getToastConfig(type, dict);
+  const hasLongMessage: boolean = isLongMessage(message ?? "");
+
+  const downloadLog = () => {
+    const blob: Blob = new Blob([message ?? ""], { type: "text/plain;charset=utf-8" });
+    const url: string = URL.createObjectURL(blob);
+    const link: HTMLAnchorElement = document.createElement("a");
+    link.href = url;
+    link.download = `toast-${new Date().toISOString().replace(/[:.]/g, "-")}.log`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div
@@ -64,10 +84,20 @@ function Toast(props: Readonly<ToastProps>) {
           </p>
         )}
         <p
-          className={`text-sm hyphens-auto wrap-break-word ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
+          className={`text-sm whitespace-pre-wrap hyphens-auto wrap-break-word ${hasLongMessage ? "line-clamp-3" : ""} ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
         >
           {message}
         </p>
+        {hasLongMessage && (
+          <Button
+            variant="link"
+            size="sm"
+            className={`!p-0 ${toastConfig.text}`}
+            onClick={downloadLog}
+          >
+            {dict.action.downloadLog}
+          </Button>
+        )}
       </div>
       {type !== "loading" &&
         <Button
