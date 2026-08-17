@@ -96,8 +96,10 @@ nextApp.prepare().then(async () => {
 
         expressServer.post('/api/upload', keycloak.protect(), async (req, res, next) => {
             try {
-                const refreshGrant = Object.create(req.kauth.grant);
-                refreshGrant.isExpired = () => true;
+                const refreshGrant = {
+                    ...req.kauth.grant,
+                    isExpired: () => true,
+                };
 
                 const refreshedGrant = await keycloak.grantManager.ensureFreshness(refreshGrant);
                 keycloak.storeGrant(refreshedGrant, req, res);
