@@ -24,7 +24,6 @@
     "@emotion/styled": "^11.14.1",
     "@floating-ui/react": "^0.27.20",
     "@formatjs/intl-localematcher": "^0.8.13",
-    "@mui/icons-material": "^9.2.0",
     "@mui/material": "^9.2.0",
     "@reduxjs/toolkit": "^2.12.0",
     "@serwist/turbopack": "^9.5.12",
