@@ -94,7 +94,7 @@ export function setSelectedFeature(
 export function highlightFeature(selectedFeature: MapFeaturePayload, map: Map, dataStore: DataStore) {
 
   const layerArray: DataLayer[] = dataStore?.getLayerList();
-  const layerContainingFeature = layerArray.find(layer => layer.id === selectedFeature.layerId);
+  const layerContainingFeature: DataLayer = layerArray.find(layer => layer.id === selectedFeature.layerId);
 
   if (layerContainingFeature.hasHighlight) {
     const highlightLayer = layerArray.find(layer => layer.id === selectedFeature.layerId + '-highlight');
