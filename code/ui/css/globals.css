@@ -1,5 +1,5 @@
 /**
- * Only the Outlined variant is imported to avoid downloading the
+ * Only the Outlined variant is imported to avoid bundling the
  * unused Rounded and Sharp font variants.
  *
  * To use another variant, add its import here:
