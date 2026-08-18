@@ -6,7 +6,7 @@
 
 ### Changes
 
-- Removed mui/icons-material library as a dependancy
+- Removed mui/icons-material library as a dependency
 - Imported only `material-symbols/outlined.css` in `global.css`, reducing the application bundle size.
 
 ## 5.85.0
