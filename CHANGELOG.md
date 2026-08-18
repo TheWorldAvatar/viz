@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.85.1
+
+### Changes
+
+- Removed mui/icons-material library as a dependency
+- Imported only `material-symbols/outlined.css` in `global.css`, reducing the application bundle size.
+
 ## 5.85.0
 
 ### Changes
