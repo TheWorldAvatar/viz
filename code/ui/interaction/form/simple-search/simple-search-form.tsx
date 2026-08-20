@@ -2,14 +2,21 @@ import { useState } from 'react';
 import { parseWordsForLabels } from "@/utils/client-utils";
 import Button from "@/ui/interaction/button";
 import styles from "./simple.module.css"
+import Tooltip from "@/ui/interaction/tooltip/tooltip";
 
 export type SearchConfigValue = string | number;
 
-export type SearchConfig = Record<string, SearchConfigValue[]>;
+export type SearchFilters = Record<string, SearchConfigValue[]>;
+
+export type SearchConfig = {
+  filters: SearchFilters;
+  showAll?: boolean;
+};
 
 export type SimpleSearchFormProps = {
   search: SearchConfig;
   onSubmit: (filters: Record<string, SearchConfigValue>) => void;
+  onShowAll?: () => void;
 };
 
 export default function SimpleSearchForm(
@@ -19,12 +26,12 @@ export default function SimpleSearchForm(
     Record<string, SearchConfigValue>
   >(
     Object.fromEntries(
-      Object.entries(props.search).map(([key, values]) => [key, values[0]])
+      Object.entries(props.search.filters).map(([key, values]) => [key, values[0]])
     )
   );
 
   const handleChange = (key: string, value: string) => {
-    const selectedValue = props.search[key].find(
+    const selectedValue = props.search.filters[key].find(
       (option) => String(option) === value
     );
 
@@ -40,7 +47,7 @@ export default function SimpleSearchForm(
 
   return (
     <div className="flex flex-col w-full gap-4">
-      {Object.entries(props.search).map(([key, values]) => (
+      {Object.entries(props.search.filters).map(([key, values]) => (
         <div key={key} className="flex flex-col w-full">
           <label htmlFor={key}>
             <span className="text-lg font-semibold">
@@ -62,11 +69,26 @@ export default function SimpleSearchForm(
         </div>
       ))}
 
-      <Button
-        leftIcon="search"
-        label="Search"
-        onClick={handleSubmit}
-      />
+      <div className="flex gap-2">
+        <Button
+          leftIcon="search"
+          label="Search"
+          onClick={handleSubmit}
+        />
+
+        {props.search.showAll && (
+          // <Button
+          //   label="Show all"
+          //   onClick={props.onShowAll}
+          // />
+          <Tooltip text="Shows all features matching the values currently listed in the dropdown.">
+            <Button
+              label="Show all"
+              onClick={props.onShowAll}
+            />
+          </Tooltip>
+        )}
+      </div>
     </div>
   );
 }

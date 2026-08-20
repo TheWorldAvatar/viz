@@ -60,6 +60,27 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
     props.setShowState(false);
   };
 
+  const handleShowAll = () => {
+    // clear the simple-search filter by applying all options given by the user
+    // if some options are not included in the options provided then those might be unintentionally left out
+    const searchConfig = props.search as SearchConfig;
+    for (const [key, values] of Object.entries(searchConfig.filters)) {
+      const filter = [
+        "in",
+        key,
+        ...values,
+      ];
+      props.layers.forEach(layer => {
+        layer.ids.forEach(id => {
+          props.map.setFilter(id, filter);
+        })
+      });
+    }
+
+    // close search modal
+    props.setShowState(false);
+  };
+
   return (
     <Modal
       isOpen={props.show}
@@ -98,6 +119,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
         <SimpleSearchForm
           search={props.search}
           onSubmit={handleSimpleSearch}
+          onShowAll={handleShowAll}
         />
       )}
     </Modal>
