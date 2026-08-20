@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.85.3
+
+### Changes
+
+- Removed `framer-motion` , `react-confetti` and `react-konami-code` libraries
+- Removed `trex.wav` and `trex.png`
+
 ## 5.85.2
 
 ### Changes
