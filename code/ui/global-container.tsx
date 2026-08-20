@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import Konami from "react-konami-code";
+import React from "react";
 import { Provider } from "react-redux";
 
 import { reduxStore } from "@/app/store";
@@ -12,7 +11,6 @@ import { useOfflineWarning } from "@/hooks/useOfflineWarning";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { UISettings } from "@/types/settings";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
-import Trex from "@/utils/trex";
 import { usePathname } from "next/navigation";
 import ContextMenu from "./interaction/context-menu/context-menu";
 import HeaderBar from "./interaction/header/headerbar";
@@ -30,17 +28,12 @@ interface GlobalContainerProps {
  * Component representing a common global page container for all content.
  */
 export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
-  const [popup, setPopup] = useState<boolean>(false);
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
   const pullIndicatorRef: React.RefObject<HTMLDivElement | null> = usePullToRefresh();
   useOfflineWarning();
   const isMapPage: boolean = pathname.endsWith("map");
-
-  const togglePopup = () => {
-    setPopup(!popup);
-  };
 
   return (
     <Provider store={reduxStore}>
@@ -72,9 +65,6 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
           </div>
         </main>
       </div>
-
-      <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
-      {popup && <Trex callback={togglePopup} />}
 
       {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
       {contextMenuVisible && <ContextMenu x={contextMenuX} y={contextMenuY} />}
