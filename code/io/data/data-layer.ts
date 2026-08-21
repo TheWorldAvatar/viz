@@ -68,9 +68,6 @@ export abstract class DataLayer {
   // indicates whether this layer has an accompanying highlight layer
   public hasHighlight?: boolean = false;
 
-  // store default filter, used to revert to original state
-  public defaultFilter?: JsonArray;
-
   /**
    * Initialise a new DataLayer instance.
    * 
@@ -131,10 +128,6 @@ export abstract class DataLayer {
 
     if (this.definition.hasHighlight) {
       this.hasHighlight = this.definition.hasHighlight as boolean;
-    }
-
-    if (this.definition.filter) {
-      this.defaultFilter = this.definition.filter as JsonArray;
     }
   }
 
