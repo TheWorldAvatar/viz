@@ -6,6 +6,17 @@
       "name": "Colleges",
       "tree-icon": "/images/tub.svg",
       "expanded": false,
+      "search": {
+        "name": [
+          "Christ's",
+          "Clare",
+          "Churchill"
+        ],
+        "founded": [
+          1505,
+          1960
+        ]
+      },
       "sources": [
         {
           "id": "college-source",

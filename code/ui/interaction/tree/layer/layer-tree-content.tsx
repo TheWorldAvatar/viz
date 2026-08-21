@@ -223,10 +223,12 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         )}
         {group.search && isSearchOpenState && (
           <SearchModal
-            id={group.search}
+            search={group.search}
             stack={group.stack}
             show={isSearchOpenState}
             setShowState={setIsSearchOpenState}
+            layers={group.layers}
+            map={props.map}
           />
         )}
       </div>
