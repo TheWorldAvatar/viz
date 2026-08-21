@@ -1,4 +1,5 @@
 import { SearchConfig } from "@/ui/interaction/form/simple-search/simple-search-form";
+import { JsonArray } from "./json";
 
 export type MapLayerGroup = {
   name: string;
@@ -21,4 +22,5 @@ export type MapLayer = {
   isVisible: boolean; // track visibility
   isAHighlightLayer: boolean; // indicates whether this is a highlight layer, will not be rendered on the layer tree
   highlightLayerIds: string[]; // the accompanying highlight layer
+  idToFilterMap: Map<string, JsonArray>;
 };
