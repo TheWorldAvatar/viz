@@ -75,23 +75,6 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
     props.setShowState(false);
   };
 
-  const handleRevert = () => {
-    // revert to original filter if it is provided, otherwise clear filters
-    props.layers.forEach(layer => {
-      layer.ids.forEach(id => {
-        const originalFilter = layer.idToFilterMap?.get(id);
-        if (originalFilter) {
-          props.map.setFilter(id, originalFilter);
-        } else {
-          props.map.setFilter(id, null);
-        }
-      })
-    });
-
-    // close search modal
-    props.setShowState(false);
-  };
-
   return (
     <Modal
       isOpen={props.show}
@@ -130,7 +113,6 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
         <SimpleSearchForm
           search={props.search}
           onSubmit={handleSimpleSearch}
-          onRevert={handleRevert}
         />
       )}
     </Modal>
