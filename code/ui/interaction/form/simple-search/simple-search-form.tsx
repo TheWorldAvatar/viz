@@ -10,13 +10,13 @@ export type SearchFilters = Record<string, SearchConfigValue[]>;
 
 export type SearchConfig = {
   filters: SearchFilters;
-  showAll?: boolean;
+  revertButton: boolean;
 };
 
 export type SimpleSearchFormProps = {
   search: SearchConfig;
   onSubmit: (filters: Record<string, SearchConfigValue>) => void;
-  onShowAll?: () => void;
+  onRevert: () => void;
 };
 
 export default function SimpleSearchForm(
@@ -76,17 +76,11 @@ export default function SimpleSearchForm(
           onClick={handleSubmit}
         />
 
-        {props.search.showAll && (
-          // <Button
-          //   label="Show all"
-          //   onClick={props.onShowAll}
-          // />
-          <Tooltip text="Shows all features matching the values currently listed in the dropdown.">
-            <Button
-              label="Show all"
-              onClick={props.onShowAll}
-            />
-          </Tooltip>
+        {props.search.revertButton && (
+          <Button
+            label="Revert filter(s)"
+            onClick={props.onRevert}
+          />
         )}
       </div>
     </div>

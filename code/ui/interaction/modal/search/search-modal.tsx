@@ -49,33 +49,38 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
   const handleSimpleSearch = (
     filters: Record<string, SearchConfigValue>
   ) => {
+    // combine filters from multiple keys
+    const combinedFilters = [
+      "all",
+      ...Object.entries(filters).map(([key, value]) => [
+        "==",
+        ["get", key],
+        value,
+      ]),
+    ];
+
     props.layers.forEach(layer => {
       layer.ids.forEach(id => {
-        for (const [key, value] of Object.entries(filters)) {
-          props.map.setFilter(id, ['in', key, value]);
-        }
+        props.map.setFilter(id, combinedFilters);
       })
     });
+
     // close search modal
     props.setShowState(false);
   };
 
-  const handleShowAll = () => {
-    // clear the simple-search filter by applying all options given by the user
-    // if some options are not included in the options provided then those might be unintentionally left out
-    const searchConfig = props.search as SearchConfig;
-    for (const [key, values] of Object.entries(searchConfig.filters)) {
-      const filter = [
-        "in",
-        key,
-        ...values,
-      ];
-      props.layers.forEach(layer => {
-        layer.ids.forEach(id => {
-          props.map.setFilter(id, filter);
-        })
-      });
-    }
+  const handleRevert = () => {
+    // revert to original filter if it is provided, otherwise clear filters
+    props.layers.forEach(layer => {
+      layer.ids.forEach(id => {
+        const originalFilter = layer.idToFilterMap?.get(id);
+        if (originalFilter) {
+          props.map.setFilter(id, originalFilter);
+        } else {
+          props.map.setFilter(id, null);
+        }
+      })
+    });
 
     // close search modal
     props.setShowState(false);
@@ -119,7 +124,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
         <SimpleSearchForm
           search={props.search}
           onSubmit={handleSimpleSearch}
-          onShowAll={handleShowAll}
+          onRevert={handleRevert}
         />
       )}
     </Modal>
