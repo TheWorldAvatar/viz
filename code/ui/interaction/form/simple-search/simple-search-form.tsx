@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { parseWordsForLabels } from "@/utils/client-utils";
 import Button from "@/ui/interaction/button";
 import styles from "./simple.module.css"
-import Tooltip from "@/ui/interaction/tooltip/tooltip";
 
 export type SearchConfigValue = string | number;
 

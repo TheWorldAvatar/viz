@@ -61,6 +61,12 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
 
     props.layers.forEach(layer => {
       layer.ids.forEach(id => {
+        const originalFilter = layer.idToFilterMap?.get(id);
+        if (originalFilter) {
+          console.warn(
+            `${layer.name} has a predefined filter that will be overwritten by the search filter.`
+          );
+        }
         props.map.setFilter(id, combinedFilters);
       })
     });
