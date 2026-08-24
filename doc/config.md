@@ -54,7 +54,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, `registry`, and `billing` accordingly.
   - `title`: REQUIRED. Thumbnail title on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
-  - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Optional for only internal links, which defaults to the default if not set.
+  - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon id from the [lucide](https://lucide.dev/icons) icon set, in kebab-case (for example `map-pin` or `trash-2`). Optional for only internal links, which defaults to the default if not set.
   - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
 - `resources`: optional configuration for additional resources. They follow the following format
@@ -77,14 +77,14 @@ Note that resources are optional and their configuration options can differ from
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `caption`: Optional language dictionary to display a message on the table for the general registries. Only `en` and `de` are permitted at this moment.
-    - `icon`: Optional parameter to display an icon from the icon library.
+    - `icon`: Optional parameter to display an icon. Use a [lucide](https://lucide.dev/icons) icon id in kebab-case, for example `clipboard-list`.
     - `permission`: Optional parameter to set the permission required in order to view the registry page on the nav bar IF authentication is enabled.
     - `add`: Optional entity type that can be added directly from each row of this registry. When set, every row gains an `Add <entity>` action that opens the add form for that entity. The value must be an entity type that is mapped to the backend, and is also used for the action's label. Omit this parameter to hide the action.
 - Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
     - `type`: Must be either `account`, `pricing`, or `activity`
     - `key`: The entity type of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
-    - `icon`: Optional parameter to display an icon from the icon library.
+    - `icon`: Optional parameter to display an icon. Use a [lucide](https://lucide.dev/icons) icon id in kebab-case, for example `clipboard-list`.
   - `exports`: OPTIONAL: An array of the export reports available from the file exporter agent. See [Export options](#export-options).
 
 #### Export options
@@ -141,7 +141,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "settings": "table-column-settings.json", // Optional table column settings file in /config
       "paths": [{
           "type": "resource_one", // resource name from backend
-          "icon": "people",
+          "icon": "map-pin",
           "caption": { // A caption dictionary to display table message
             "en": "Example", // Only shows up on german site
             "de": "Beispiel" // Only shows up on german site
@@ -201,7 +201,7 @@ Icons on the map are shown by default in the layer tree. Additional legend items
 ```json
 {
   "legend": {
-    // Group one for icons - Only PNG, JPG, SVG, and Google Materials icon are available
+    // Group one for icons - Only PNG, JPG, SVG, and lucide icon ids are available
     "Status Indicators": {
       // Group one, item one
       "Active": {
@@ -216,7 +216,7 @@ Icons on the map are shown by default in the layer tree. Additional legend items
       // Group one, item three
       "Unknown": {
         "type": "symbol",
-        "icon": "question_mark"
+        "icon": "circle-question-mark"
       }
     },
     // Group two for fills
@@ -516,7 +516,7 @@ The following fields are supported, and must be added to the top of the file bef
 - `title`: Displays the title on the browser tab. Required
 - `slug`: Identifier for the page route. Required
 - `description`: Describes the page in the landing page. Required only for non-landing pages
-- `thumbnail`: Displays the associated thumbnail image in the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Required only for non-landing pages
+- `thumbnail`: Displays the associated thumbnail image in the navigation bar. This uses an icon id from the [lucide](https://lucide.dev/icons) icon set, in kebab-case (for example `users` or `cpu`). Required only for non-landing pages
 
 ### 3.2 Sample
 
