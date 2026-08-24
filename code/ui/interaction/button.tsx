@@ -1,7 +1,7 @@
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { Placement } from "@floating-ui/react";
-import { Icon } from "@mui/material";
+import type { LucideIcon } from "lucide-react";
 import React, { ButtonHTMLAttributes } from "react";
 
 export type ButtonVariant = "link"
@@ -19,9 +19,8 @@ export type ButtonVariant = "link"
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: "xs" | "sm" | "md" | "lg" | "default" | "icon" | "icon-sm" | "icon-md" | "icon-xs";
-  leftIcon?: "string" | React.ReactNode;
-  rightIcon?: "string" | React.ReactNode;
-  iconSize?: "inherit" | "medium" | "small" | "large";
+  leftIcon?: LucideIcon;
+  rightIcon?: LucideIcon;
   loading?: boolean;
   label?: string;
   tooltipText?: string;
@@ -37,8 +36,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * @param {string} variant The button variant, e.g., "primary", "secondary", etc. This controls the button's appearance.
  * @param {string} size The button size, e.g., "sm", "md", "lg", "default", or "icon". This controls the button's dimensions and padding.
  * @param {string} spinnerSize The size of the loading spinner, e.g.,
- * @param {string} leftIcon Optional left icon, can be a string or React node.
- * @param {string} rightIcon Optional right icon, can be a string or React
+ * @param {LucideIcon} leftIcon Optional lucide icon component rendered before the label.
+ * @param {LucideIcon} rightIcon Optional lucide icon component rendered after the label.
  * @param {boolean} loading Optional loading state to show a spinner.
  * @param {string} label Optional label for the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
@@ -51,10 +50,9 @@ export default function Button({
   className, // Allow custom classes to be passed in
   variant = "primary", // Default variant
   size = "md", // Default size
-  iconSize = "medium", // Default icon size
   onClick,
-  leftIcon,
-  rightIcon,
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
   children,
   disabled,
   loading = false, // Default loading state to false
@@ -104,6 +102,18 @@ export default function Button({
     "icon-md": "size-8",
   };
 
+  const iconSizes = {
+    xs: "size-5",
+    sm: "size-5",
+    md: "size-5",
+    default: "size-5",
+    lg: "size-5",
+    "icon-xs": "size-3.5",
+    "icon-sm": "size-4",
+    "icon-md": "size-4.5",
+    icon: "size-5",
+  };
+
   // Define spacing between icons based on size
   const iconSpacing = {
     xs: "space-x-1",
@@ -145,29 +155,21 @@ export default function Button({
             }`}
         >
           {loading && <LoadingSpinner size="sm" />}
-          {!loading && leftIcon && (
+          {!loading && LeftIcon && (
             <span
               className={`${hasMobileIcon ? "flex" : "hidden md:flex"
                 } items-center`}
             >
-              {
-                <Icon fontSize={iconSize} className="material-symbols-outlined">
-                  {leftIcon}
-                </Icon>
-              }
+              <LeftIcon className={iconSizes[size]} aria-hidden />
             </span>
           )}
           <span className="truncate">{children || label}</span>
-          {!loading && rightIcon && (
+          {!loading && RightIcon && (
             <span
               className={`${hasMobileIcon ? "flex" : "hidden md:flex"
                 } items-center`}
             >
-              {
-                <Icon fontSize={iconSize} className="material-symbols-outlined">
-                  {rightIcon}
-                </Icon>
-              }
+              <RightIcon className={iconSizes[size]} aria-hidden />
             </span>
           )}
         </div>

@@ -1,23 +1,24 @@
-import { Icon } from '@mui/material';
 import Image from 'next/image';
+import { ICON_REGISTRY } from './icon-registry.generated';
+import { LucideIcon } from 'lucide-react';
 
 interface IconComponentProps {
   readonly icon: string;
-  readonly classes?: string
-  readonly height?: number
-  readonly width?: number
+  readonly classes?: string;
 }
 
 /**
- * Reusable component for displaying icons. It supports PNG, JPG, SVG, and Google Material icons.
- * 
- * @param {string} icon The icon to display. It can be a URL to an image (PNG, JPG), the name of a Material icon, or the path to an SVG.
- * @param {string} classes Additional CSS classes to apply to the icon element if it is not PNG or JPG.
- * @param {number} height Maximum rendered height in pixels for only PNG and JPG inputs.
- * @param {number} width Maximum rendered width in pixels for only PNG and JPG inputs.
+ * Reusable component for displaying icons. It supports PNG, JPG, SVG, and Lucide React icons.
+ *
+ * Components with a hardcoded icon should import it from `lucide-react` directly
+ * rather than routing through here. This exists for the icons in `public/config`,
+ * which are resolved through a registry generated at build time by `scripts/generate-icon-registry.mjs`.
+
+ * @param {string} icon The icon to display: a URL to an image (PNG, JPG, SVG), or a lucide icon id.
+ * @param {string} classes Additional CSS classes to apply to the icon element.
  */
 export default function IconComponent(props: IconComponentProps) {
-  if (props.icon.endsWith(".png") || props.icon.endsWith(".jpg") || props.icon.endsWith(".svg")) {
+  if (props.icon.match(/\.(png|jpe?g|svg)$/i)) {
     return (
       <div className={props.classes}>
         <Image
@@ -26,16 +27,17 @@ export default function IconComponent(props: IconComponentProps) {
           sizes="100vw"
           style={{ width: 'auto', height: '100%', maxWidth: '100%' }}
           src={props.icon}
-          alt="Icon" />
+          alt="" />
       </div>
     );
-  } else {
-    const iconClassNames = ["material-symbols-outlined"].concat(props.classes).join(" ");
-    // Name of Google material icon
-    return (
-      <Icon className={iconClassNames}>
-        {props.icon}
-      </Icon>
-    );
   }
+
+  const Icon: LucideIcon = ICON_REGISTRY[props.icon];
+  if (!Icon) {
+    return null;
+  }
+
+  return (
+    <Icon className={props.classes ?? "size-6"} aria-hidden />
+  );
 }
