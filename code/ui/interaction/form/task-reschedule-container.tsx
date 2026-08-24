@@ -3,7 +3,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Icon } from "@mui/material";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "@/hooks/form/api/useTaskData";
 import { useDictionary } from "@/hooks/useDictionary";
@@ -23,6 +22,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/int
 import { toast } from "../action/toast/toast";
 import DateInput from "../input/date/date-input";
 import Tooltip from "../tooltip/tooltip";
+import { Info, RefreshCw, SendHorizonal } from "lucide-react";
 
 
 /**
@@ -132,7 +132,7 @@ function TaskFormContents() {
             <label className="text-lg font-bold flex gap-2 mb-1">
               {dict.form.rescheduleDate}
               <Tooltip text={dict.form.rescheduleDateDesc} placement="right">
-                <Icon className="material-symbols-outlined">{"info"}</Icon>
+                <Info className="size-5.5" aria-hidden />
               </Tooltip>
             </label>
             <DateInput
@@ -150,10 +150,12 @@ function TaskFormContents() {
       <footer className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4" >
         <div className="flex gap-2.5">
           <Button
-            leftIcon="cached"
+            leftIcon={RefreshCw}
             disabled={isFetching || isLoading}
             variant="outline"
             size="icon"
+            tooltipText={dict.action.refresh}
+            aria-label={dict.action.refresh}
             onClick={triggerRefresh}
           />
         </div>
@@ -166,7 +168,7 @@ function TaskFormContents() {
           <div className="flex-grow" />
           {/* Submit button */}
           <Button
-            leftIcon="send"
+            leftIcon={SendHorizonal}
             label={dict.action.submit}
             tooltipText={dict.action.submit}
             disabled={isLoading || isFetching}

@@ -7,6 +7,7 @@ import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
+import { Filter, SquareMinus } from "lucide-react";
 
 
 interface SearchSelectorProps {
@@ -74,8 +75,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }}
           />
           <Button
-            leftIcon="filter_alt"
-            iconSize="medium"
+            leftIcon={Filter}
             size="icon"
             onClick={(event) => {
               event.preventDefault();
@@ -84,14 +84,13 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }}
             tooltipText={dict.action.applyFilter}
             variant="primary"
-            className="h-full w-12 border border-border ml-2"
+            className="p-5 border border-border ml-2"
             disabled={props.disabled || !isConnected}
             aria-label={"Submit for " + props.label}
           />
         </div>
         {selectedOptions.length > 0 && <Button
-          leftIcon="indeterminate_check_box"
-          iconSize="medium"
+          leftIcon={SquareMinus}
           size="icon"
           onClick={(event) => {
             event.preventDefault();

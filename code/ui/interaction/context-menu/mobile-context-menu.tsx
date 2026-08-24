@@ -6,7 +6,7 @@ import { ContextItemMap } from '@/types/settings';
 import { useDictionary } from '@/hooks/useDictionary';
 import { Dictionary } from '@/types/dictionary';
 import { usePathname } from "next/navigation";
-import Icon from "@mui/material/Icon";
+import { Settings } from "lucide-react";
 
 import ContextItem, { ContextItemDefinition } from './context-item';
 
@@ -27,11 +27,7 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
     return (
         <div className={`mt-auto pt-5 border-t border-border flex flex-col gap-2 p-2 ${pathname.endsWith("map") && tableRibbonState == null ? "xl:hidden" : ""}`}>
             <div className='flex items-center gap-3 mb-1'>
-                <Icon sx={{
-                    color: "#16687B",
-                }} className="material-symbols-outlined shrink-0">
-                    {"settings"}
-                </Icon>
+                <Settings className="size-6 shrink-0 text-[#16687B]" aria-hidden />
                 <h3 className="text-base font-bold text-foreground">
                     {dict.title.settings}
                 </h3>
