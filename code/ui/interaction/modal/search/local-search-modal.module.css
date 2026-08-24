@@ -1,4 +1,4 @@
-.simple-form-select-value {
+.select-value {
   width: 100%;
   height: 2.6rem;
   max-width: none;
@@ -10,6 +10,6 @@
   color: var(--foreground);
 }
 
-.simple-form-select-value:focus-visible {
+.select-value:focus-visible {
   outline: 2px solid var(--focus);
 }

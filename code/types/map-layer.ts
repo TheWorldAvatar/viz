@@ -1,4 +1,4 @@
-import { SearchConfig } from "@/ui/interaction/form/simple-search/simple-search-form";
+import { SearchConfig } from "@/types/search";
 import { JsonArray } from "./json";
 
 export type MapLayerGroup = {

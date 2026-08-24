@@ -105,7 +105,7 @@ function recurseParseTreeStructure(
   // Construct TreeLayer instances
   for (const [key, layers] of Object.entries(layersByName)) {
     // name clash with Mapbox's Map
-    // user defined filters that will be used for simple-search-form's revert button
+    // User-defined filters retained for a simple-search-form's warning message.
     const idToFilterMap = new globalThis.Map<string, JsonArray>();
 
     layers.forEach((layer) => {

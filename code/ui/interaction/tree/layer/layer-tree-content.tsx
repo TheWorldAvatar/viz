@@ -10,7 +10,8 @@ import { MapLayer, MapLayerGroup } from "@/types/map-layer";
 import IconComponent from "@/ui/graphic/icon/icon";
 import MaterialIconButton from "@/ui/graphic/icon/icon-button";
 import SimpleDropdownField from "@/ui/interaction/dropdown/simple-dropdown";
-import SearchModal from "@/ui/interaction/modal/search/search-modal";
+import ApiSearchModal from "@/ui/interaction/modal/search/api-search-modal";
+import LocalSearchModal from "@/ui/interaction/modal/search/local-search-modal";
 import {
   setFilterFeatureIris,
   setFilterLayerIds,
@@ -221,16 +222,22 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
             onClick={openSearchModal}
           />
         )}
-        {group.search && isSearchOpenState && (
-          <SearchModal
-            search={group.search}
-            stack={group.stack}
-            show={isSearchOpenState}
-            setShowState={setIsSearchOpenState}
-            layers={group.layers}
-            map={props.map}
-          />
-        )}
+        {group.search && isSearchOpenState &&
+          (typeof group.search === "string" ? (
+            <ApiSearchModal
+              search={group.search}
+              show={isSearchOpenState}
+              setShowState={setIsSearchOpenState}
+            />
+          ) : (
+            <LocalSearchModal
+              search={group.search}
+              show={isSearchOpenState}
+              setShowState={setIsSearchOpenState}
+              layers={group.layers}
+              map={props.map}
+            />
+          ))}
       </div>
 
       {/* Conditionally show subgroups when expanded, highlight layers are hidden */}

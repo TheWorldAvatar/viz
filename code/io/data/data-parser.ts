@@ -5,7 +5,7 @@ import { DataLayer } from './data-layer';
 import { LayerSource } from './layer-source';
 import { DataStore } from './data-store';
 import { MapboxDataLayer } from './mapbox/mapbox-data-layer';
-import { SearchConfig } from '@/ui/interaction/form/simple-search/simple-search-form';
+import { SearchConfig } from '@/types/search';
 
 /**
  * Handles parsing of raw JSON data into instances of the data classes.

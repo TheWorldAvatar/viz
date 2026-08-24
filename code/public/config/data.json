@@ -8,11 +8,12 @@
       "expanded": false,
       "search": {
         "name": [
-          "Christ's",
           "Clare",
+          "Christ's",
           "Churchill"
         ],
         "founded": [
+          1326,
           1505,
           1960
         ]
@@ -31,10 +32,29 @@
           "name": "Before 1600",
           "source": "college-source",
           "type": "symbol",
-          "filter": ["<=", ["get", "founded"], 1600],
+          "filter": [
+            "<=",
+            [
+              "get",
+              "founded"
+            ],
+            1600
+          ],
           "layout": {
             "icon-image": "christs",
-            "icon-size": ["interpolate", ["linear"], ["zoom"], 12, 0.25, 20, 0.5],
+            "icon-size": [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "zoom"
+              ],
+              12,
+              0.25,
+              20,
+              0.5
+            ],
             "icon-allow-overlap": true,
             "icon-ignore-placement": true
           }
@@ -45,10 +65,29 @@
           "name": "After 1600",
           "source": "college-source",
           "type": "symbol",
-          "filter": [">", ["get", "founded"], 1600],
+          "filter": [
+            ">",
+            [
+              "get",
+              "founded"
+            ],
+            1600
+          ],
           "layout": {
             "icon-image": "christs",
-            "icon-size": ["interpolate", ["linear"], ["zoom"], 12, 0.25, 20, 0.5],
+            "icon-size": [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "zoom"
+              ],
+              12,
+              0.25,
+              20,
+              0.5
+            ],
             "icon-allow-overlap": true,
             "icon-ignore-placement": true
           }
@@ -60,8 +99,23 @@
           "source": "college-source",
           "type": "symbol",
           "layout": {
-            "icon-image": ["get", "icon-image"],
-            "icon-size": ["interpolate", ["linear"], ["zoom"], 12, 0.25, 20, 0.5],
+            "icon-image": [
+              "get",
+              "icon-image"
+            ],
+            "icon-size": [
+              "interpolate",
+              [
+                "linear"
+              ],
+              [
+                "zoom"
+              ],
+              12,
+              0.25,
+              20,
+              0.5
+            ],
             "icon-allow-overlap": true,
             "icon-ignore-placement": true
           }
@@ -85,13 +139,13 @@
           "source": "lines-source",
           "type": "line",
           "layout": {
-              "visibility": "visible"
+            "visibility": "visible"
           },
           "paint": {
-              "line-color": "#d35230",
-              "line-width": 3
+            "line-color": "#d35230",
+            "line-width": 3
           }
-      }
+        }
       ]
     }
   ]
