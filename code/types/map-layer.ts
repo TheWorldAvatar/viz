@@ -1,4 +1,3 @@
-import { SearchConfig } from "@/types/search";
 import { JsonArray } from "./json";
 
 export type MapLayerGroup = {
@@ -8,7 +7,7 @@ export type MapLayerGroup = {
   icon?: string;
   layers?: MapLayer[];
   stack?: string; // Optional stack endpoint
-  search?: string | SearchConfig; // Optional search resource identifier
+  search?: string | MapSearchConfig; // Optional search resource identifier
   showChildren?: boolean; // track open/closed state
   groupings: string[]; // unique array of groupings
 };
@@ -24,3 +23,6 @@ export type MapLayer = {
   highlightLayerIds: string[]; // the accompanying highlight layer
   idToFilterMap: Map<string, JsonArray>;
 };
+
+export type MapSearchConfigValue = string | number;
+export type MapSearchConfig = Record<string, MapSearchConfigValue[]>;

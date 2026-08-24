@@ -1,4 +1,4 @@
-import { SearchConfig } from '@/types/search';
+import { MapSearchConfig } from "@/types/map-layer";
 import { DataLayer } from './data-layer';
 import { LayerSource } from './layer-source';
 
@@ -54,7 +54,7 @@ export class DataGroup {
   /**
    * Optional search resource identifier on the endpoint.
    */
-  public search: string | SearchConfig;
+  public search: string | MapSearchConfig;
 
   /**
    * Optional icon for display in layer tree.

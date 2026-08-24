@@ -4,14 +4,15 @@ import { Map } from "mapbox-gl";
 import React, { useState } from "react";
 
 import { MapLayer } from "@/types/map-layer";
-import { SearchConfig, SearchConfigValue } from "@/types/search";
+import { MapSearchConfig } from "@/types/map-layer";
+import { MapSearchConfigValue } from "@/types/map-layer";
 import { parseWordsForLabels } from "@/utils/client-utils";
 import Button from "@/ui/interaction/button";
 import Modal from "../modal";
 import styles from "./local-search-modal.module.css";
 
 interface LocalSearchModalProps {
-  search: SearchConfig;
+  search: MapSearchConfig;
   show: boolean;
   setShowState: React.Dispatch<React.SetStateAction<boolean>>;
   layers: MapLayer[];
@@ -23,7 +24,7 @@ export default function LocalSearchModal(
   props: Readonly<LocalSearchModalProps>
 ) {
   const [selectedFilters, setSelectedFilters] = useState<
-    Record<string, SearchConfigValue>
+    Record<string, MapSearchConfigValue>
   >(
     Object.fromEntries(
       Object.entries(props.search).map(([key, values]) => [key, values[0]])
@@ -35,7 +36,7 @@ export default function LocalSearchModal(
       (option) => String(option) === value
     );
 
-    setSelectedFilters((current: Record<string, SearchConfigValue>) => ({
+    setSelectedFilters((current: Record<string, MapSearchConfigValue>) => ({
       ...current,
       [key]: selectedValue ?? value,
     }));
