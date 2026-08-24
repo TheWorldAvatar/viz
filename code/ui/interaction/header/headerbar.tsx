@@ -67,7 +67,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
         <div className="flex items-center gap-1">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
-              <Link key={logo} href={Routes.HOME}>
+              <Link key={logo} href={Routes.HOME} aria-label={dict.nav.tooltip.home}>
                 <IconComponent
                   icon={logo}
                   classes="h-8 md:h-12 w-auto ml-4 md:ml-8"
@@ -76,7 +76,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             ))
           ) : (
             // Handle the case where header bar is a string
-            <Link href={Routes.HOME}>
+            <Link href={Routes.HOME} aria-label={dict.nav.tooltip.home}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
                 classes="h-8 md:h-12 ml-4 w-auto"

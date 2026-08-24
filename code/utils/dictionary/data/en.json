@@ -3,8 +3,8 @@
   "action": {
     "add": "Add",
     "remove": "Remove",
-    "addItem": "add {replace}",
-    "removeItem": "remove {replace}",
+    "addItem": "Add {replace}",
+    "removeItem": "Remove {replace}",
     "adjustPricing": "Adjust pricing",
     "assign": "Assign",
     "applyFilter": "Apply filter",
