@@ -12,6 +12,7 @@ import Button from "@/ui/interaction/button";
 import { FormComponent } from "@/ui/interaction/form/form";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import Modal from "../modal";
+import { Search, SquareSquare } from "lucide-react";
 
 interface SearchModalProps {
   id: string;
@@ -63,12 +64,12 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
           )}
           <div className="flex flex-wrap gap-2.5 2xl:gap-2">
             <Button
-              leftIcon="search"
+              leftIcon={Search}
               label={dict.action.search}
               onClick={onSubmit}
             />
             <Button
-              leftIcon="select_all"
+              leftIcon={SquareSquare}
               label={dict.action.showAll}
               onClick={showAllFeatures}
             />

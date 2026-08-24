@@ -3,7 +3,6 @@
 import React, { useRef, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
-import { Icon } from "@mui/material";
 import { useDictionary } from "@/hooks/useDictionary";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody, FileResponse } from "@/types/backend-agent";
@@ -17,6 +16,7 @@ import Modal from "@/ui/interaction/modal/modal";
 import { NavBarItemType } from "@/ui/navigation/navbar/navbar-item";
 import { getInitialDate, handleDownload } from "@/utils/client-utils";
 import { postFileUploadAPI, queryDefaultFileExportAPI } from "@/utils/internal-api-services";
+import { Download, Upload } from "lucide-react";
 
 interface FileModalProps {
   url: string;
@@ -95,28 +95,17 @@ export default function FileModal(props: Readonly<FileModalProps>) {
     >
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            {props.type === "date" ? (
-              <div className="flex justify-center items-center p-2 bg-transparent border border-border text-foreground rounded-lg">
-                <Icon className="material-symbols-outlined">download</Icon>
-              </div>
-            ) : (
-              <div className="flex justify-center items-center p-2 bg-transparent border border-border  rounded-lg text-foreground">
-                <Icon className="material-symbols-outlined">file_upload</Icon>
-              </div>
-            )}
-            <div>
-              <h2 className="text-lg font-semibold text-foreground">
-                {props.type === "date"
-                  ? dict.message.exportReport
-                  : dict.action.upload}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {props.type === "date"
-                  ? dict.message.pickDateRange
-                  : dict.action.file}
-              </p>
-            </div>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">
+              {props.type === "date"
+                ? dict.message.exportReport
+                : dict.action.upload}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {props.type === "date"
+                ? dict.message.pickDateRange
+                : dict.action.file}
+            </p>
           </div>
         </div>
 
@@ -160,7 +149,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
 
               <Button
                 variant="info"
-                leftIcon={props.type === "date" ? "download" : "file_upload"}
+                leftIcon={props.type === "date" ? Download : Upload}
                 type="button"
                 onClick={onSubmit}
                 disabled={

@@ -2,9 +2,9 @@
 
 import React from "react";
 
-import { Icon } from "@mui/material";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
+import IconComponent from "@/ui/graphic/icon/icon";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { interpolate } from "@/utils/client-utils";
 
@@ -70,15 +70,10 @@ export function NavBarItem(
         onClick={props.handleClick ?? handleClick}
       >
         <div className={"flex items-center justify-center"}>
-          <Icon
-            sx={{
-              color: "#16687B",
-            }}
-            fontSize={props.isMobile ? "medium" : "large"}
-            className="material-symbols-outlined"
-          >
-            {props.icon}
-          </Icon>
+          <IconComponent
+            icon={props.icon}
+            classes={`text-[#16687B] ${props.isMobile ? "size-5.5" : "size-8"}`}
+          />
         </div>
         <div className="flex flex-1 flex-col">
           <h3

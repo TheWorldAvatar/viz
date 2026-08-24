@@ -20,7 +20,7 @@ import ClearAllFiltersButton from "../../action/clear-all-filters-button";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
-import { Archive, ArrowUpDown, BadgeDollarSign, CalendarCheck, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, FileText, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Unplug, Wallet } from "lucide-react";
+import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Wallet } from "lucide-react";
 
 interface TableRibbonProps {
   path: string;

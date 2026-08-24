@@ -17,6 +17,7 @@ import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
 import { useScreenType } from "@/hooks/screen/useScreenType";
 import { useSession } from "@/hooks/auth/useSession";
+import { ArrowLeftToLine, ArrowRightToLine, Menu } from "lucide-react";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -53,7 +54,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         <PopoverActionButton
           draggable
           variant="ghost"
-          leftIcon="menu"
+          leftIcon={Menu}
           size="icon"
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
@@ -167,7 +168,7 @@ function NavMenuContents(
         <Button
           variant="ghost"
           size="icon"
-          leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+          leftIcon={props.isMenuExpanded ? ArrowLeftToLine : ArrowRightToLine}
           className={`flex! mt-4 p-7 
             ${props.isMenuExpanded
               ? "ml-auto rounded-md"
@@ -185,7 +186,7 @@ function NavMenuContents(
       {props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
-          icon="home"
+          icon="house"
           url={Routes.HOME}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -226,7 +227,7 @@ function NavMenuContents(
       {props.settings?.modules?.dashboard && (
         <NavBarItem
           title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
-          icon={dashboardLinkProps?.icon ?? "dashboard"}
+          icon={dashboardLinkProps?.icon ?? "layout-dashboard"}
           url={Routes.DASHBOARD}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -241,7 +242,7 @@ function NavMenuContents(
       {props.settings?.modules?.billing && isPermitted("invoice") && (
         <NavBarItem
           title={billingLinkProps?.title ?? dict.nav.title.billing}
-          icon="receipt_long"
+          icon="receipt-text"
           url={Routes.BILLING_ACCOUNTS}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -256,7 +257,7 @@ function NavMenuContents(
       {props.settings?.modules?.help && (
         <NavBarItem
           title={helpLinkProps?.title ?? dict.nav.title.help}
-          icon={helpLinkProps?.icon ?? "help"}
+          icon={helpLinkProps?.icon ?? "circle-help"}
           url={Routes.HELP}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -273,7 +274,7 @@ function NavMenuContents(
         props.settings.resources?.registry?.data && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
-            icon={registryLinkProps?.icon ?? "table_chart"}
+            icon={registryLinkProps?.icon ?? "sheet"}
             url={
               isPermitted("registryFullAccess")
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
@@ -299,7 +300,7 @@ function NavMenuContents(
             return <NavBarItem
               key={path.type + index}
               title={parseWordsForLabels(path.type)}
-              icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
+              icon={path.icon ?? registryLinkProps?.icon ?? "sheet"}
               url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
               isMobile={props.isMobile}
               caption={
