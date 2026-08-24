@@ -50,7 +50,8 @@
 
 .tab-icon {
   color: var(--text-color-secondary);
-  font-size: var(--icon-size) !important;
+  height: var(--icon-size);
+  width: var(--icon-size);
 }
 
 .infoSection {
