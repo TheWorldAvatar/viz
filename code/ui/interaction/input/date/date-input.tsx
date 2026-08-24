@@ -21,6 +21,7 @@ import { de, enGB } from "react-day-picker/locale";
 import PopoverActionButton from "../../action/popover/popover-button";
 import CustomMonthsDropdown from "./custom-months-dropdown";
 import CustomYearsDropdown from "./custom-years-dropdown";
+import { CalendarDays } from "lucide-react";
 
 interface DateInputProps {
   selectedDate: Date | DateRange | Date[] | undefined;
@@ -69,7 +70,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       <div className="flex">
         <Button
           id={id}
-          leftIcon="date_range"
+          leftIcon={CalendarDays}
           size={showMobileView ? "icon" : "sm"}
           className={"flex-4 justify-start"}
           // Defaults variant to outline if not provided and in mobile view mode
@@ -91,7 +92,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   }
   return <PopoverActionButton
     id={id}
-    leftIcon="date_range"
+    leftIcon={CalendarDays}
     placement={props.placement ?? "bottom"}
     size={showMobileView ? "icon" : "sm"}
     className={"h-full w-full p-2 justify-start"}

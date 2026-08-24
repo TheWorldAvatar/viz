@@ -4,6 +4,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 // Custom dropdown component for selecting months in react-day-picker
 // Renders a 3x4 grid of localized month names
@@ -26,9 +27,8 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
         <PopoverActionButton
             variant="outline"
             placement="bottom-start"
-            rightIcon="expand_more"
+            rightIcon={ChevronDown}
             size="sm"
-            iconSize="small"
             className="text-sm"
             label={selectedLabel}
             aria-label={`${dict.form.month}, ${selectedLabel}`}
