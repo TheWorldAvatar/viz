@@ -3,6 +3,7 @@
 import { useResizeObserver } from "@/hooks/screen/useResizeObserver";
 import React, { useState } from "react";
 import Button from "../button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface AccordionProps {
     id: string;
@@ -29,9 +30,8 @@ export default function Accordion(props: Readonly<AccordionProps>) {
         <article className="flex flex-col mb-2 mt-0.5">
             <Button
                 type="button"
-                leftIcon={isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+                leftIcon={isOpen ? ChevronUp : ChevronDown}
                 size="sm"
-                iconSize="small"
                 variant={props.isActive ? "secondary" : "outline"}
                 onClick={(): void => setIsOpen((prev) => !prev)}
                 disabled={props.disabled}

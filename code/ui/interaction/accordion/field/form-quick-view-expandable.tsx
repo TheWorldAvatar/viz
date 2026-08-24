@@ -6,6 +6,7 @@ import { Dictionary } from "@/types/dictionary";
 import Button from "../../button";
 import FormQuickViewFields from "./form-quick-view-fields";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
+import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 
 interface FormQuickViewExpandableProps {
   entity: string;
@@ -37,7 +38,7 @@ export default function FormQuickViewExpandable(
   return (
     <div className="flex flex-col py-2 w-full ">
       <div className="flex flex-row items-baseline ">
-        <h4 className="flex-shrink-0 w-28 lg:w-36 text-sm sm:text-base text-foreground capitalize font-semibold flex-wrap">
+        <h4 className="shrink-0 w-28 lg:w-36 text-sm sm:text-base text-foreground capitalize font-semibold flex-wrap">
           {props.entityType}
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
@@ -48,8 +49,7 @@ export default function FormQuickViewExpandable(
               tooltipText={
                 isQuickViewOpen ? dict.action.hide : dict.action.show
               }
-              iconSize="small"
-              leftIcon="open_in_new"
+              leftIcon={ExternalLink}
               onClick={() => navigateToDrawer(`../../view/${props.entityType}/${selectedEntityId}`)}
               variant="outline"
               loading={isQuickViewLoading}
@@ -61,9 +61,8 @@ export default function FormQuickViewExpandable(
               tooltipText={
                 isQuickViewOpen ? dict.action.hide : dict.action.show
               }
-              iconSize="small"
               leftIcon={
-                isQuickViewOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"
+                isQuickViewOpen ? ChevronUp : ChevronDown
               }
               onClick={() => setIsQuickViewOpen(!isQuickViewOpen)}
               variant={isQuickViewOpen ? "secondary" : "outline"}

@@ -22,6 +22,7 @@ import { JsonObject } from "@/types/json";
 import { ToastConfig, ToastType } from "@/types/toast";
 import { Map } from "mapbox-gl";
 import { DataLayer } from '@/io/data/data-layer';
+import { CircleAlert, CircleCheck, Hourglass, Info } from "lucide-react";
 
 /**
  * Open full screen mode.
@@ -355,14 +356,14 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
         bg: "bg-muted",
         border: "border-border",
         text: "text-foreground",
-        icon: "info",
+        icon: Info,
       };
     case "success":
       return {
         bg: "bg-success-background",
         border: "border-green-200",
         text: "text-success-foreground",
-        icon: "check_circle",
+        icon: CircleCheck,
         title: dict.title.success,
       };
     case "error":
@@ -370,7 +371,7 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
         bg: "bg-error-background",
         border: "border-red-200",
         text: "text-error-foreground",
-        icon: "error",
+        icon: CircleAlert,
         title: dict.title.error,
       };
     case "loading":
@@ -378,7 +379,7 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
         bg: "bg-muted",
         border: "border-border",
         text: "text-foreground",
-        icon: "hourglass_bottom",
+        icon: Hourglass,
         title: dict.title.loading,
         animate: "animate-spin",
       };
