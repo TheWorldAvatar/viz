@@ -33,14 +33,7 @@ function execScript() {
   collectConfigIcons(usage);
   collectPageThumbnails(usage);
 
-  const { resolvedIconNames, errors } = resolveIconNames(usage);
-  if (errors.length) {
-    console.error(
-      `\nUnresolved icon names:\n\n${errors.join("\n")}\n\n` +
-      `Icon names are lucide ids in kebab-case — browse them at https://lucide.dev/icons\n`
-    );
-    process.exit(1);
-  }
+  const resolvedIconNames = resolveIconNames(usage);
 
   writeRegistry(resolvedIconNames);
   console.info(`Generated ${resolvedIconNames.length} config icons → ${relative(ROOT, OUT)}`);
@@ -79,8 +72,11 @@ function collectPageThumbnails(usage) {
 }
 
 /**
- * Splits the collected names into those lucide publishes and error lines for
- * the rest, each pointing at the files that asked for it.
+ * Returns the collected names that lucide publishes.
+ *
+ * Exits the process on any name it does not, reporting every offender at once
+ * with the files that asked for it, so an unknown name fails the build rather
+ * than reaching the app as a silently missing icon.
  */
 function resolveIconNames(usage) {
   const available = listLucideIconIds();
@@ -95,7 +91,16 @@ function resolveIconNames(usage) {
       errors.push(`❌ "${name}" is not a lucide icon - used in ${where}`);
     }
   }
-  return { resolvedIconNames, errors };
+
+  if (errors.length) {
+    console.error(
+      `\nUnresolved icon names:\n\n${errors.join("\n")}\n\n` +
+      `Icon names are lucide ids in kebab-case — browse them at https://lucide.dev/icons\n`
+    );
+    process.exit(1);
+  }
+
+  return resolvedIconNames;
 }
 
 // Emits the registry module at ui/graphic/icon/icon-registry.generated.ts
