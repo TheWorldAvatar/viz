@@ -159,8 +159,7 @@ if (errors.length) {
   process.exit(1);
 }
 
-// lucide-react declares `sideEffects: false`, so this named barrel import is
-// tree-shaken down to just these components.
+// List of unique Lucide components
 const components = [...new Set(entries.map(([, component]) => component))].sort();
 
 mkdirSync(dirname(OUT), { recursive: true });
