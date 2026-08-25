@@ -1,6 +1,6 @@
 "use client";
 
-import { Map } from "mapbox-gl";
+import { FilterSpecification, Map } from "mapbox-gl";
 import React, { useState } from "react";
 
 import { MapLayer } from "@/types/map-layer";
@@ -43,13 +43,11 @@ export default function LocalSearchModal(
   };
 
   const handleSearch = () => {
-    const combinedFilters = [
+    const combinedFilters: FilterSpecification = [
       "all",
-      ...Object.entries(selectedFilters).map(([key, value]) => [
-        "==",
-        ["get", key],
-        value,
-      ]),
+      ...Object.entries(selectedFilters).map(
+        ([key, value]): FilterSpecification => ["==", ["get", key], value]
+      ),
     ];
 
     props.layers.forEach((layer) => {
