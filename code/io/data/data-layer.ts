@@ -68,7 +68,7 @@ export abstract class DataLayer {
   // indicates whether this layer has an accompanying highlight layer
   public hasHighlight?: boolean = false;
 
-  // store default filter, used to revert to original state
+  // Retain the configured filter so runtime filters can be composed with it.
   public defaultFilter?: JsonArray;
 
   /**

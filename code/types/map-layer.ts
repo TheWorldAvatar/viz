@@ -21,6 +21,7 @@ export type MapLayer = {
   isVisible: boolean; // track visibility
   isAHighlightLayer: boolean; // indicates whether this is a highlight layer, will not be rendered on the layer tree
   highlightLayerIds: string[]; // the accompanying highlight layer
+  // Configured filter for each layer ID, used when composing local search filters.
   idToFilterMap: Map<string, JsonArray>;
 };
 

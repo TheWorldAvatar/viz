@@ -52,12 +52,28 @@ export default function LocalSearchModal(
 
     props.layers.forEach((layer) => {
       layer.ids.forEach((id) => {
-        if (layer.idToFilterMap?.get(id)) {
-          console.warn(
-            `${layer.name} has a predefined filter that will be overwritten by the search filter.`
-          );
-        }
-        props.map.setFilter(id, combinedFilters);
+        const defaultFilter = layer.idToFilterMap?.get(id) as
+          | FilterSpecification
+          | undefined;
+        const layerFilter: FilterSpecification = defaultFilter
+          ? ["all", defaultFilter, combinedFilters]
+          : combinedFilters;
+
+        props.map.setFilter(id, layerFilter);
+      });
+    });
+
+    props.setShowState(false);
+  };
+
+  const handleRevert = () => {
+    props.layers.forEach((layer) => {
+      layer.ids.forEach((id) => {
+        const defaultFilter = layer.idToFilterMap.get(id) as
+          | FilterSpecification
+          | undefined;
+
+        props.map.setFilter(id, defaultFilter ?? null);
       });
     });
 
@@ -95,6 +111,7 @@ export default function LocalSearchModal(
 
         <div className="flex gap-2">
           <Button leftIcon="search" label="Search" onClick={handleSearch} />
+          <Button label="Revert filter(s)" onClick={handleRevert} />
         </div>
       </div>
     </Modal>
