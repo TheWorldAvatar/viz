@@ -20,10 +20,9 @@ export NEXT_SKIP_TYPE_CHECK=true
 export NEXT_SKIP_ESLINT=true
 
 # Generate the lucide icon registry from the mounted config in $WATCH_DIR.
-# This must happen BEFORE any `pnpm run build` below: `next build` compiles the
-# registry into the bundle, so generating it afterwards would have no effect on
-# what is served. It writes to /twa/ui, outside $WATCH_DIR, so it cannot disturb
-# the hash computed above.
+# This must happen BEFORE any `pnpm run build` 
+# Below `next build` compiles the registry into the bundle, so generating it afterwards would have no effect on what is served.
+# It writes to /twa/ui, outside $WATCH_DIR, so it cannot disturb the hash computed above.
 echo "Generating icon registry..."
 node /twa/scripts/generate-icon-registry.mjs || exit 1
 
