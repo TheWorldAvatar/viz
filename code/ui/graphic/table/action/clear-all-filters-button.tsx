@@ -4,6 +4,7 @@ import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import Button, { ButtonVariant } from "@/ui/interaction/button";
+import { FunnelX } from "lucide-react";
 
 
 interface ClearAllFiltersButtonProps {
@@ -28,9 +29,8 @@ export default function ClearAllFiltersButton(props: Readonly<ClearAllFiltersBut
 
   return (
     <Button
-      leftIcon="filter_list_off"
+      leftIcon={FunnelX}
       aria-label={dict.action.clearAllFilters}
-      iconSize="medium"
       className="mt-1"
       disabled={props.disabled}
       size="icon"

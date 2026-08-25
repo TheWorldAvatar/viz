@@ -2,6 +2,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { useEffect, useRef, useState } from "react";
 import { Dictionary } from "@/types/dictionary";
 import Button from "@/ui/interaction/button";
+import { ListChevronsDownUpIcon, ListChevronsUpDown } from "lucide-react";
 
 interface ExpandableTextCellProps {
     text: string;
@@ -50,7 +51,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                         }}
                         variant="ghost"
                         size="icon"
-                        leftIcon={isExpanded ? "collapse_content" : "read_more"}
+                        leftIcon={isExpanded ? ListChevronsDownUpIcon : ListChevronsUpDown}
                         tooltipText={isExpanded ? dict.action.showLess : dict.action.showMore}
                         aria-label={isExpanded ? dict.action.showLess : dict.action.showMore}
                         className="text-info-foreground!"

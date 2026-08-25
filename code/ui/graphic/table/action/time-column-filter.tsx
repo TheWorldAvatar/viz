@@ -6,6 +6,7 @@ import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simp
 import { interpolate } from "@/utils/client-utils";
 import { useState } from "react";
 import { getInitialFilters } from "../registry/registry-table-utils";
+import { Filter, FunnelX } from "lucide-react";
 
 interface TimeColumnFilterProps {
     label: string;
@@ -116,8 +117,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                     />
                 </div>
                 <Button
-                    leftIcon="filter_alt"
-                    iconSize="medium"
+                    leftIcon={Filter}
                     size="icon"
                     variant="primary"
                     className="p-5"
@@ -131,8 +131,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                     aria-label={interpolate(dict.action.filterBy, props.label)}
                 />
                 <Button
-                    leftIcon="filter_list_off"
-                    iconSize="medium"
+                    leftIcon={FunnelX}
                     size="icon"
                     variant="secondary"
                     className="p-5 border border-border"

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import Button from "../button";
 import { Dictionary } from "@/types/dictionary";
 import { useDictionary } from "@/hooks/useDictionary";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ export default function Modal(props: Readonly<ModalProps>) {
       {dialog.open && (
         <FloatingPortal>
           <FloatingOverlay
-            className="flex justify-center items-center z-[999] bg-inverse-primary"
+            className="flex justify-center items-center z-999 bg-inverse-primary"
             lockScroll
           >
             <FloatingFocusManager context={dialog.context}>
@@ -74,10 +75,11 @@ export default function Modal(props: Readonly<ModalProps>) {
                 >
                   <div className="absolute top-2 right-4">
                     <Button
-                      leftIcon="close"
+                      leftIcon={X}
                       size="icon"
                       variant="ghost"
-                      className="!rounded-full"
+                      className="rounded-full!"
+                      aria-label={dict.action.close}
                       tooltipText={dict.action.close}
                       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                         event.preventDefault();

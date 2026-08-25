@@ -77,7 +77,11 @@
     "select": "Auswählen",
     "selectItem": "{replace} wählen",
     "nextYears": "Nächstes Jahr",
-    "previousYears": "Vorherige Jahre"
+    "previousYears": "Vorherige Jahre",
+    "nextPage": "Nächste Seite",
+    "previousPage": "Vorherige Seite",
+    "First page": "Erste Seite",
+    "Last page": "Letzte Seite"
   },
   "form": {
     "singleService": "Einzelner Dienst",

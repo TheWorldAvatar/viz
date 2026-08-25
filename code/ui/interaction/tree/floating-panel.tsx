@@ -1,4 +1,4 @@
-import { Icon, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import styles from './floating-panel.module.css';
 
 import { Map } from 'mapbox-gl';
@@ -19,6 +19,7 @@ import { useDictionary } from '@/hooks/useDictionary';
 import InfoTree from './info/info-tree';
 import LayerTree, { parseIntoTreeStucture } from './layer/layer-tree';
 import LegendTree from './legend/legend-tree';
+import { ChevronDown, ChevronUp, Info, Key, Layers } from "lucide-react";
 
 // Incoming parameters for component.
 interface FloatingPanelContainerProps {
@@ -91,7 +92,7 @@ export default function FloatingPanelContainer(
             leaveDelay={100}
             placement="bottom-start"
           >
-            <Icon className="material-symbols-outlined">stacks</Icon>
+            <Layers className="size-6" aria-hidden />
           </Tooltip>
         </button>
 
@@ -107,7 +108,7 @@ export default function FloatingPanelContainer(
               leaveDelay={100}
               placement="bottom-start"
             >
-              <Icon className="material-symbols-outlined">key_vertical</Icon>
+              <Key className="size-6" aria-hidden />
             </Tooltip>
           </button>
         )}
@@ -124,7 +125,7 @@ export default function FloatingPanelContainer(
               leaveDelay={100}
               placement="bottom-start"
             >
-              <Icon className="material-symbols-outlined">info</Icon>
+              <Info className="size-6" aria-hidden />
             </Tooltip>
           </button>
         )}
@@ -138,9 +139,7 @@ export default function FloatingPanelContainer(
             enterDelay={500}
             leaveDelay={200}
           >
-            <Icon className="material-symbols-outlined">
-              {isPanelVisible ? "keyboard_arrow_down" : "keyboard_arrow_up"}
-            </Icon>
+            {isPanelVisible ? <ChevronDown className="size-6" aria-hidden /> : <ChevronUp className="size-6" aria-hidden />}
           </Tooltip>
         </button>
       </div>

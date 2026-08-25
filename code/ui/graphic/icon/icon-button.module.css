@@ -15,19 +15,12 @@
 .icon-button {
     color: var(--text-color-primary);
     transition: color 0.3s ease;
+    height: var(--icon-size);
+    width: var(--icon-size);
 }
 
 .hover:hover {
     color: var(--border-tertiary);
-}
-
-.large-icon {
-    font-size: var(--icon-size) !important;
-}
-
-
-.small-icon {
-    font-size: var(--small-icon-size) !important;
 }
 
 .small-icon-image {

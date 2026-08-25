@@ -22,6 +22,7 @@ import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
 import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { Ban, Check, Pencil, RefreshCw, SendHorizonal, Trash2 } from "lucide-react";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -167,10 +168,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       <footer className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
         {!formRef.current?.formState?.isSubmitting && (
           <Button
-            leftIcon="cached"
+            leftIcon={RefreshCw}
             variant="outline"
             disabled={isLoading}
             tooltipText={dict.action.refresh}
+            aria-label={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
           />
@@ -181,7 +183,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             status?.data?.message === ENTITY_STATUS.ACTIVE && (
               <Button
                 variant="secondary"
-                leftIcon="block"
+                leftIcon={Ban}
                 className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 disabled={isLoading}
@@ -195,7 +197,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
-                leftIcon="done_outline"
+                leftIcon={Check}
                 label={dict.action.approve}
                 disabled={isLoading}
                 loading={isLoading}
@@ -209,7 +211,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <Button // Edit button
-                leftIcon="edit"
+                leftIcon={Pencil}
                 label={dict.action.edit}
                 disabled={isLoading}
                 tooltipText={dict.action.edit}
@@ -223,8 +225,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <Button // Delete button
-                leftIcon="delete"
-                iconSize="medium"
+                leftIcon={Trash2}
                 label={dict.action.delete}
                 disabled={isLoading}
                 tooltipText={dict.action.delete}
@@ -234,9 +235,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             )}
           {props.formType != FormTypeMap.VIEW && (
             <Button
-              leftIcon="send"
+              leftIcon={SendHorizonal}
               label={dict.action.submit}
-              tooltipText={dict.action.submit}
               loading={isLoading}
               disabled={isLoading}
               onClick={onSubmit}

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { Icon } from "@mui/material";
 import useFormSession from "@/hooks/form/useFormSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import { browserStorageManager } from "@/state/browser-storage-manager";
@@ -23,6 +22,7 @@ import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
 import SelectedDatesDisplay from "./selected-dates-display";
+import { Info } from "lucide-react";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -265,7 +265,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             >
               {parseWordsForLabels(dict.title.scheduleType)}
               <Tooltip text={serviceDescription} placement="right">
-                <Icon className="material-symbols-outlined">{"info"}</Icon>
+                <Info className="size-5.5" aria-hidden />
               </Tooltip>
             </label>
             <SimpleSelector
@@ -292,7 +292,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 <label className="text-lg font-bold flex gap-2">
                   {dict.form.selectDates}
                   <Tooltip text={dict.form.selectDatesDesc} placement="right">
-                    <Icon className="material-symbols-outlined">{"info"}</Icon>
+                    <Info className="size-5.5" aria-hidden />
                   </Tooltip>
                 </label>
                 <DateInput

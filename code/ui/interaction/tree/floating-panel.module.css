@@ -72,10 +72,6 @@
   box-shadow: 1px rgba(0, 0, 0, 0.35);
 }
 
-.headButton span {
-  font-size: var(--icon-size);
-}
-
 .headButton.active {
   background-color: var(--background-tertiary);
 }

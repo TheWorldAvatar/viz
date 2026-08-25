@@ -1,7 +1,6 @@
 import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
-import { Icon } from "@mui/material";
 import { ColumnFilter, flexRender, Header, Table } from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 
@@ -15,6 +14,7 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
+import { ArrowDown, ArrowUp, ListFilter } from "lucide-react";
 
 interface HeaderCellProps {
   type: string;
@@ -75,19 +75,17 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 )}
                 {!props.disableSort && ({
                   asc: (
-                    <Icon className="material-symbols-outlined">arrow_upward</Icon>
+                    <ArrowUp className="size-5" aria-hidden />
                   ),
                   desc: (
-                    <Icon className="material-symbols-outlined">
-                      arrow_downward
-                    </Icon>
+                    <ArrowDown className="size-5" aria-hidden />
                   ),
                 }[props.header.column.getIsSorted() as string] ?? null)}
               </div>
             </Tooltip>
             {!props.disableFilter && <PopoverActionButton
               placement="bottom-start"
-              leftIcon="filter_list"
+              leftIcon={ListFilter}
               variant={isActiveFilter ? "secondary" : "ghost"}
               tooltipText={dict.action.filter}
               tooltipPosition="top-start"

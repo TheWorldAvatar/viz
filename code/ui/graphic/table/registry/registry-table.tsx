@@ -28,6 +28,7 @@ import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { useConnected } from "@/hooks/useConnected";
+import { ArrowUp } from "lucide-react";
 
 interface RegistryTableProps {
   recordType: string;
@@ -181,7 +182,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             <Button
               size="icon"
               variant="secondary"
-              leftIcon="arrow_upward"
+              leftIcon={ArrowUp}
               tooltipText={dict.action.backToTop}
               aria-label={dict.action.backToTop}
               onClick={() => scrollToTop(true)}

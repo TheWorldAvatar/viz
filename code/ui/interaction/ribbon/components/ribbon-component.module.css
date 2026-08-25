@@ -45,19 +45,8 @@
     align-items: center;
 }
 
-.ribbonComponentIcon span {
-    font-size: 24pt !important;
-    text-align: center;
-}
-
 .ribbonComponentIcon svg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-.ribbonComponentIcon svg path {
-    fill: var(--text-color-primary) !important;
+    color: var(--text-color-primary);
 }
 
 .ribbonComponentText {
@@ -118,10 +107,6 @@
 
 .ribbonComponentArrow {
     cursor: pointer;
-
-    height: unset !important;
-    font-size: var(--font-size-h2) !important;
-    line-height: 10pt !important;
 }
 
 .ribbonComponentArrow:hover {

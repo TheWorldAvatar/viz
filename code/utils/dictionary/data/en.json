@@ -3,8 +3,8 @@
   "action": {
     "add": "Add",
     "remove": "Remove",
-    "addItem": "add {replace}",
-    "removeItem": "remove {replace}",
+    "addItem": "Add {replace}",
+    "removeItem": "Remove {replace}",
     "adjustPricing": "Adjust pricing",
     "assign": "Assign",
     "applyFilter": "Apply filter",
@@ -77,7 +77,11 @@
     "select": "Select",
     "selectItem": "select {replace}",
     "nextYears": "Next years",
-    "previousYears": "Previous years"
+    "previousYears": "Previous years",
+    "nextPage": "Next page",
+    "previousPage": "Previous page",
+    "firstPage": "First page",
+    "lastPage": "Last page"
   },
   "form": {
     "singleService": "Single Service",

@@ -1,9 +1,10 @@
+import type { LucideIcon } from "lucide-react";
 import IconComponent from "@/ui/graphic/icon/icon";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 
 interface HeaderFieldProps {
   name: string;
-  icon: string;
+  icon: LucideIcon | string;
   containerStyle: string;
   headerNameStyle: string;
   isLoading: boolean;
@@ -15,7 +16,7 @@ interface HeaderFieldProps {
  * This component renders a header field.
  *
  * @param {string} name Header name displayed.
- * @param {string} icon The icon to display in this header.
+ * @param {LucideIcon | string} icon The icon to display: a lucide component, or an image path (e.g. Assets.SUBQUERY).
  * @param {string} containerStyle Styling for the container.
  * @param {string} headerNameStyle Styling for the header name.
  * @param {boolean} isLoading  Indicates if a loading indicator is required.
@@ -29,7 +30,9 @@ export default function HeaderField(props: Readonly<HeaderFieldProps>) {
       className={props.containerStyle}
       onClick={props.toggleExpansion}
     >
-      {!props.isLoading && <IconComponent icon={props.icon} classes="w-4" />}
+      {!props.isLoading && (
+        <IconComponent icon={props.icon} classes="size-4 shrink-0" />
+      )}
 
       {/* Renders a loading indicator when required, or else, shows the required icon */}
       {props.isLoading && (

@@ -38,6 +38,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskF
 import PopoverActionButton from "../action/popover/popover-button";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
+import { Check, CircleX, ClipboardList, EllipsisVertical, RefreshCw, Save, Send, SendHorizontal, TriangleAlert, X } from "lucide-react";
 
 interface TaskFormContainerComponentProps {
   id: string;
@@ -86,11 +87,12 @@ export function TaskFormContainerComponent(
       <div className="relative flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
         <div className="absolute top-2 right-4 z-10">
           <Button
-            leftIcon="close"
+            leftIcon={X}
             size="icon"
             variant="ghost"
             type="button"
             tooltipText={dict.action.close}
+            aria-label={dict.action.close}
             className="rounded-full!"
             onClick={() => router.back()}
           />
@@ -387,10 +389,12 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         <div className="flex gap-2.5">
           {!formRef.current?.formState?.isSubmitting && (
             <Button
-              leftIcon="cached"
+              leftIcon={RefreshCw}
               disabled={isFetching || isLoading}
               variant="outline"
               size="icon"
+              tooltipText={dict.action.refresh}
+              aria-label={dict.action.refresh}
               onClick={triggerRefresh}
             />
           )}
@@ -406,9 +410,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT ||
             props.formType === FormTypeMap.ACCRUAL || props.formType === FormTypeMap.EXEMPT
           ) && <Button
-              leftIcon="send"
+              leftIcon={SendHorizontal}
               label={dict.action.submit}
-              tooltipText={dict.action.submit}
               disabled={isLoading}
               onClick={() => {
                 if (
@@ -425,7 +428,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             <div aria-label="More actions">
               <PopoverActionButton
                 placement="top"
-                rightIcon="more_vert"
+                rightIcon={EllipsisVertical}
                 variant="outline"
                 label={dict.title.actions}
                 className="mr-2"
@@ -438,9 +441,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     task?.status?.toLowerCase() === RegistryStatusMap.COMPLETED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
-                      leftIcon="done_outline"
+                      leftIcon={Check}
                       size="md"
-                      iconSize="medium"
                       className="w-full justify-start"
                       label={dict.action.complete}
                       onClick={() => navigateToTaskAction("complete")}
@@ -453,9 +455,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     task?.status?.toLowerCase() === RegistryStatusMap.COMPLETED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
-                      leftIcon="assignment"
+                      leftIcon={ClipboardList}
                       size="md"
-                      iconSize="medium"
                       className="w-full justify-start"
                       label={dict.action.dispatch}
                       onClick={() => navigateToTaskAction("dispatch")}
@@ -469,9 +470,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
-                      leftIcon="cancel"
+                      leftIcon={CircleX}
                       size="md"
-                      iconSize="medium"
                       className="w-full justify-start"
                       label={dict.action.cancel}
                       onClick={() => navigateToTaskAction("cancel")}
@@ -485,9 +485,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
-                      leftIcon="report"
+                      leftIcon={TriangleAlert}
                       size="md"
-                      iconSize="medium"
                       className="w-full justify-start"
                       label={dict.action.report}
                       onClick={() => navigateToTaskAction("report")}
@@ -498,11 +497,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.COMPLETE &&
                   task?.scheduleType !== "perpetualService" && (
                     <Button
-                      leftIcon="schedule_send"
+                      leftIcon={SendHorizontal}
                       variant="secondary"
                       disabled={isLoading}
                       label={dict.action.submitAndDuplicate}
-                      tooltipText={dict.action.submitAndDuplicate}
                       onClick={() => {
                         setIsSubmitting(true);
                         setIsDuplicate(true);
@@ -513,11 +511,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 {isPermitted("saveTask") &&
                   props.formType === FormTypeMap.COMPLETE && (
                     <Button
-                      leftIcon="save"
+                      leftIcon={Save}
                       variant="secondary"
                       disabled={isLoading}
                       label={dict.action.save}
-                      tooltipText={dict.action.save}
                       onClick={() => {
                         setIsSubmitting(true);
                         setIsSaving(true);
