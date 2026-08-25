@@ -78,7 +78,7 @@ const available = new Set(
 const usage = new Map();
 
 function record(name, file) {
-  const clean = String(name).trim().replace(/^(["'])(.*)\1$/, "$2");
+  const clean = name.trim().replace(/^(["'])(.*)\1$/, "$2");
   if (!clean || IMAGE.test(clean)) return;
   if (!usage.has(clean)) usage.set(clean, new Set());
   usage.get(clean).add(relative(ROOT, file));
@@ -132,21 +132,22 @@ for (const dir of SOURCE_DIRS) {
   for (const file of walk(join(ROOT, dir), /\.tsx$/)) {
     const src = read(file);
     if (src === null) continue;
-    for (const m of src.matchAll(/\bicon\s*=\s*(?:"([^"]+)"|\{([^}]*)\})/g)) {
-      if (m[1]) record(m[1], file);
-      else for (const lit of m[2].matchAll(/"([^"]+)"/g)) record(lit[1], file);
+    // `icon="map"` and `icon={link?.icon ?? "map"}` reduce to the same rule:
+    // record every string literal in whatever follows `icon=`.
+    for (const m of src.matchAll(/\bicon\s*=\s*("[^"]*"|\{[^}]*\})/g)) {
+      for (const lit of m[1].matchAll(/"([^"]+)"/g)) record(lit[1], file);
     }
   }
 }
 
-const entries = [];
+const resolvedIconNames = [];
 const errors = [];
 
 for (const name of [...usage.keys()].sort()) {
-  const where = [...usage.get(name)].sort().join(", ");
   if (available.has(name)) {
-    entries.push([name, toPascalCase(name)]);
+    resolvedIconNames.push(name);
   } else {
+    const where = [...usage.get(name)].sort().join(", ");
     errors.push(`❌ "${name}" is not a lucide icon - used in ${where}`);
   }
 }
@@ -162,7 +163,7 @@ if (errors.length) {
 // lucide has alias ids that share one export (`arrow-down-01` and `arrow-down-0-1`
 // are both `ArrowDown01`), so the import list must be deduped or it emits a
 // duplicate identifier.
-const components = [...new Set(entries.map(([, component]) => component))].sort();
+const components = [...new Set(resolvedIconNames.map((name) => toPascalCase(name)))].sort();
 
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(
@@ -173,10 +174,10 @@ writeFileSync(
     `import { type LucideIcon, ${components.join(", ")} } from "lucide-react";`,
     "",
     "export const ICON_REGISTRY: Record<string, LucideIcon> = {",
-    ...entries.map(([name, component]) => `  ${JSON.stringify(name)}: ${component},`),
+    ...resolvedIconNames.map((name) => `  ${JSON.stringify(name)}: ${toPascalCase(name)},`),
     "};",
     "",
   ].join("\n")
 );
 
-console.log(`Generated ${entries.length} config icons → ${relative(ROOT, OUT)}`);
+console.log(`Generated ${resolvedIconNames.length} config icons → ${relative(ROOT, OUT)}`);
