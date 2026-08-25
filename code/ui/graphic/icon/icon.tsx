@@ -35,6 +35,7 @@ export default function IconComponent(props: IconComponentProps) {
   // A string is a config name that needs the icon registry.
   const Icon: LucideIcon = typeof props.icon === "string" ? ICON_REGISTRY[props.icon] : props.icon;
   if (!Icon) {
+    console.warn(`IconComponent: no icon resolved for ${JSON.stringify(props.icon)}. Names must be lucide icon ids in kebab-case (https://lucide.dev/icons).`);
     return null;
   }
 
