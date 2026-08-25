@@ -159,7 +159,9 @@ if (errors.length) {
   process.exit(1);
 }
 
-// List of unique Lucide components
+// lucide has alias ids that share one export (`arrow-down-01` and `arrow-down-0-1`
+// are both `ArrowDown01`), so the import list must be deduped or it emits a
+// duplicate identifier.
 const components = [...new Set(entries.map(([, component]) => component))].sort();
 
 mkdirSync(dirname(OUT), { recursive: true });
