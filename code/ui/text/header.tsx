@@ -24,20 +24,15 @@ interface HeaderFieldProps {
  * @param {Function} toggleExpansion Function to toggle expansion on click.
  */
 export default function HeaderField(props: Readonly<HeaderFieldProps>) {
-  const Icon: LucideIcon = typeof props.icon === "string" ? null : props.icon;
-
   return (
     <div
       style={{ paddingLeft: props.spacing }}
       className={props.containerStyle}
       onClick={props.toggleExpansion}
     >
-      {!props.isLoading &&
-        (Icon ? (
-          <Icon className="size-4 shrink-0" aria-hidden />
-        ) : (
-          <IconComponent icon={props.icon as string} classes="size-4 shrink-0" />
-        ))}
+      {!props.isLoading && (
+        <IconComponent icon={props.icon} classes="size-4 shrink-0" />
+      )}
 
       {/* Renders a loading indicator when required, or else, shows the required icon */}
       {props.isLoading && (

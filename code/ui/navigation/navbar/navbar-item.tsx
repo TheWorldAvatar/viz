@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import type { LucideIcon } from "lucide-react";
 
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
@@ -12,7 +13,7 @@ export type NavBarItemType = "default" | "file" | "date";
 
 export interface NavBarItemProps {
   title: string;
-  icon: string;
+  icon: LucideIcon | string;
   isMobile: boolean;
   url: string;
   tooltip?: string;
@@ -27,7 +28,7 @@ export interface NavBarItemProps {
  * A nav bar item with an icon, title, and caption that may redirect to a URL by default.
  *
  * @param {string} title Title.
- * @param {string} icon Icon to display.
+ * @param {LucideIcon | string} icon Icon to display: a lucide component or a string.
  * @param {boolean} isMobile Indicates if the design should be in mobile mode.
  * @param {string} url Redirects to this url when clicked.
  * @param {string} tooltip Overrides the existing tooltip text to this url when clicked.

@@ -18,7 +18,6 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LUCIDE_ICONS = join(ROOT, "node_modules/lucide-react/dist/esm/icons");
 const OUT = join(ROOT, "ui/graphic/icon/icon-registry.generated.ts");
 const CONFIG_DIR = join(ROOT, "public");
-const SOURCE_DIRS = ["ui", "app"];
 
 const ICON_CONFIG_FILES = [
   join(CONFIG_DIR, "config/ui-settings.json"),
@@ -123,22 +122,6 @@ for (const file of walk(CONFIG_DIR, /\.md$/)) {
   if (src === null) continue;
   const m = src.match(/^thumbnail:\s*(\S+)\s*$/m);
   if (m) record(m[1], file, usage);
-}
-
-// Components resolving a name through IconComponent also supply hardcoded
-// fallbacks (`icon={link?.icon ?? "map"}`), which must be in the registry too.
-// Only string literals inside an `icon` prop count — a bare `?? "..."` elsewhere
-// is far more likely to be a default placement or class name.
-for (const dir of SOURCE_DIRS) {
-  for (const file of walk(join(ROOT, dir), /\.tsx$/)) {
-    const src = read(file);
-    if (src === null) continue;
-    // `icon="map"` and `icon={link?.icon ?? "map"}` reduce to the same rule:
-    // record every string literal in whatever follows `icon=`.
-    for (const m of src.matchAll(/\bicon\s*=\s*("[^"]*"|\{[^}]*\})/g)) {
-      for (const lit of m[1].matchAll(/"([^"]+)"/g)) record(lit[1], file, usage);
-    }
-  }
 }
 
 const resolvedIconNames = [];

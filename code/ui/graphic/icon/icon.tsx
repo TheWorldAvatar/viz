@@ -3,7 +3,7 @@ import { ICON_REGISTRY } from './icon-registry.generated';
 import { LucideIcon } from 'lucide-react';
 
 interface IconComponentProps {
-  readonly icon: string;
+  readonly icon: LucideIcon | string;
   readonly classes?: string;
 }
 
@@ -14,11 +14,11 @@ interface IconComponentProps {
  * rather than routing through here. This exists for the icons in `public/config`,
  * which are resolved through a registry generated at build time by `scripts/generate-icon-registry.mjs`.
 
- * @param {string} icon The icon to display: a URL to an image (PNG, JPG, SVG), or a lucide icon id.
+ * @param {LucideIcon | string} icon The icon to display: a lucide component, a URL to an image (PNG, JPG, SVG), or a lucide icon id.
  * @param {string} classes Additional CSS classes to apply to the icon element.
  */
 export default function IconComponent(props: IconComponentProps) {
-  if (props.icon.match(/\.(png|jpe?g|svg)$/i)) {
+  if (typeof props.icon === "string" && props.icon.match(/\.(png|jpe?g|svg)$/i)) {
     return (
       <div className={props.classes}>
         <Image
@@ -32,7 +32,8 @@ export default function IconComponent(props: IconComponentProps) {
     );
   }
 
-  const Icon: LucideIcon = ICON_REGISTRY[props.icon];
+  // A string is a config name that needs the icon registry.
+  const Icon: LucideIcon = typeof props.icon === "string" ? ICON_REGISTRY[props.icon] : props.icon;
   if (!Icon) {
     return null;
   }
