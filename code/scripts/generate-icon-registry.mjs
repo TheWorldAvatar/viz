@@ -147,7 +147,7 @@ for (const name of [...usage.keys()].sort()) {
   if (available.has(name)) {
     entries.push([name, toPascalCase(name)]);
   } else {
-    errors.push(`  ✗ "${name}" is not a lucide icon\n      used in ${where}`);
+    errors.push(`❌ "${name}" is not a lucide icon - used in ${where}`);
   }
 }
 
