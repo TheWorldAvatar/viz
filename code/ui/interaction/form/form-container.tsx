@@ -237,7 +237,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             <Button
               leftIcon={SendHorizonal}
               label={dict.action.submit}
-              tooltipText={dict.action.submit}
               loading={isLoading}
               disabled={isLoading}
               onClick={onSubmit}
