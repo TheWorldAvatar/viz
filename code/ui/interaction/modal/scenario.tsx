@@ -2,7 +2,6 @@
 
 import styles from './scenario.module.css';
 
-import { Button } from "@mui/material";
 import Dialog from '@mui/material/Dialog';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getScenarioDefinitions, setScenarioID, getScenarioID, setScenarioName, setScenarioType, setScenarioDefinitions } from '@/state/map-feature-slice';
 import { ScenarioDefinition } from '@/types/scenario';
 import IconComponent from '@/ui/graphic/icon/icon';
+import Button from '@/ui/interaction/button';
 import { getScenarios } from '@/utils/getScenarios';
 
 interface ScenarioModalProperties {
@@ -64,8 +64,8 @@ export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) 
         <div className={styles.headerContainer}>
           <div className={styles.header}>
             <h1>Select a scenario:</h1>
-            <Button style={{ marginLeft: 'auto', textTransform: 'none' }} className={styles.refreshButton} onClick={onClick}>Refresh</Button>
-            {selectedScenario && <Button style={{ textTransform: 'none' }} className={styles.closeButton} onClick={() => props.setShowState(false)}>Close</Button>}
+            <Button variant="ghost" className={styles.refreshButton} onClick={onClick}>Refresh</Button>
+            {selectedScenario && <Button variant="ghost" className={`ml-2 ${styles.closeButton}`} onClick={() => props.setShowState(false)}>Close</Button>}
           </div>
         </div>
         <div className={styles.contentContainer}>
