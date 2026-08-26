@@ -19,6 +19,7 @@ import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
+import { ArrowLeft, RefreshCw, SendHorizonal } from "lucide-react";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -70,13 +71,13 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
         <section className="flex flex-col h-full w-full mx-auto px-4 gap-5 md:px-8 bg-muted justify-between">
             <header className={`flex flex-row gap-4 pt-10 text-foreground items-baseline`}>
                 <Button
-                    leftIcon="arrow_back"
+                    leftIcon={ArrowLeft}
                     variant="outline"
                     onClick={() => router.back()}
                     size="icon"
-                    iconSize="small"
                     tooltipPosition="right"
                     tooltipText={interpolate(dict.action.backTo, FormTypeMap.INVOICE)}
+                    aria-label={interpolate(dict.action.backTo, FormTypeMap.INVOICE)}
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
@@ -127,17 +128,18 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
             <footer className="bg-muted flex items-center justify-between">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
-                        leftIcon="cached"
+                        leftIcon={RefreshCw}
                         variant="outline"
                         disabled={isLoading}
                         tooltipText={dict.action.refresh}
+                        aria-label={dict.action.refresh}
                         onClick={triggerRefresh}
                         size="icon"
                     />
                 )}
                 <div>
                     <Button
-                        leftIcon="send"
+                        leftIcon={SendHorizonal}
                         label={dict.action.submit}
                         tooltipText={dict.action.submit}
                         loading={isLoading}

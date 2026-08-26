@@ -2,12 +2,12 @@
 
 import React from 'react';
 
-import Icon from '@mui/material/Icon';
+import type { LucideIcon } from "lucide-react";
 import styles from './icon-button.module.css';
 
 // Interface for properties
 interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
-    iconName: string,
+    icon: LucideIcon,
     iconStyles?: string[],
     text?: {
         styles?: string[],
@@ -22,25 +22,23 @@ interface IndexedButtonProps extends ButtonProps {
 }
 
 /**
- * A material icon button with custom styling and icons.
+ * An icon button with custom styling and icons.
  * 
- * @param {string} iconName The icon name from the material UI library.
+ * @param {LucideIcon} icon The lucide icon component to render.
  * @param {string[]} iconStyles An optional array of CSS class names for the icon.
  * @param {string} text.content An optional text content if required.
  * @param {string[]} text.styles An optional array of CSS class names for the text content.
  * @param {Function} callback An optional callback function if required.
  */
-export default function MaterialIconButton({ iconName, iconStyles, text, callback, ...rest }: ButtonProps) {
+export default function IconButton({ icon: Icon, iconStyles, text, callback, ...rest }: ButtonProps) {
     // CSS classes
-    const containerClassNames = `${rest.className || ''} ${styles["icon-button-container"]}`.trim();
-    const iconClassNames = ["material-symbols-outlined", styles["icon-button"]].concat(iconStyles).join(" ");
-    const textClassNames = text?.styles?.join(" ");
+    const containerClassNames: string = `${rest.className || ''} ${styles["icon-button-container"]}`.trim();
+    const iconClassNames: string = [styles["icon-button"]].concat(iconStyles).join(" ");
+    const textClassNames: string = text?.styles?.join(" ");
 
     return (
         <div {...rest} className={containerClassNames}>
-            <Icon className={iconClassNames} onClick={callback}>
-                {iconName}
-            </Icon>
+            <Icon className={iconClassNames} onClick={callback} aria-hidden />
             {
                 text && (
                     <span className={textClassNames}>
@@ -53,12 +51,12 @@ export default function MaterialIconButton({ iconName, iconStyles, text, callbac
 }
 
 /**
- * A material icon button that can interact with click events based on the their index.
+ * An icon button that can interact with click events based on the their index.
  * 
  * @param {number} index An optional index for this component. Defaults to 0 if excluded.
  * @param {Function} onButtonClick A function called on the index when clicking the button.
  */
-export function MaterialIconButtonWithIndex({ index, onButtonClick, ...rest }: IndexedButtonProps) {
+export function IconButtonWithIndex({ index, onButtonClick, ...rest }: IndexedButtonProps) {
     const [position] = React.useState(index ? index : 0);
 
     const handleClick = () => {
@@ -66,6 +64,6 @@ export function MaterialIconButtonWithIndex({ index, onButtonClick, ...rest }: I
     };
 
     return (
-        <MaterialIconButton {...rest} onClick={handleClick} />
+        <IconButton {...rest} onClick={handleClick} />
     );
 }

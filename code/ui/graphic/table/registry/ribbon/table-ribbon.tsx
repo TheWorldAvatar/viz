@@ -20,6 +20,7 @@ import ClearAllFiltersButton from "../../action/clear-all-filters-button";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Wallet } from "lucide-react";
 
 interface TableRibbonProps {
   path: string;
@@ -77,7 +78,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             {!isBillingStage && (
               <RedirectButton
                 label={dict.nav.title.jobs}
-                leftIcon="local_shipping"
+                leftIcon={Truck}
                 hasMobileIcon={false}
                 url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
                 variant={
@@ -93,7 +94,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             {!isBillingStage && (
               <RedirectButton
                 label={dict.nav.title.tasks}
-                leftIcon="list_alt"
+                leftIcon={ClipboardList}
                 hasMobileIcon={false}
                 url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
                 variant={
@@ -109,7 +110,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             {(isBillingStage) && isPermitted("invoice") && (<>
               <RedirectButton
                 label={dict.nav.title.accounts}
-                leftIcon={"account_balance_wallet"}
+                leftIcon={Wallet}
                 hasMobileIcon={false}
                 url={Routes.BILLING_ACCOUNTS}
                 variant={
@@ -119,7 +120,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
               <RedirectButton
                 label={dict.nav.title.pricing}
-                leftIcon={"price_change"}
+                leftIcon={CircleDollarSign}
                 hasMobileIcon={false}
                 url={Routes.BILLING_PRICING_MODELS}
                 variant={
@@ -129,7 +130,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
               <RedirectButton
                 label={dict.nav.title.invoice}
-                leftIcon={"request_quote"}
+                leftIcon={Receipt}
                 hasMobileIcon={false}
                 url={Routes.BILLING_INVOICE}
                 variant={
@@ -149,7 +150,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border`}>
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.pending}
-              leftIcon="free_cancellation"
+              leftIcon={CalendarCheck2}
               hasMobileIcon={false}
               url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
               variant={
@@ -159,7 +160,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />}
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.active}
-              leftIcon="check_circle_outline"
+              leftIcon={CircleCheck}
               hasMobileIcon={false}
               url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
               variant={
@@ -169,7 +170,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />}
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.archive}
-              leftIcon="archive_outlined"
+              leftIcon={Archive}
               hasMobileIcon={false}
               url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
               variant={
@@ -179,7 +180,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.outstanding}
-              leftIcon="pending"
+              leftIcon={CircleEllipsis}
               hasMobileIcon={false}
               url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
               variant={
@@ -189,7 +190,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.scheduled}
-              leftIcon="schedule"
+              leftIcon={Clock}
               hasMobileIcon={false}
               url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
               variant={
@@ -199,7 +200,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.closed}
-              leftIcon="event_busy"
+              leftIcon={CalendarX}
               hasMobileIcon={false}
               url={`${Routes.REGISTRY_TASK_CLOSED}`}
               variant={
@@ -227,7 +228,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             props.lifecycleStage === LifecycleStageMap.INVOICE ||
             props.lifecycleStage === LifecycleStageMap.PRICING) && (
               <Button
-                leftIcon="add"
+                leftIcon={Plus}
                 size="icon"
                 aria-label={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
                   interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
@@ -259,9 +260,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             disabled={props.tableDescriptor.filters.every((filter) => (filter?.value as string[])?.length == 0)}
           />
           <Button
-            leftIcon="mobiledata_off"
+            leftIcon={ArrowUpDown}
             aria-label={dict.action.resetOrder}
-            iconSize="medium"
             className="mt-1"
             disabled={!props.tableDescriptor.hasCustomOrder}
             size="icon"
@@ -273,7 +273,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
             <Button
               size="icon"
-              leftIcon={props.tableDescriptor.isBulkDispatchEdit ? "edit_off" : "edit"}
+              leftIcon={props.tableDescriptor.isBulkDispatchEdit ? PencilOff : Pencil}
               onClick={() => {
                 props.tableDescriptor.table.resetRowSelection();
                 props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit);
@@ -282,14 +282,16 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 }
               }}
               tooltipText={dict.action.bulkAssign}
+              aria-label={dict.action.bulkAssign}
               variant="outline"
             />}
           {isPermitted("export") && <DownloadButton instances={props.instances} />}
           <Button
             size="icon"
-            leftIcon="cached"
+            leftIcon={RefreshCw}
             variant="outline"
             tooltipText={dict.action.refresh}
+            aria-label={dict.action.refresh}
             onClick={triggerRefresh}
           />
         </div>

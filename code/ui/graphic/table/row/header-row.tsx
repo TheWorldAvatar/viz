@@ -27,6 +27,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
 import { RegistryExportSettings } from "@/types/settings";
+import { Check, ChevronDown, ChevronUp, CircleCheckBig, ClipboardPlus } from "lucide-react";
 
 interface HeaderRowProps {
   accountType: string;
@@ -111,7 +112,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             {numberOfSelectedRows > 0 && (
               <PopoverActionButton
                 placement="bottom-start"
-                leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
+                leftIcon={isActionMenuOpen ? ChevronUp : ChevronDown}
                 variant="ghost"
                 size="icon"
                 tooltipText={dict.title.bulkActions}
@@ -122,7 +123,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                 <div className="flex flex-col space-y-3">
                   {
                     tableDescriptor.isBulkDispatchEdit && <Button
-                      leftIcon="assignment_add"
+                      leftIcon={ClipboardPlus}
                       label={dict.action.dispatch}
                       variant="ghost"
                       disabled={isLoading}
@@ -137,7 +138,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                   {lifecycleStage === LifecycleStageMap.PENDING && (
                     <>
                       <Button
-                        leftIcon="done_outline"
+                        leftIcon={Check}
                         label={dict.action.approve}
                         variant="ghost"
                         disabled={isLoading}
@@ -145,7 +146,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       />
                       {hasAmendedStatus && (
                         <Button
-                          leftIcon="published_with_changes"
+                          leftIcon={CircleCheckBig}
                           label={dict.action.resubmit}
                           variant="ghost"
                           disabled={isLoading}
@@ -157,7 +158,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                   {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED)
                     && !tableDescriptor.isBulkDispatchEdit && (
                       <Button
-                        leftIcon="assignment_add"
+                        leftIcon={ClipboardPlus}
                         label={dict.action.dispatch}
                         variant="ghost"
                         disabled={isLoading}

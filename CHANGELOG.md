@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.86.0
+
+### Changes
+
+- Replaced the `material-symbols` icon font with `lucide-react` SVG components.
+- Added `generate-icon-registry.mjs` script, which resolves the icon names in a deployment's `public/config` into `ui/graphic/icon/icon-registry.generated.ts`. It runs at dev server start and at container launch, so it sees the mounted configuration.
+- An unknown icon name now fails the build and names the file it came from, rather than rendering nothing.
+
 ## 5.85.3
 
 ### Changes

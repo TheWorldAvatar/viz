@@ -42,6 +42,12 @@ console.info('keycloak authorisation required: ', keycloakEnabled ? colourYellow
 // Determine the deployment mode based on NODE_ENV; default to 'development' mode if not specified
 const dev = process.env.NODE_ENV !== "production";
 
+// Dev only: Generate the lucide icon registry from public/config 
+// The script exits non-zero on an unknown icon name, which stops the dev server rather than booting with missing icons.
+if (dev) {
+    await import("./scripts/generate-icon-registry.mjs");
+}
+
 // Initialise the Next.js application
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();

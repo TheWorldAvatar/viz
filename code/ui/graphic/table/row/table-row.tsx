@@ -25,6 +25,7 @@ import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
+import { History } from "lucide-react";
 
 interface TableRowProps {
   id: string;
@@ -197,7 +198,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               setActiveRowId={setActiveRowId}
             />}
             {!props.disableRowAction && !tableDescriptor.isBulkDispatchEdit && <Button
-              leftIcon="history"
+              leftIcon={History}
               size="icon"
               variant="ghost"
               tooltipText={dict.title.history}

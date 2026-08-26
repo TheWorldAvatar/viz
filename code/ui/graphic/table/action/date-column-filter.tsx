@@ -5,6 +5,7 @@ import DateInput from "@/ui/interaction/input/date/date-input";
 import { getNormalizedDate, interpolate } from "@/utils/client-utils";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
+import { Filter, FunnelX } from "lucide-react";
 
 interface DateColumnFilterProps {
   label: string;
@@ -39,8 +40,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     >
       <div className="flex gap-2 ml-2">
         <Button
-          leftIcon="filter_alt"
-          iconSize="medium"
+          leftIcon={Filter}
           size="icon"
           onClick={(event) => {
             event.preventDefault();
@@ -54,8 +54,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
           aria-label={interpolate(dict.action.filterBy, props.label)}
         />
         <Button
-          leftIcon="filter_list_off"
-          iconSize="medium"
+          leftIcon={FunnelX}
           size="icon"
           onClick={(event) => {
             event.preventDefault();

@@ -8,7 +8,7 @@ import SVG from "react-inlinesvg";
 
 import { MapLayer, MapLayerGroup } from "@/types/map-layer";
 import IconComponent from "@/ui/graphic/icon/icon";
-import MaterialIconButton from "@/ui/graphic/icon/icon-button";
+import IconButton from "@/ui/graphic/icon/icon-button";
 import SimpleDropdownField from "@/ui/interaction/dropdown/simple-dropdown";
 import ApiSearchModal from "@/ui/interaction/modal/search/api-search-modal";
 import LocalSearchModal from "@/ui/interaction/modal/search/local-search-modal";
@@ -17,6 +17,7 @@ import {
   setFilterLayerIds,
   setFilterTimes,
 } from "@/state/map-feature-slice";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Replace } from "lucide-react";
 
 // type definition for incoming properties
 interface LayerTreeHeaderProps {
@@ -187,8 +188,8 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         <span style={{ width: spacing }} />
 
         {/* Expand/collapse icon */}
-        <MaterialIconButton
-          iconName={isExpanded ? "keyboard_arrow_down" : "keyboard_arrow_right"}
+        <IconButton
+          icon={isExpanded ? ChevronDown : ChevronRight}
           iconStyles={[iconStyles.hover]}
           onClick={toggleExpansion}
         />
@@ -216,8 +217,8 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
 
         {/* A button to open the search modal when available */}
         {group.search && (
-          <MaterialIconButton
-            iconName={"find_replace"}
+          <IconButton
+            icon={Replace}
             iconStyles={[iconStyles.hover]}
             onClick={openSearchModal}
           />
@@ -351,8 +352,8 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
         </div>
 
         {/* Toggle visibility state */}
-        <MaterialIconButton
-          iconName={isVisible ? "visibility" : "visibility_off"}
+        <IconButton
+          icon={isVisible ? Eye : EyeOff}
           iconStyles={[iconStyles.hover]}
           onClick={toggleLayerVisibility}
         />

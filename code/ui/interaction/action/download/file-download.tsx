@@ -6,6 +6,7 @@ import { RegistryExportSettings } from "@/types/settings";
 import Button, { ButtonProps } from "@/ui/interaction/button";
 import { handleDownload } from "@/utils/client-utils";
 import { queryFileExportAPI } from "@/utils/internal-api-services";
+import { Download } from "lucide-react";
 
 interface FileDownloadButtonsProps extends ButtonProps {
   targetId: string | string[];
@@ -49,7 +50,7 @@ export default function FileDownloadButtons({
           // disabled until the download completes.
           <Button
             key={exportKey}
-            leftIcon="download"
+            leftIcon={Download}
             label={exportOption.caption}
             loading={downloadingKey === exportKey}
             disabled={disabled || !!downloadingKey}

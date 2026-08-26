@@ -4,11 +4,11 @@ import styles from './ribbon-component.module.css';
 
 import Tooltip from '@/ui/interaction/tooltip/tooltip';
 
-import IconComponent from '@/ui/graphic/icon/icon';
+import type { LucideIcon } from "lucide-react";
 
 interface RibbonComponentClickProps {
   id: string
-  icon: string,
+  icon: LucideIcon,
   text?: string,
   tooltip: string,
   action: () => void
@@ -21,7 +21,7 @@ export default function RibbonComponentClick(props: Readonly<RibbonComponentClic
         <div>
           <div className={styles.ribbonComponentInner}>
             <div className={styles.ribbonComponentIcon}>
-              <IconComponent icon={props.icon} />
+              <props.icon className="size-6" aria-hidden />
             </div>
             {props.text &&
 

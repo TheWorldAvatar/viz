@@ -4,6 +4,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import Button from "@/ui/interaction/button";
 import { interpolate } from "@/utils/client-utils";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
 
@@ -61,7 +62,7 @@ export default function TablePagination() {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            leftIcon="keyboard_double_arrow_left"
+            leftIcon={ChevronsLeft}
             size="icon"
             className="hidden! md:flex!"
             onClick={() => {
@@ -71,11 +72,12 @@ export default function TablePagination() {
               tableDescriptor.resetOrder();
             }}
             disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
-            aria-label="Go to first page"
+            tooltipText={dict.action.firstPage}
+            aria-label={dict.action.firstPage}
           />
           <Button
             variant="outline"
-            leftIcon="keyboard_arrow_left"
+            leftIcon={ChevronLeft}
             size="icon"
             onClick={() => {
               tableDescriptor.table.previousPage();
@@ -84,11 +86,12 @@ export default function TablePagination() {
               tableDescriptor.resetOrder();
             }}
             disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
-            aria-label="Go to previous page"
+            tooltipText={dict.action.previousPage}
+            aria-label={dict.action.previousPage}
           />
           <Button
             variant="outline"
-            leftIcon="keyboard_arrow_right"
+            leftIcon={ChevronRight}
             size="icon"
             onClick={() => {
               tableDescriptor.table.nextPage();
@@ -97,11 +100,12 @@ export default function TablePagination() {
               tableDescriptor.resetOrder();
             }}
             disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
-            aria-label="Go to next page"
+            tooltipText={dict.action.nextPage}
+            aria-label={dict.action.nextPage}
           />
           <Button
             variant="outline"
-            leftIcon="keyboard_double_arrow_right"
+            leftIcon={ChevronsRight}
             className="hidden! md:flex!"
             size="icon"
             onClick={() => {
@@ -111,7 +115,8 @@ export default function TablePagination() {
               tableDescriptor.resetOrder();
             }}
             disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
-            aria-label="Go to last page"
+            tooltipText={dict.action.lastPage}
+            aria-label={dict.action.lastPage}
           />
         </div>
       </div>
