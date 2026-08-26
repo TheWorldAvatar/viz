@@ -90,7 +90,7 @@ export default function LocalSearchModal(
     <Modal
       isOpen={props.show}
       setIsOpen={props.setShowState}
-      className="w-[40vw]!"
+      className="h-auto! max-h-dvh w-full md:max-w-xl! overflow-y-auto rounded-xl! "
     >
       <div className="flex flex-col w-full gap-4 mt-4">
         {Object.entries(props.search).map(([key, values]) => (
@@ -113,7 +113,7 @@ export default function LocalSearchModal(
           </div>
         ))}
 
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <Button variant="secondary" label={dict.action.showAll} leftIcon={SquareSquare} onClick={handleRevert} />
           <Button leftIcon={Search} label={dict.action.search} onClick={handleSearch} />
         </div>

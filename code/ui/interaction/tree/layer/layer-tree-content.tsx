@@ -17,7 +17,7 @@ import {
   setFilterLayerIds,
   setFilterTimes,
 } from "@/state/map-feature-slice";
-import { ChevronDown, ChevronRight, Eye, EyeOff, TextSearch } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Search } from "lucide-react";
 
 // type definition for incoming properties
 interface LayerTreeHeaderProps {
@@ -218,7 +218,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         {/* A button to open the search modal when available */}
         {group.search && (
           <IconButton
-            icon={TextSearch}
+            icon={Search}
             iconStyles={[iconStyles.hover]}
             onClick={openSearchModal}
             className="ml-2"
