@@ -9,7 +9,9 @@ import { MapSearchConfigValue } from "@/types/map-layer";
 import { parseWordsForLabels } from "@/utils/client-utils";
 import Button from "@/ui/interaction/button";
 import Modal from "../modal";
-import styles from "./local-search-modal.module.css";
+import SimpleSelector, {
+  SelectOptionType,
+} from "@/ui/interaction/dropdown/simple-selector";
 import { Search, SquareSquare } from "lucide-react";
 import { Dictionary } from "@/types/dictionary";
 import { useDictionary } from "@/hooks/useDictionary";
@@ -93,23 +95,21 @@ export default function LocalSearchModal(
       <div className="flex flex-col w-full gap-4 mt-4">
         {Object.entries(props.search).map(([key, values]) => (
           <div key={key} className="flex flex-col w-full gap-1.5">
-            <label htmlFor={key}>
-              <span className="text-lg font-semibold">
-                {parseWordsForLabels(key)}
-              </span>
+            <label htmlFor="select-input" className="text-lg font-semibold">
+              {parseWordsForLabels(key)}
             </label>
-            <select
-              id={key}
-              className={styles["select-value"]}
-              value={String(selectedFilters[key])}
-              onChange={(event) => handleChange(key, event.target.value)}
-            >
-              {values.map((value) => (
-                <option key={String(value)} value={String(value)}>
-                  {String(value)}
-                </option>
-              ))}
-            </select>
+            <SimpleSelector
+              options={values.map((value) => ({
+                label: String(value),
+                value: String(value),
+                disabled: false,
+              }))}
+              defaultVal={String(selectedFilters[key])}
+              onChange={(selected) =>
+                handleChange(key, (selected as SelectOptionType)?.value)
+              }
+              ariaLabel={parseWordsForLabels(key)}
+            />
           </div>
         ))}
 
