@@ -2,7 +2,6 @@
 
 import styles from './scenario.module.css';
 
-import Dialog from '@mui/material/Dialog';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,6 +9,7 @@ import { getScenarioDefinitions, setScenarioID, getScenarioID, setScenarioName, 
 import { ScenarioDefinition } from '@/types/scenario';
 import IconComponent from '@/ui/graphic/icon/icon';
 import Button from '@/ui/interaction/button';
+import Modal from '@/ui/interaction/modal/modal';
 import { getScenarios } from '@/utils/getScenarios';
 
 interface ScenarioModalProperties {
@@ -49,22 +49,17 @@ export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) 
   const selectedScenario = useSelector(getScenarioID);
 
   return (
-    <Dialog
-      sx={{ '& .MuiDialog-paper': { maxWidth: "80vw", maxHeight: "70vh" } }}
-      open={props.show}
-      onClose={(event, reason) => {
-        if (!selectedScenario && event && (reason === 'escapeKeyDown' || reason === 'backdropClick')) {
-          return;
-        }
-        props.setShowState(false);
-      }}
+    <Modal
+      isOpen={props.show}
+      setIsOpen={props.setShowState}
+      className="w-fit! h-fit! max-w-[80vw]! max-h-[70vh]! p-0! rounded-xl! overflow-hidden! bg-background!"
     >
 
       <div className={styles.globalContainer}>
         <div className={styles.headerContainer}>
           <div className={styles.header}>
             <h1>Select a scenario:</h1>
-            <Button variant="ghost" className={styles.refreshButton} onClick={onClick}>Refresh</Button>
+            <Button variant="ghost" className={`ml-auto ${styles.refreshButton}`} onClick={onClick}>Refresh</Button>
             {selectedScenario && <Button variant="ghost" className={`ml-2 ${styles.closeButton}`} onClick={() => props.setShowState(false)}>Close</Button>}
           </div>
         </div>
@@ -83,6 +78,6 @@ export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) 
         </div>
       </div>
 
-    </Dialog>
+    </Modal>
   )
 }
