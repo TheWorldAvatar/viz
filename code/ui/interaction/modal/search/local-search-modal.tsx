@@ -10,6 +10,9 @@ import { parseWordsForLabels } from "@/utils/client-utils";
 import Button from "@/ui/interaction/button";
 import Modal from "../modal";
 import styles from "./local-search-modal.module.css";
+import { Search, SquareSquare } from "lucide-react";
+import { Dictionary } from "@/types/dictionary";
+import { useDictionary } from "@/hooks/useDictionary";
 
 interface LocalSearchModalProps {
   search: MapSearchConfig;
@@ -23,6 +26,7 @@ interface LocalSearchModalProps {
 export default function LocalSearchModal(
   props: Readonly<LocalSearchModalProps>
 ) {
+  const dict: Dictionary = useDictionary();
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, MapSearchConfigValue>
   >(
@@ -84,11 +88,11 @@ export default function LocalSearchModal(
     <Modal
       isOpen={props.show}
       setIsOpen={props.setShowState}
-      className="h-[90vh] w-[90vw]"
+      className="w-[40vw]!"
     >
-      <div className="flex flex-col w-full gap-4">
+      <div className="flex flex-col w-full gap-4 mt-4">
         {Object.entries(props.search).map(([key, values]) => (
-          <div key={key} className="flex flex-col w-full">
+          <div key={key} className="flex flex-col w-full gap-1.5">
             <label htmlFor={key}>
               <span className="text-lg font-semibold">
                 {parseWordsForLabels(key)}
@@ -109,9 +113,9 @@ export default function LocalSearchModal(
           </div>
         ))}
 
-        <div className="flex gap-2">
-          <Button leftIcon="search" label="Search" onClick={handleSearch} />
-          <Button label="Revert filter(s)" onClick={handleRevert} />
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" label={dict.action.showAll} leftIcon={SquareSquare} onClick={handleRevert} />
+          <Button leftIcon={Search} label={dict.action.search} onClick={handleSearch} />
         </div>
       </div>
     </Modal>
