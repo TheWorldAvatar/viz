@@ -2,7 +2,7 @@
 
 import styles from './ribbon-component.module.css';
 
-import { Tooltip } from '@mui/material';
+import Tooltip from '@/ui/interaction/tooltip/tooltip';
 import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,12 +69,7 @@ export default function RibbonComponentOptions(props: Readonly<RibbonComponentOp
 
     return (
         <div className={styles.ribbonComponent}>
-            <Tooltip
-                title={props.tooltip}
-                enterDelay={1000}
-                leaveDelay={100}
-                placement="bottom-start">
-
+            <Tooltip text={props.tooltip} placement="top-start">
                 <div>
                     <div className={innerClass} onClick={props.action}>
                         <div className={styles.ribbonComponentIcon}>

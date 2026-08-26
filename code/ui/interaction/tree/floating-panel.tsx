@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material';
+import Tooltip from '@/ui/interaction/tooltip/tooltip';
 import styles from './floating-panel.module.css';
 
 import { Map } from 'mapbox-gl';
@@ -86,12 +86,7 @@ export default function FloatingPanelContainer(
           className={activeIndex == 0 ? buttonClassActive : buttonClass}
           onClick={() => clickAction(0)}
         >
-          <Tooltip
-            title={dict.map.title.layerSelection}
-            enterDelay={1000}
-            leaveDelay={100}
-            placement="bottom-start"
-          >
+          <Tooltip text={dict.map.title.layerSelection}>
             <Layers className="size-6" aria-hidden />
           </Tooltip>
         </button>
@@ -102,12 +97,7 @@ export default function FloatingPanelContainer(
             className={activeIndex == 1 ? buttonClassActive : buttonClass}
             onClick={() => clickAction(1)}
           >
-            <Tooltip
-              title={dict.map.title.legend}
-              enterDelay={1000}
-              leaveDelay={100}
-              placement="bottom-start"
-            >
+            <Tooltip text={dict.map.title.legend}>
               <Key className="size-6" aria-hidden />
             </Tooltip>
           </button>
@@ -119,12 +109,7 @@ export default function FloatingPanelContainer(
             className={activeIndex == 2 ? buttonClassActive : buttonClass}
             onClick={() => clickAction(2)}
           >
-            <Tooltip
-              title={dict.map.title.information}
-              enterDelay={1000}
-              leaveDelay={100}
-              placement="bottom-start"
-            >
+            <Tooltip text={dict.map.title.information}>
               <Info className="size-6" aria-hidden />
             </Tooltip>
           </button>
@@ -134,11 +119,7 @@ export default function FloatingPanelContainer(
         <button
           className={styles.expandButton}
           onClick={() => setIsPanelVisible(!isPanelVisible)}>
-          <Tooltip
-            title={isPanelVisible ? dict.map.tooltip.collapsePanel : dict.map.tooltip.expandPanel}
-            enterDelay={500}
-            leaveDelay={200}
-          >
+          <Tooltip text={isPanelVisible ? dict.map.tooltip.collapsePanel : dict.map.tooltip.expandPanel}>
             {isPanelVisible ? <ChevronDown className="size-6" aria-hidden /> : <ChevronUp className="size-6" aria-hidden />}
           </Tooltip>
         </button>
