@@ -33,7 +33,7 @@ export default function DimensionSlider({ data }: DimensionSliderProps) {
     }
 
     return (
-        <div className="flex flex-col  justify-center w-full h-full p-2">
+        <div className="flex flex-col justify-center w-full h-full p-2">
             {/* <span>{Object.keys(data).flat()}</span> ---TODO slider label if we want later */}
             <output>{valuetext(currentValue, values)}</output>
             <input
