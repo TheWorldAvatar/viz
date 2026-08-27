@@ -20,7 +20,7 @@ import {
 import { ScenarioDefinition } from "@/types/scenario";
 import { CameraPosition, ImageryOption, MapSettings } from "@/types/settings";
 import ScenarioModal from "@/ui/interaction/modal/scenario";
-import { SHOW_ALL_FEATURE_INDICATOR } from "@/ui/interaction/modal/search/search-modal";
+import { SHOW_ALL_FEATURE_INDICATOR } from "@/ui/interaction/modal/search/api-search-modal";
 import Ribbon from "@/ui/interaction/ribbon/ribbon";
 import FloatingPanelContainer from "@/ui/interaction/tree/floating-panel";
 import MapEventManager from "@/ui/map/map-event-manager";

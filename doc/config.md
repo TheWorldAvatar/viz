@@ -333,7 +333,7 @@ The `data.json` requires at least one defined data group. Each data group contai
 - `expanded` (optional): A boolean indicating if the starting state of the data group should be expanded. False to collapse the group.
 - `tree-icon` (optional): An image that will be displayed on the layer tree.
 - `stack` (optional): This is the URL for the stack containing metadata on this group's data. Note that this should be the base URL of the stack (i.e. without "/geoserver"). If missing, dynamic metadata from a remote FeatureInfoAgent cannot be utilised. This parameter can also be set with different values for different subgroups.
-- `search` (optional): This is the target resource identifier that will activate the search feature capability to find the requested feature(s). The search feature will depend on the [VisBackendAgent](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Agents/VisBackendAgent) running on the same stack, which must be deployed. Please define filters at the layers if only a subset of features should be visible by default.
+- `search` (optional): Enables search for the group's layers. Set it to a string resource identifier to use API search, or to an object of feature-property names and allowed values to use local search. See [Configuring search](#dataset-configuring-search) below.
 - `sources` (optional): This is an array of objects defining data sources (see below for info on sources).
 - `layers` (optional): This is an array of objects defining data layers (see below for info on layers).
 - `groups` (optional): This is an array of its data subgroups, which follows the same structure and is used to build the data hierarchy.
@@ -366,6 +366,48 @@ Definitions of data sources and layers is optional within a data group so that g
     ]
 }
 ```
+
+##### Dataset: Configuring search
+
+A data group supports two search modes, selected by the type of its `search` value.
+
+**API search**
+
+Set `search` to the target resource identifier used by the search form:
+
+```json
+{
+  "name": "Buildings",
+  "search": "building",
+  "stack": "https://my-example-website.com/stack"
+}
+```
+
+API search requires the [VisBackendAgent](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Agents/VisBackendAgent) to be deployed on the stack.
+
+**Local search**
+
+Set `search` to an object in which each key is a feature property and each value is the list of permitted choices. Choices may be strings or numbers:
+
+```json
+{
+  "name": "Colleges",
+  "search": {
+    "name": ["Clare", "Christ's", "Churchill"],
+    "founded": [1326, 1505, 1960]
+  },
+  "sources": [
+    ...
+  ],
+  "layers": [
+    ...
+  ]
+}
+```
+
+The local search modal creates one dropdown per property. When the user searches, the visualisation applies exact-match filters for all selected properties to every layer in the group; a feature must match every selection to remain visible.
+
+Local search replaces any existing Mapbox filter on the affected layers. Avoid combining it with predefined layer filters unless replacing those filters is intended.
 
 ##### Dataset: Defining a source
 

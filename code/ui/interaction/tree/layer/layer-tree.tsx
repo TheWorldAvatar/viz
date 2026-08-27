@@ -6,7 +6,7 @@ import { Map } from "mapbox-gl";
 import { DataGroup } from "@/io/data/data-group";
 import { DataLayer } from "@/io/data/data-layer";
 import { DataStore } from "@/io/data/data-store";
-import { JsonObject } from "@/types/json";
+import { JsonArray, JsonObject } from "@/types/json";
 import { MapLayerGroup, MapLayer } from "@/types/map-layer";
 import { IconSettings } from "@/types/settings";
 import LayerTreeHeader from "./layer-tree-content";
@@ -104,6 +104,16 @@ function recurseParseTreeStructure(
 
   // Construct TreeLayer instances
   for (const [key, layers] of Object.entries(layersByName)) {
+    // name clash with Mapbox's Map
+    // Retain each layer's configured filter so local search can combine with it.
+    const idToFilterMap = new globalThis.Map<string, JsonArray>();
+
+    layers.forEach((layer) => {
+      if (layer.defaultFilter !== undefined) {
+        idToFilterMap.set(layer.id, layer.defaultFilter);
+      }
+    });
+
     const mapLayer: MapLayer = {
       name: key,
       address: dataGroup.name + "." + key,
@@ -113,7 +123,8 @@ function recurseParseTreeStructure(
       isVisible: layers.find((layer) => layer.cachedVisibility !== null)
         ?.cachedVisibility,
       isAHighlightLayer: layers.every(layer => layer.isAHighlightLayer), // this is fine, either all layers will be highlight layers or not
-      highlightLayerIds: layers.filter(layer => layer.hasHighlight).map(layer => layer.id + '-highlight')
+      highlightLayerIds: layers.filter(layer => layer.hasHighlight).map(layer => layer.id + '-highlight'),
+      idToFilterMap: idToFilterMap
     };
     mapLayerGroup.layers.push(mapLayer);
   }

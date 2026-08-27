@@ -1,3 +1,5 @@
+import { JsonArray } from "./json";
+
 export type MapLayerGroup = {
   name: string;
   address: string; // Marks the current position of the group in the hierarchy. 0 is first group, while 0.0 is first subgroup
@@ -5,7 +7,7 @@ export type MapLayerGroup = {
   icon?: string;
   layers?: MapLayer[];
   stack?: string; // Optional stack endpoint
-  search?: string; // Optional search resource identifier
+  search?: string | MapSearchConfig; // Optional search resource identifier
   showChildren?: boolean; // track open/closed state
   groupings: string[]; // unique array of groupings
 };
@@ -19,4 +21,9 @@ export type MapLayer = {
   isVisible: boolean; // track visibility
   isAHighlightLayer: boolean; // indicates whether this is a highlight layer, will not be rendered on the layer tree
   highlightLayerIds: string[]; // the accompanying highlight layer
+  // Configured filter for each layer ID, used when composing local search filters.
+  idToFilterMap: Map<string, JsonArray>;
 };
+
+export type MapSearchConfigValue = string | number;
+export type MapSearchConfig = Record<string, MapSearchConfigValue[]>;

@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.87.0
+
+### Changes
+
+- Added support for configuring local map searches with dropdown filters directly in `data.json`.
+- Local search filters are combined with each layer's configured default filter.
+
 ## 5.86.0
 
 ### Changes
@@ -84,7 +91,7 @@
 
 - Updated the registry table rows to have a consistent height. Cell text is clamped to a single line.
 - Text truncation is now measured against the width a column actually renders at, instead of being estimated from a character count. The widths configured in `table-column-settings.json` are therefore always respected.
-- Array cells now show only the first nested field when collapsed, and stack every nested field on its own line when expanded. 
+- Array cells now show only the first nested field when collapsed, and stack every nested field on its own line when expanded.
 
 ## 5.83.8
 

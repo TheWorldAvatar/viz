@@ -5,6 +5,7 @@ import { DataLayer } from './data-layer';
 import { LayerSource } from './layer-source';
 import { DataStore } from './data-store';
 import { MapboxDataLayer } from './mapbox/mapbox-data-layer';
+import { MapSearchConfig } from "@/types/map-layer";
 
 /**
  * Handles parsing of raw JSON data into instances of the data classes.
@@ -106,7 +107,11 @@ export class DataParser {
     }
     // Add search resource identifier (if set)
     if (current["search"]) {
-      dataGroup.search = current["search"] as string;
+      if (typeof current["search"] === "string") {
+        dataGroup.search = current["search"];
+      } else {
+        dataGroup.search = current["search"] as MapSearchConfig;
+      }
     }
     // Recurse into sub groups (if present)
     if (current["groups"]) {
