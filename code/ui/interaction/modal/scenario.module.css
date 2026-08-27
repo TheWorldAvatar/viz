@@ -1,7 +1,6 @@
 .globalContainer {
   background-color: var(--background);
   color: var(--text-color-primary);
-  position: relative;
   max-height: 70vh;
   overflow: hidden;
   display: flex;
@@ -9,8 +8,6 @@
 }
 
 .headerContainer {
-  position: relative;
-  top: 0;
   width: 100%;
 }
 
@@ -24,7 +21,7 @@
   flex-direction: row;
   align-items: center;
   font-size: 1.5rem;
-  padding: 1rem;
+  padding: 3rem 1rem 1rem;
 }
 
 .optionContainer {
@@ -83,11 +80,9 @@
 }
 
 .refreshButton {
-  margin-left: 'auto';
   color: var(--text-color-links) !important;
 }
 
 .closeButton {
-  margin-left: 'auto';
   color: rgba(255, 60, 0, 0.6) !important
 }

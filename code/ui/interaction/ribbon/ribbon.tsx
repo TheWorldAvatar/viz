@@ -1,6 +1,5 @@
 "use client"
 
-import { Divider } from '@mui/material';
 import { Map } from 'mapbox-gl';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -139,7 +138,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
             }
           }}
         />
-        <Divider orientation="vertical" flexItem />
+        <hr className="self-stretch h-auto border-r border-border" />
         {currentScenarioName &&
           <RibbonComponentToggle
             key="scenario" id="scenario"

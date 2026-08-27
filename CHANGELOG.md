@@ -2,12 +2,20 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.87.1
+
+### Changes
+
+- Replaced all remaining MUI components with our custom components or native HTML elements
+- Removed `@mui/material`, `@emotion/react` and `@emotion/styled` as dependencies.
+
 ## 5.87.0
 
 ### Changes
 
 - Added support for configuring local map searches with dropdown filters directly in `data.json`.
 - Local search filters are combined with each layer's configured default filter.
+- Split `search-modal.tsx` into `api-search-modal.tsx` and the new `local-search-modal.tsx`.
 
 ## 5.86.0
 
