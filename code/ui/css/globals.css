@@ -254,6 +254,7 @@
   --color-row-active-background: var(--row-active-background);
   --color-row-active-background-hover: var(--row-active-background-hover);
 
+  --z-index-sticky-cell: 10; /* Sticky table header rows and table columns */
   --z-index-loading: 100; /* Route loading overlay and pull-to-refresh, over content but not the header */
   --z-index-header: 200; /* Application header bar, stays reachable during loads */
   --z-index-overlay: 300; /* Dialogs, drawers, popovers and menus */

@@ -116,7 +116,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         addEntity={props.addEntity}
         pricingType={props.pricingType}
       >
-        <div className="isolate relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
+        <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div
             ref={scrollContainerRef}
             onScroll={(e) => saveScrollPosition(e.currentTarget.scrollTop)}
@@ -132,7 +132,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 aria-label={`${props.recordType} registry table`}
                 className="border-separate border-spacing-0 w-full"
               >
-                <thead className="bg-muted sticky top-0 z-10">
+                <thead className="bg-muted sticky top-0 z-sticky-cell">
                   {props.tableDescriptor.table
                     .getHeaderGroups()
                     .map((headerGroup) => (
