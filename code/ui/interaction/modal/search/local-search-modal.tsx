@@ -90,7 +90,7 @@ export default function LocalSearchModal(
     <Modal
       isOpen={props.show}
       setIsOpen={props.setShowState}
-      className="h-auto! max-h-dvh w-full md:max-w-xl! overflow-y-auto rounded-xl! "
+      className="h-auto! max-h-dvh w-full md:max-w-xl! rounded-xl! "
     >
       <div className="flex flex-col w-full gap-4 mt-4">
         {Object.entries(props.search).map(([key, values]) => (
