@@ -10,13 +10,14 @@ import { MapLayer, MapLayerGroup } from "@/types/map-layer";
 import IconComponent from "@/ui/graphic/icon/icon";
 import IconButton from "@/ui/graphic/icon/icon-button";
 import SimpleDropdownField from "@/ui/interaction/dropdown/simple-dropdown";
-import SearchModal from "@/ui/interaction/modal/search/search-modal";
+import ApiSearchModal from "@/ui/interaction/modal/search/api-search-modal";
+import LocalSearchModal from "@/ui/interaction/modal/search/local-search-modal";
 import {
   setFilterFeatureIris,
   setFilterLayerIds,
   setFilterTimes,
 } from "@/state/map-feature-slice";
-import { ChevronDown, ChevronRight, Eye, EyeOff, Replace } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Search } from "lucide-react";
 
 // type definition for incoming properties
 interface LayerTreeHeaderProps {
@@ -217,19 +218,28 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         {/* A button to open the search modal when available */}
         {group.search && (
           <IconButton
-            icon={Replace}
+            icon={Search}
             iconStyles={[iconStyles.hover]}
             onClick={openSearchModal}
+            className="ml-2"
           />
         )}
-        {group.search && isSearchOpenState && (
-          <SearchModal
-            id={group.search}
-            stack={group.stack}
-            show={isSearchOpenState}
-            setShowState={setIsSearchOpenState}
-          />
-        )}
+        {group.search && isSearchOpenState &&
+          (typeof group.search === "string" ? (
+            <ApiSearchModal
+              search={group.search}
+              show={isSearchOpenState}
+              setShowState={setIsSearchOpenState}
+            />
+          ) : (
+            <LocalSearchModal
+              search={group.search}
+              show={isSearchOpenState}
+              setShowState={setIsSearchOpenState}
+              layers={group.layers}
+              map={props.map}
+            />
+          ))}
       </div>
 
       {/* Conditionally show subgroups when expanded, highlight layers are hidden */}
