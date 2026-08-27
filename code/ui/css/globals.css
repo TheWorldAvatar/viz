@@ -253,6 +253,12 @@
   --color-row-selected-background-hover: var(--row-selected-background-hover);
   --color-row-active-background: var(--row-active-background);
   --color-row-active-background-hover: var(--row-active-background-hover);
+
+  --z-index-loading: 100; /* Route loading overlay and pull-to-refresh, over content but not the header */
+  --z-index-header: 200; /* Application header bar, stays reachable during loads */
+  --z-index-overlay: 300; /* Dialogs, drawers, popovers and menus */
+  --z-index-toast: 400; /* Toast notifications, above dialogs */
+  --z-index-tooltip: 500; /* Always the outermost layer */
 }
 
 * {

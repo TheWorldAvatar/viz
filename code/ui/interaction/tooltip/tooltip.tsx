@@ -47,7 +47,7 @@ export default function Tooltip(props: Readonly<TooltipProps>) {
               ref={tooltip.refs.setFloating}
               style={{
                 ...tooltip.floatingStyles,
-                zIndex: 1000000000, // Highest z-index so it is above modal content and toasts (sonner uses 999999999)
+                zIndex: "var(--z-index-tooltip)",
               }}
               {...tooltip.getFloatingProps()}
             >

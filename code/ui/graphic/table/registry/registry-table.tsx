@@ -116,7 +116,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         addEntity={props.addEntity}
         pricingType={props.pricingType}
       >
-        <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
+        <div className="isolate relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div
             ref={scrollContainerRef}
             onScroll={(e) => saveScrollPosition(e.currentTarget.scrollTop)}
@@ -178,7 +178,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </table>
             </DndContext>
           </div>
-          <div className="absolute bottom-16 right-6 z-20">
+          <div className="absolute bottom-16 right-6">
             <Button
               size="icon"
               variant="secondary"
