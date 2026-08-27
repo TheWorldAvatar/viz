@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   pointer-events: all;
-  z-index: 99;
+  z-index: 1;
 }
 
 @media (max-width: 430px) {
