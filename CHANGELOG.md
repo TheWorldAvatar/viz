@@ -15,6 +15,7 @@
 
 - Added support for configuring local map searches with dropdown filters directly in `data.json`.
 - Local search filters are combined with each layer's configured default filter.
+- Split `search-modal.tsx` into `api-search-modal.tsx` and the new `local-search-modal.tsx`.
 
 ## 5.86.0
 
