@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.87.1
+
+### Changes
+
+- Replaced all remaining MUI components with our custom components or native HTML elements
+- Removed `@mui/material`, `@emotion/react` and `@emotion/styled` as dependencies.
+
 ## 5.87.0
 
 ### Changes
