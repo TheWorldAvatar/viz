@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.87.2
+
+### Changes
+
+- Added a standardised z-index scale to global.css using Tailwind CSS theme variables.
+- Fixed styling issue with the `local-search-modal.tsx`
+
 ## 5.87.1
 
 ### Changes
