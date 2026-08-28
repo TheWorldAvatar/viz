@@ -132,7 +132,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 aria-label={`${props.recordType} registry table`}
                 className="border-separate border-spacing-0 w-full"
               >
-                <thead className="bg-muted sticky top-0 z-10">
+                <thead className="bg-muted sticky top-0 z-sticky-cell">
                   {props.tableDescriptor.table
                     .getHeaderGroups()
                     .map((headerGroup) => (
@@ -178,7 +178,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </table>
             </DndContext>
           </div>
-          <div className="absolute bottom-16 right-6 z-20">
+          <div className="absolute bottom-16 right-6">
             <Button
               size="icon"
               variant="secondary"

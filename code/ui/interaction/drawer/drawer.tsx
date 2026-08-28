@@ -62,14 +62,11 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     <>
       {dialog.open && (
         <FloatingPortal>
-          <FloatingOverlay className="z-999 pointer-events-none">
+          <FloatingOverlay className="z-overlay pointer-events-none">
             <FloatingFocusManager context={dialog.context}>
               <div
                 ref={dialog.refs.setFloating}
-                style={{
-                  ...dialog.floatingStyles,
-                  zIndex: 999998,
-                }}
+                style={dialog.floatingStyles}
                 className="fixed right-0 top-0 bottom-0 flex items-end md:items-center md:justify-end pointer-events-none"
                 {...dialog.getFloatingProps()}
               >

@@ -120,7 +120,7 @@ export default function FloatingPanelContainer(
           className={styles.expandButton}
           onClick={() => setIsPanelVisible(!isPanelVisible)}>
           <Tooltip text={isPanelVisible ? dict.map.tooltip.collapsePanel : dict.map.tooltip.expandPanel}>
-            {isPanelVisible ? <ChevronDown className="size-6" aria-hidden /> : <ChevronUp className="size-6" aria-hidden />}
+            {isPanelVisible ? <ChevronUp className="size-6" aria-hidden /> : <ChevronDown className="size-6" aria-hidden />}
           </Tooltip>
         </button>
       </div>

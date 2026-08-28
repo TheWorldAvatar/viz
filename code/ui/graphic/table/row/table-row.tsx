@@ -184,9 +184,9 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             props.row.toggleSelected(!props.row.getIsSelected());
           }
         }}
-        className={`border-b border-border text-left relative ${isDragging ? "z-10 opacity-70" : "z-0"} ${rowBackgroundClass}`}
+        className={`border-b border-border text-left relative isolate ${isDragging ? "z-sticky-cell opacity-70" : ""} ${rowBackgroundClass}`}
       >
-        <TableCell className={`sticky left-0 z-20 cursor-default ${rowBackgroundClass}`}>
+        <TableCell className={`sticky left-0 z-sticky-cell cursor-default ${rowBackgroundClass}`}>
           <div className="flex items-center justify-evenly gap-0.5">
             {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={props.row.id} />}
             {!tableDescriptor.isBulkDispatchEdit && <RegistryRowAction

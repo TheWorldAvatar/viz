@@ -40,7 +40,7 @@ export const selectorStyles: StylesConfig<
     minWidth: "100%",
     maxWidth: "min(20rem, 90vw)",
     border: "1px solid var(--border)",
-    zIndex: 99999,
+    zIndex: "var(--z-index-overlay)",
     overflow: "hidden",
   }),
   noOptionsMessage: (provided) => ({
@@ -166,7 +166,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     minWidth: "100%",
     maxWidth: "min(20rem, 90vw)",
     border: "1px solid var(--border)",
-    zIndex: 99999,
+    zIndex: "var(--z-index-overlay)",
     overflow: "hidden",
   }),
   noOptionsMessage: (provided) => ({

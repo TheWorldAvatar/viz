@@ -85,7 +85,7 @@ export function TaskFormContainerComponent(
         props.formType === FormTypeMap.CANCEL ? "cancellation" :
           "dispatch"}>
       <div className="relative flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
-        <div className="absolute top-2 right-4 z-10">
+        <div className="absolute top-2 right-4">
           <Button
             leftIcon={X}
             size="icon"

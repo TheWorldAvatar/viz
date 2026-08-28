@@ -4,9 +4,9 @@ export default function TableSkeleton() {
     return (
         <div className="rounded-lg border border-border flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0 w-full mr-auto overflow-hidden fade-in-on-motion ">
             <table className="w-full border-separate border-spacing-0 ">
-                <thead className="bg-muted sticky top-0 z-10">
+                <thead className="bg-muted sticky top-0 z-sticky-cell">
                     <tr>
-                        <th className="w-[calc(100%/20)] border-r border-border border-b p-2 md:p-3 sticky left-0 z-20 bg-muted">
+                        <th className="w-[calc(100%/20)] border-r border-border border-b p-2 md:p-3 sticky left-0 bg-muted">
                         </th>
                         {/* Header cells */}
                         {[...Array(5)].map((_, colIndex) => (
@@ -23,7 +23,7 @@ export default function TableSkeleton() {
                     {[...Array(7)].map((_, rowIndex) => (
                         <tr key={`skeleton-row-${rowIndex}`}>
                             {/* Action cells */}
-                            <th className="w-[5%] border-r border-border border-b  p-2 md:p-3 sticky left-0 z-20 bg-background group-hover:bg-muted">
+                            <th className="w-[5%] border-r border-border border-b  p-2 md:p-3 sticky left-0 bg-background group-hover:bg-muted">
                                 <div className="flex gap-0.5">
                                     <div className="h-8 w-8 bg-ring animate-pulse rounded flex items-center justify-center">
                                         <GripVertical className="size-6 opacity-30" aria-hidden />

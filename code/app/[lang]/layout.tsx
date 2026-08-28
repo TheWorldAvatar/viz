@@ -101,7 +101,7 @@ export default async function RootLayout({
               <GlobalContainer pages={pages} settings={uiSettings}>
                 {children}
                 {modal}
-                <Toaster duration={Infinity} />
+                <Toaster duration={Infinity} style={{ zIndex: "var(--z-index-toast)" }} />
               </GlobalContainer>
             </SessionInfoProvider>
           </DictionaryProvider>
