@@ -278,7 +278,8 @@ function NavMenuContents(
             url={
               isPermitted("registryFullAccess")
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
-                : screenType === ScreenTypeMap.MOBILE ? Routes.REGISTRY_TASK_OUTSTANDING_MOBILE : Routes.REGISTRY_TASK_OUTSTANDING
+                : screenType === ScreenTypeMap.MOBILE || screenType == ScreenTypeMap.TABLET
+                  ? Routes.REGISTRY_TASK_OUTSTANDING_MOBILE : Routes.REGISTRY_TASK_OUTSTANDING
             }
             isMobile={props.isMobile}
             caption={
