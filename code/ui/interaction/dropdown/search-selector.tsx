@@ -44,15 +44,8 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [isIncluded, setIsIncluded] = useState<boolean>(props.initSelectedOptions.isIncluded);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions.values);
-  const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions.values);
-  const [previousOptions, setPreviousOptions] = useState<string[]>(props.options);
 
-  if (props.options !== previousOptions) {
-    setPreviousOptions(props.options);
-    setPinnedOptions(selectedOptions);
-  }
-
-  const visibleOptions: string[] = [...new Set([...pinnedOptions, ...props.options, ...selectedOptions])];
+  const visibleOptions: string[] = Array.from(new Set([...props.options, ...selectedOptions]));
 
   return (
     <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
@@ -117,8 +110,8 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           </div>
         )}
         {!props.isLoading && <p className="text-sm text-foreground/80 italic px-2 my-1">
-          {visibleOptions.length === 0 && dict.message.noOptions}
-          {visibleOptions.length > 20 && dict.message.typeMore}
+          {props.options.length === 0 && dict.message.noOptions}
+          {props.options.length > 20 && dict.message.typeMore}
         </p>}
         {!props.isLoading && visibleOptions.length > 0 && <div className={"flex justify-center bg-ring"}>
           <Button
@@ -159,7 +152,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
         ))}
         <p className="text-2xl text-foreground/80 italic px-2">
-          {visibleOptions.length > 20 && "..."}
+          {props.options.length > 20 && "..."}
         </p>
       </div>
     </div>
