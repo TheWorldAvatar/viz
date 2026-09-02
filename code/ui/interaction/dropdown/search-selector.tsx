@@ -1,20 +1,21 @@
-import { useDictionary } from "@/hooks/useDictionary";
 import { useConnected } from "@/hooks/useConnected";
+import { useDictionary } from "@/hooks/useDictionary";
 import useRefresh from "@/hooks/useRefresh";
 import { Dictionary } from "@/types/dictionary";
+import { ColFilterValues } from "@/types/table";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import StatusComponent from "@/ui/text/status/status";
+import { Filter, SquareMinus } from "lucide-react";
 import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
-import LoadingSpinner from "@/ui/graphic/loader/spinner";
-import { Filter, SquareMinus } from "lucide-react";
 
 
 interface SearchSelectorProps {
   label: string;
   searchString: string;
   options: string[];
-  initSelectedOptions: string[];
+  initSelectedOptions: ColFilterValues;
   onSubmission: (_options: string[], _isIncluded: boolean) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
   isLoading: boolean;
@@ -29,7 +30,7 @@ interface SearchSelectorProps {
  * @param {string} label The aria-label for the component.
  * @param {string} searchString The uncontrolled search option.
  * @param {string[]} options The options to be displayed.
- * @param {string[]} initSelectedOptions The initial options that have been selected.
+ * @param {ColFilterValues} initSelectedOptions The initial options that have been selected.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
  * @param {boolean} isLoading The loading state to indicate if options are fetching.
@@ -41,9 +42,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
   const isConnected: boolean = useConnected();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
-  const [isIncluded, setIsIncluded] = useState<boolean>(true);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
-  const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions);
+  const [isIncluded, setIsIncluded] = useState<boolean>(props.initSelectedOptions.isIncluded);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions.values);
+  const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions.values);
   const [previousOptions, setPreviousOptions] = useState<string[]>(props.options);
 
   if (props.options !== previousOptions) {
