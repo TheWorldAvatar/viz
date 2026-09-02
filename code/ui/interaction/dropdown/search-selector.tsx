@@ -16,7 +16,7 @@ interface SearchSelectorProps {
   options: string[];
   initSelectedOptions: string[];
   showOptions: boolean;
-  onSubmission: (_options: string[]) => void;
+  onSubmission: (_options: string[], _isIncluded: boolean) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,6 +43,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
   const isConnected: boolean = useConnected();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
+  const [isIncluded, setIsIncluded] = useState<boolean>(true);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
   const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions);
   const [previousOptions, setPreviousOptions] = useState<string[]>(props.options);
@@ -80,7 +81,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              props.onSubmission(selectedOptions);
+              props.onSubmission(selectedOptions, isIncluded);
             }}
             tooltipText={dict.action.applyFilter}
             variant="primary"
@@ -120,6 +121,27 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           {visibleOptions.length === 0 && dict.message.noOptions}
           {visibleOptions.length > 20 && dict.message.typeMore}
         </p>}
+        {props.showOptions && visibleOptions.length > 0 && <div className={"flex justify-center bg-ring"}>
+          <Button
+            label={dict.action.include}
+            hasMobileIcon={false}
+            variant={isIncluded ? "active" : "ghost"}
+            className="w-full sm:w-auto"
+            onClick={() => {
+              setIsIncluded(true);
+            }}
+          />
+          <Button
+            label={dict.action.exclude}
+            hasMobileIcon={false}
+            variant={!isIncluded ? "active" : "ghost"}
+            className="w-full sm:w-auto"
+            onClick={() => {
+              setIsIncluded(false);
+            }}
+          />
+        </div>
+        }
         {props.showOptions && !refreshFlag && visibleOptions.map((option, index) => (
           <SelectOption
             key={option + index}

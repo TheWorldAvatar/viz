@@ -107,8 +107,11 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 lifecycleStage={props.lifecycleStage}
                 selectedDate={props.selectedDate}
                 filters={props.filters}
-                onSubmission={(selectedOptions: string[]) => {
-                  props.header.column.setFilterValue(selectedOptions);
+                onSubmission={(selectedOptions: string[], isIncluded: boolean = true) => {
+                  props.header.column.setFilterValue({
+                    isIncluded,
+                    values: selectedOptions,
+                  });
                   tableDescriptor.resetRowSelection();
                   props.table.resetPageIndex();
                   tableScrollDescriptor.scrollToTop();
