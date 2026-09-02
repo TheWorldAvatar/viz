@@ -1,5 +1,6 @@
 import { useFilterOptions } from "@/hooks/table/api/useFilterOptions";
 import { LifecycleStage } from "@/types/form";
+import { ColFilterValues } from "@/types/table";
 import DateColumnFilter from "@/ui/graphic/table/action/date-column-filter";
 import NumericColumnFilter from "@/ui/graphic/table/action/numeric-column-filter";
 import TimeColumnFilter from "@/ui/graphic/table/action/time-column-filter";
@@ -104,5 +105,5 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
 
 function getCurrentFilters(filters: ColumnFilter[], field: string): string[] {
     const targetFilter: ColumnFilter = filters.find(filter => filter.id === field);
-    return !targetFilter ? [] : (targetFilter.value as string[]);
+    return !targetFilter ? [] : (targetFilter.value as ColFilterValues).values;
 }
