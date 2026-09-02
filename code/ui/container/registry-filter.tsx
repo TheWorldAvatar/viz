@@ -93,7 +93,6 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         options={options}
         label={props.field}
         initSelectedOptions={currentFilters}
-        showOptions={!isLoading}
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
         isLoading={isLoading}

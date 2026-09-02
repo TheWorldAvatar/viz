@@ -15,7 +15,6 @@ interface SearchSelectorProps {
   searchString: string;
   options: string[];
   initSelectedOptions: string[];
-  showOptions: boolean;
   onSubmission: (_options: string[], _isIncluded: boolean) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
   isLoading: boolean;
@@ -31,7 +30,6 @@ interface SearchSelectorProps {
  * @param {string} searchString The uncontrolled search option.
  * @param {string[]} options The options to be displayed.
  * @param {string[]} initSelectedOptions The initial options that have been selected.
- * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
  * @param {boolean} isLoading The loading state to indicate if options are fetching.
@@ -117,11 +115,11 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             <span className="sr-only">{dict.message.loading}</span>
           </div>
         )}
-        {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
+        {!props.isLoading && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {visibleOptions.length === 0 && dict.message.noOptions}
           {visibleOptions.length > 20 && dict.message.typeMore}
         </p>}
-        {props.showOptions && visibleOptions.length > 0 && <div className={"flex justify-center bg-ring"}>
+        {!props.isLoading && visibleOptions.length > 0 && <div className={"flex justify-center bg-ring"}>
           <Button
             label={dict.action.include}
             hasMobileIcon={false}
@@ -142,7 +140,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
         </div>
         }
-        {props.showOptions && !refreshFlag && visibleOptions.map((option, index) => (
+        {!props.isLoading && !refreshFlag && visibleOptions.map((option, index) => (
           <SelectOption
             key={option + index}
             option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
