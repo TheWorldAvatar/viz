@@ -26,6 +26,8 @@ export const useDictionary = () => {
 
     const normaliseNumber = useCallback((value: string): string => {
         if (!value) return "";
+
+        const negativeSign: string = value.trim().startsWith("-") ? "-" : "";
         // Drop the group separators from the input
         const cleanVal: string = value.split(numberSeparators[0]).join("")
             // Replace translated decimal separator with the default separator
@@ -37,9 +39,9 @@ export const useDictionary = () => {
         const parts: string[] = cleanVal.split(numberSeparators[3]);
         if (parts.length > 2) {
             // Keep the first part, join the rest of the parts together
-            return parts[0] + numberSeparators[3] + parts.slice(1).join("");
+            return negativeSign + parts[0] + numberSeparators[3] + parts.slice(1).join("");
         }
-        return cleanVal;
+        return negativeSign + cleanVal;
     }, [numberSeparators]);
 
     const translate = useCallback((value: LanguageDictionary): string => {
