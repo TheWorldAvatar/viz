@@ -1,5 +1,6 @@
 import { useFilterOptions } from "@/hooks/table/api/useFilterOptions";
 import { LifecycleStage } from "@/types/form";
+import { ColFilterValues } from "@/types/table";
 import DateColumnFilter from "@/ui/graphic/table/action/date-column-filter";
 import NumericColumnFilter from "@/ui/graphic/table/action/numeric-column-filter";
 import TimeColumnFilter from "@/ui/graphic/table/action/time-column-filter";
@@ -39,7 +40,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     const isTimeField: boolean = props.fieldType === XSD_TIME;
     const isNumericField: boolean = props.fieldType === XSD_DECIMAL || props.fieldType === XSD_INTEGER;
 
-    const [currentFilters, setCurrentFilters] = useState<string[]>(getCurrentFilters(props.filters, props.field));
+    const [currentFilters, setCurrentFilters] = useState<ColFilterValues>(getCurrentFilters(props.filters, props.field));
 
     useEffect(() => {
         setCurrentFilters(getCurrentFilters(props.filters, props.field));
@@ -56,7 +57,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         props.field,
         props.lifecycleStage,
         props.selectedDate,
-        currentFilters,
+        currentFilters.values,
         props.filters,
         isDateField || isNumericField || isTimeField,
     );
@@ -64,7 +65,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     if (isDateField) {
         return <DateColumnFilter
             label={props.field}
-            currentVal={currentFilters[0]}
+            currentVal={currentFilters.values[0]}
             onSubmission={props.onSubmission}
             disabled={props.disabled}
         />
@@ -73,7 +74,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     if (isNumericField) {
         return <NumericColumnFilter
             label={props.field}
-            currentVal={currentFilters}
+            currentVal={currentFilters.values}
             onSubmission={props.onSubmission}
             disabled={props.disabled}
         />
@@ -82,7 +83,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     if (isTimeField) {
         return <TimeColumnFilter
             label={props.field}
-            currentVal={currentFilters}
+            currentVal={currentFilters.values}
             onSubmission={props.onSubmission}
             disabled={props.disabled}
         />
@@ -92,7 +93,6 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         options={options}
         label={props.field}
         initSelectedOptions={currentFilters}
-        showOptions={!isLoading}
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
         isLoading={isLoading}
@@ -102,7 +102,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     />
 }
 
-function getCurrentFilters(filters: ColumnFilter[], field: string): string[] {
+function getCurrentFilters(filters: ColumnFilter[], field: string): ColFilterValues {
     const targetFilter: ColumnFilter = filters.find(filter => filter.id === field);
-    return !targetFilter ? [] : (targetFilter.value as string[]);
+    return !targetFilter ? { isIncluded: true, values: [] } : targetFilter.value as ColFilterValues;
 }

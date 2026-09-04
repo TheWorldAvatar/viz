@@ -8,6 +8,8 @@
     "adjustPricing": "Preis anpassen",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
+    "exclude": "Ausschließen",
+    "include": "Einbeziehen",
     "delete": "Löschen",
     "deleteItem": "{replace} löschen",
     "edit": "Bearbeiten",

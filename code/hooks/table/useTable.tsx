@@ -1,3 +1,15 @@
+import { useDictionary } from "@/hooks/useDictionary";
+import { Dictionary } from "@/types/dictionary";
+import { LifecycleStage, RegistryFieldValues } from "@/types/form";
+import { TableColumnOption } from "@/types/settings";
+import { ColFilterValues } from "@/types/table";
+import {
+  genSortParams,
+  getInitialColumnVisibilityState,
+  getInitialSortingState,
+  getInitialSortParams
+} from "@/ui/graphic/table/registry/registry-table-utils";
+import { toast } from "@/ui/interaction/action/toast/toast";
 import {
   ColumnFilter,
   ColumnFiltersState,
@@ -10,23 +22,12 @@ import {
   useReactTable,
   VisibilityState
 } from "@tanstack/react-table";
-import { useDictionary } from "@/hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "@/types/form";
-import { TableColumnOption } from "@/types/settings";
-import {
-  genSortParams,
-  getInitialColumnVisibilityState,
-  getInitialSortingState,
-  getInitialSortParams
-} from "@/ui/graphic/table/registry/registry-table-utils";
-import { toast } from "@/ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
-import { useTableRowOrder } from "./useTableRowOrder";
 import { useTablePagination } from "./useTablePagination";
+import { useTableRowOrder } from "./useTableRowOrder";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -145,16 +146,8 @@ export function useTable(
       if (filter.value === null || filter.value === undefined) {
         return false;
       }
-
-      if (Array.isArray(filter.value)) {
-        return filter.value.length > 0;
-      }
-
-      if (typeof filter.value === "string") {
-        return filter.value.trim().length > 0;
-      }
-
-      return true;
+      const currentFilters: string[] = (filter.value as ColFilterValues).values;
+      return currentFilters.length > 0;
     });
 
     // Limit to maximum 3 active filters at a time 
