@@ -5,7 +5,7 @@ import { Dictionary } from "@/types/dictionary";
 import { ColFilterValues } from "@/types/table";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import StatusComponent from "@/ui/text/status/status";
-import { Filter, SquareMinus } from "lucide-react";
+import { Ban, Check, Filter, SquareMinus } from "lucide-react";
 import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
@@ -102,6 +102,38 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           aria-label={dict.action.clear}
         />}
       </div>
+      {!props.isLoading && visibleOptions.length > 0 &&
+        <div
+          role="group"
+          aria-label={"filter mode for " + props.label}
+          className="flex gap-1 mt-1.5 mb-0.5"
+        >
+          <Button
+            label={dict.action.include}
+            leftIcon={Check}
+            size="sm"
+            variant={isIncluded ? "info_banner" : "ghost"}
+            aria-pressed={isIncluded}
+            disabled={props.disabled}
+            className="flex-1 text-sm font-medium rounded-sm"
+            onClick={() => {
+              setIsIncluded(true);
+            }}
+          />
+          <Button
+            label={dict.action.exclude}
+            leftIcon={Ban}
+            size="sm"
+            variant={!isIncluded ? "info_banner" : "ghost"}
+            aria-pressed={!isIncluded}
+            disabled={props.disabled}
+            className="flex-1 text-sm font-medium rounded-sm"
+            onClick={() => {
+              setIsIncluded(false);
+            }}
+          />
+        </div>
+      }
       <div className="max-h-80 w-full overflow-y-auto overflow-x-auto">
         {props.isLoading && (
           <div role="status" aria-live="polite" className="p-2.5 mt-2">
@@ -113,27 +145,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}
         </p>}
-        {!props.isLoading && visibleOptions.length > 0 && <div className={"flex justify-center bg-ring"}>
-          <Button
-            label={dict.action.include}
-            hasMobileIcon={false}
-            variant={isIncluded ? "active" : "ghost"}
-            className="w-full sm:w-auto"
-            onClick={() => {
-              setIsIncluded(true);
-            }}
-          />
-          <Button
-            label={dict.action.exclude}
-            hasMobileIcon={false}
-            variant={!isIncluded ? "active" : "ghost"}
-            className="w-full sm:w-auto"
-            onClick={() => {
-              setIsIncluded(false);
-            }}
-          />
-        </div>
-        }
         {!props.isLoading && !refreshFlag && visibleOptions.map((option, index) => (
           <SelectOption
             key={option + index}
