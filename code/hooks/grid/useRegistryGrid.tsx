@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useLiveTasks } from "../dexie/useLiveTasks";
 import useOperationStatus from "../useOperationStatus";
+import { ColFilterValues } from "@/types/table";
 
 export interface GridDescriptor {
     isInitialLoading: boolean;
@@ -85,7 +86,7 @@ export function useRegistryGrid(
             }
             // Check for active filters
             const noActiveFilters: boolean = updatedFilters.filter(filter => filter?.id != "status")
-                .every((filter) => (filter?.value as string[])?.length == 0);
+                .every((filter) => (filter?.value as ColFilterValues[])?.values?.length == 0);
             setHasNoActiveFilters(noActiveFilters);
             if (noActiveFilters) {
                 localStorageManager.clear();
