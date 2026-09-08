@@ -70,7 +70,10 @@ export function useRegistryGrid(
             const currentFieldIndex: number = prev.findIndex((f) => f.id === field);
             const filter: ColumnFilter = {
                 id: field,
-                value: selectedOptions,
+                value: {
+                    isIncluded: true,
+                    values: selectedOptions
+                },
             };
             let updatedFilters: ColumnFilter[];
             // Append if there is no previous filter for the field
