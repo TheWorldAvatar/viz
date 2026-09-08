@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.88.0
+
+### Changes
+
+- Extended filters to support exclusionary capabilities
+- Updated min version of `VisBackend Agent` from `v1.66.0` to `v1.69.0`
+
 ## 5.87.4
 
 ### Bug fixes
@@ -13,6 +20,7 @@
 ### Changes
 
 - Enable conflict checks only for mobile registry of task completion
+- Updated min version of `VisBackend Agent` from `v1.64.0` to `v1.66.0`
 
 ## 5.87.2
 
