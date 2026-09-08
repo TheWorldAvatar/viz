@@ -21,6 +21,7 @@ interface SearchSelectorProps {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disabled?: boolean;
+  disableExclusion?: boolean;
   className?: string;
 }
 
@@ -36,6 +37,7 @@ interface SearchSelectorProps {
  * @param {boolean} isLoading The loading state to indicate if options are fetching.
  * @param setIsLoading State function to set loading state.
  * @param {boolean} disabled An optional state to disable the filter.
+ * @param {boolean} disableExclusion An optional state to disable the exclusion functionality.
  * @param {string} className Optional additional styling applied to the selector.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
@@ -106,7 +108,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           aria-label={dict.action.clear}
         />}
       </div>
-      {!props.isLoading && visibleOptions.length > 0 &&
+      {!props.isLoading && visibleOptions.length > 0 && !props.disableExclusion &&
         <div
           role="group"
           aria-label={"filter mode for " + props.label}

@@ -19,6 +19,7 @@ interface RegistryFilterProps {
     filters: ColumnFilter[];
     onSubmission: (_selectedOptions: string[]) => void;
     disabled?: boolean;
+    disableExclusion?: boolean;
     className?: string;
 }
 
@@ -33,6 +34,7 @@ interface RegistryFilterProps {
  * @param {ColumnFilter[]} filters Current filter state for all applied filters.
  * @param  onSubmission Executes this function on submission.
  * @param {boolean} disabled An optional state to disable the filter.
+ * @param {boolean} disableExclusion An optional state to disable the exclusion functionality.
  * @param {string} className Optional additional styling applied to the registry filter.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
@@ -98,6 +100,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         disabled={props.disabled}
+        disableExclusion={props.disableExclusion}
         className={props.className}
     />
 }

@@ -97,6 +97,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                             selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
                             filters={props.filters}
                             disabled={!isConnected}
+                            disableExclusion={true}
                             className="w-full"
                             onSubmission={(selectedOptions: string[]) => {
                                 if (isConnected) {
