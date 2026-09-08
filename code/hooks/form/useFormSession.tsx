@@ -44,7 +44,7 @@ const useFormSession = (): useFormSessionReturn => {
     const updateInvoiceAccount = (account: string): void => {
         dispatch(setInvoiceAccountFilter({
             id: formSession.accountType,
-            value: [account],
+            value: { isIncluded: true, values: [account] },
         }));
     };
 

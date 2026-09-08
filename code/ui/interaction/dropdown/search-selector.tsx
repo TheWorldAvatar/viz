@@ -1,26 +1,27 @@
-import { useDictionary } from "@/hooks/useDictionary";
 import { useConnected } from "@/hooks/useConnected";
+import { useDictionary } from "@/hooks/useDictionary";
 import useRefresh from "@/hooks/useRefresh";
 import { Dictionary } from "@/types/dictionary";
+import { ColFilterValues } from "@/types/table";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import StatusComponent from "@/ui/text/status/status";
-import { useState } from "react";
+import { Ban, Check, Filter, SquareMinus } from "lucide-react";
+import { useMemo, useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
-import LoadingSpinner from "@/ui/graphic/loader/spinner";
-import { Filter, SquareMinus } from "lucide-react";
 
 
 interface SearchSelectorProps {
   label: string;
   searchString: string;
   options: string[];
-  initSelectedOptions: string[];
-  showOptions: boolean;
-  onSubmission: (_options: string[]) => void;
+  initSelectedOptions: ColFilterValues;
+  onSubmission: (_options: string[], _isIncluded: boolean) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disabled?: boolean;
+  disableExclusion?: boolean;
   className?: string;
 }
 
@@ -30,29 +31,27 @@ interface SearchSelectorProps {
  * @param {string} label The aria-label for the component.
  * @param {string} searchString The uncontrolled search option.
  * @param {string[]} options The options to be displayed.
- * @param {string[]} initSelectedOptions The initial options that have been selected.
- * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
+ * @param {ColFilterValues} initSelectedOptions The initial options that have been selected.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
  * @param {boolean} isLoading The loading state to indicate if options are fetching.
  * @param setIsLoading State function to set loading state.
  * @param {boolean} disabled An optional state to disable the filter.
+ * @param {boolean} disableExclusion An optional state to disable the exclusion functionality.
  * @param {string} className Optional additional styling applied to the selector.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
   const isConnected: boolean = useConnected();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
-  const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions);
-  const [previousOptions, setPreviousOptions] = useState<string[]>(props.options);
+  const [isIncluded, setIsIncluded] = useState<boolean>(props.initSelectedOptions.isIncluded);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions.values);
 
-  if (props.options !== previousOptions) {
-    setPreviousOptions(props.options);
-    setPinnedOptions(selectedOptions);
-  }
-
-  const visibleOptions: string[] = [...new Set([...pinnedOptions, ...props.options, ...selectedOptions])];
+  const visibleOptions: string[] = useMemo(() => {
+    return props.searchString.trim().length > 0
+      ? [...props.options.filter((opt) => !selectedOptions.includes(opt)), ...selectedOptions]
+      : Array.from(new Set([...selectedOptions, ...props.options]))
+  }, [props.options, props.searchString]);
 
   return (
     <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
@@ -80,7 +79,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              props.onSubmission(selectedOptions);
+              props.onSubmission(selectedOptions, isIncluded);
             }}
             tooltipText={dict.action.applyFilter}
             variant="primary"
@@ -109,6 +108,38 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           aria-label={dict.action.clear}
         />}
       </div>
+      {!props.isLoading && visibleOptions.length > 0 && !props.disableExclusion &&
+        <div
+          role="group"
+          aria-label={"filter mode for " + props.label}
+          className="flex gap-1 mt-1.5 mb-0.5"
+        >
+          <Button
+            label={dict.action.include}
+            leftIcon={Check}
+            size="sm"
+            variant={isIncluded ? "info_banner" : "ghost"}
+            aria-pressed={isIncluded}
+            disabled={props.disabled}
+            className="flex-1 text-sm font-medium rounded-sm"
+            onClick={() => {
+              setIsIncluded(true);
+            }}
+          />
+          <Button
+            label={dict.action.exclude}
+            leftIcon={Ban}
+            size="sm"
+            variant={!isIncluded ? "info_banner" : "ghost"}
+            aria-pressed={!isIncluded}
+            disabled={props.disabled}
+            className="flex-1 text-sm font-medium rounded-sm"
+            onClick={() => {
+              setIsIncluded(false);
+            }}
+          />
+        </div>
+      }
       <div className="max-h-80 w-full overflow-y-auto overflow-x-auto">
         {props.isLoading && (
           <div role="status" aria-live="polite" className="p-2.5 mt-2">
@@ -116,13 +147,13 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             <span className="sr-only">{dict.message.loading}</span>
           </div>
         )}
-        {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
-          {visibleOptions.length === 0 && dict.message.noOptions}
-          {visibleOptions.length > 20 && dict.message.typeMore}
+        {!props.isLoading && <p className="text-sm text-foreground/80 italic px-2 my-1">
+          {props.options.length === 0 && dict.message.noOptions}
+          {props.options.length > 20 && dict.message.typeMore}
         </p>}
-        {props.showOptions && !refreshFlag && visibleOptions.map((option, index) => (
+        {!props.isLoading && !refreshFlag && visibleOptions.map((option) => (
           <SelectOption
-            key={option + index}
+            key={option}
             option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
               props.label === "scheduleType" ? dict.form[option] : option}
             labelComponent={props.label === "status" ? <StatusComponent status={option} /> : null}
@@ -138,7 +169,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
         ))}
         <p className="text-2xl text-foreground/80 italic px-2">
-          {visibleOptions.length > 20 && "..."}
+          {props.options.length > 20 && "..."}
         </p>
       </div>
     </div>

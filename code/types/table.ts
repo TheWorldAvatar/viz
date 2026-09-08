@@ -5,6 +5,11 @@ export const TableCellTagMap = {
 
 export type TableCellTag = typeof TableCellTagMap[keyof typeof TableCellTagMap];
 
+export interface ColFilterValues {
+    isIncluded: boolean;
+    values: string[];
+}
+
 export const ComparisonOperatorMap = {
     EQUALS: "eq",
     NOT_EQUALS: "neq",
