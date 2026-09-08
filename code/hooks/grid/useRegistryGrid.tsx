@@ -37,7 +37,7 @@ export interface GridDescriptor {
 }
 
 const GRID_LIMIT: number = dexieTaskRepo.getInitialBatchSize();
-const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistryStatusMap.ASSIGNED] }];
+const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: { isIncluded: true, values: [RegistryStatusMap.ASSIGNED] } }];
 
 /**
  * A custom hook to retrieve grid data into functionalities for the registry.
