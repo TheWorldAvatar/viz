@@ -6,7 +6,7 @@ import { ColFilterValues } from "@/types/table";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import StatusComponent from "@/ui/text/status/status";
 import { Ban, Check, Filter, SquareMinus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 
@@ -45,7 +45,11 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const [isIncluded, setIsIncluded] = useState<boolean>(props.initSelectedOptions.isIncluded);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions.values);
 
-  const visibleOptions: string[] = Array.from(new Set([...props.options, ...selectedOptions]));
+  const visibleOptions: string[] = useMemo(() => {
+    return props.searchString.trim().length > 0
+      ? [...props.options.filter((opt) => !selectedOptions.includes(opt)), ...selectedOptions]
+      : Array.from(new Set([...selectedOptions, ...props.options]))
+  }, [props.options, props.searchString]);
 
   return (
     <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
@@ -145,9 +149,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}
         </p>}
-        {!props.isLoading && !refreshFlag && visibleOptions.map((option, index) => (
+        {!props.isLoading && !refreshFlag && visibleOptions.map((option) => (
           <SelectOption
-            key={option + index}
+            key={option}
             option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
               props.label === "scheduleType" ? dict.form[option] : option}
             labelComponent={props.label === "status" ? <StatusComponent status={option} /> : null}
