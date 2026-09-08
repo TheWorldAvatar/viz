@@ -14,6 +14,7 @@ import { ColumnFilter } from "@tanstack/react-table";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { FunnelX, ListFilter } from "lucide-react";
+import { ColFilterValues } from "@/types/table";
 
 interface FilterMenuProps {
     hasNoActiveFilters: boolean;
@@ -81,7 +82,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                     const fieldId: string = column.id;
                     const fieldTitle: string = column.header.toString();
                     const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
-                    const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
+                    const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as ColFilterValues).values;
                     return <Accordion
                         key={index}
                         id={fieldId}
