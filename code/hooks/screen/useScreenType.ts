@@ -14,7 +14,7 @@ export const useScreenType = (): ScreenType => {
 
       if (width < 768 && isCoarsePointer) {
         setScreenType(ScreenTypeMap.MOBILE);
-      } else if (width < 1024 && isCoarsePointer) {
+      } else if (width < 1200 && isCoarsePointer) {
         setScreenType(ScreenTypeMap.TABLET);
       } else {
         setScreenType(ScreenTypeMap.DESKTOP);
