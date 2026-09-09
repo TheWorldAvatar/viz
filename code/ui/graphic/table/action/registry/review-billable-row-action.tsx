@@ -18,6 +18,7 @@ import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import RowActionButton from "../row-action-button";
+import { BanknoteCheck } from "lucide-react";
 
 
 interface ReviewBillableRowActionProps {
@@ -92,7 +93,7 @@ export default function ReviewBillableRowAction(
   };
 
   return <RowActionButton
-    icon="price_check"
+    icon={BanknoteCheck}
     label={dict.action.reviewBillable}
     disabled={isLoading || isSyncing || liveAccount?.options?.[0]?.disabled}
     onClick={onReviewBillable}

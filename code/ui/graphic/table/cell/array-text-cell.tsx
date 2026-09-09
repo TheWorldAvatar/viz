@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "@/ui/interaction/button";
 import { parseWordsForLabels } from "@/utils/client-utils";
 import ExpandableTextCell from "./expandable-text-cell";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ArrayTextCellProps {
     fields: Record<string, string>[];
@@ -26,9 +27,8 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
         {props.fields.length > 1 && <div className="flex shrink-0 items-center gap-1">
             <Button
                 variant="info"
-                leftIcon="keyboard_arrow_left"
+                leftIcon={ChevronLeft}
                 size="icon-sm"
-                iconSize="small"
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -39,9 +39,8 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
             />
             <Button
                 variant="info"
-                leftIcon="keyboard_arrow_right"
+                leftIcon={ChevronRight}
                 size="icon-sm"
-                iconSize="small"
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();

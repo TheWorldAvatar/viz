@@ -15,6 +15,7 @@ import ErrorComponent from "@/ui/text/error/error";
 import { parseWordsForLabels } from "@/utils/client-utils";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
+import { MapPin } from "lucide-react";
 
 interface FormGeocoderProps {
   field: PropertyShape;
@@ -132,9 +133,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             {(formType == "add" || formType == "edit") && (
               <div className="shrink-0">
                 <Button
-                  leftIcon="place"
+                  leftIcon={MapPin}
                   size="icon"
                   tooltipText={dict.action.selectLocation}
+                  aria-label={dict.action.selectLocation}
                   disabled={!watchedPostalCode || watchedPostalCode.trim() === ""}
                   onClick={() => {
                     // Trim the postal code to prevent submitting with whitespace,

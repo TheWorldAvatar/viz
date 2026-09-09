@@ -1,10 +1,10 @@
-import { Icon } from "@mui/material";
 import useFormSession from "@/hooks/form/useFormSession";
 import { FieldError } from "react-hook-form";
 import { FormTypeMap, OntologyConcept, PropertyShape, VALUE_KEY } from "@/types/form";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import FormErrorComponent from "@/ui/text/error/form-error";
 import { parseWordsForLabels } from "@/utils/client-utils";
+import { Info } from "lucide-react";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -53,7 +53,7 @@ export default function FormInputContainer(
             {parseWordsForLabels(label)}
             {props.error && "*"}
             <Tooltip text={description} placement="right">
-              <Icon className="material-symbols-outlined">{"info"}</Icon>
+              <Info className="size-5.5" aria-hidden />
             </Tooltip>
           </span>
           {props.formatLabel && (

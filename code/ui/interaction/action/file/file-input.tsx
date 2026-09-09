@@ -1,9 +1,9 @@
 "use client";
 
-import { Icon } from "@mui/material";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { Dictionary } from "@/types/dictionary";
+import { Paperclip } from "lucide-react";
 
 interface FileInputButtonProps {
   form: UseFormReturn<FieldValues>;
@@ -29,9 +29,7 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
         htmlFor="file-upload"
         className={`cursor-pointer flex items-center w-full max-w-md py-2 px-4 rounded-lg bg-info-background hover:bg-info-background-hover border border-info-border shadow-xs`}
       >
-        <Icon className="material-symbols-outlined text-info-foreground">
-          attach_file
-        </Icon>
+        <Paperclip className="size-5 text-info-foreground" aria-hidden />
         <p className="ml-2 text-info-foreground text-base truncate">
           {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
         </p>

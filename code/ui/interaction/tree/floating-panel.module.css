@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   pointer-events: all;
-  z-index: 99;
+  z-index: 1;
 }
 
 @media (max-width: 430px) {
@@ -70,10 +70,6 @@
 .expandButton:hover {
   background-color: var(--background-secondary);
   box-shadow: 1px rgba(0, 0, 0, 0.35);
-}
-
-.headButton span {
-  font-size: var(--icon-size);
 }
 
 .headButton.active {

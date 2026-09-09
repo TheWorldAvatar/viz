@@ -19,5 +19,4 @@ export const Assets: {
   SCHEDULE: "/images/defaults/icons/schedule.svg",
   SUBQUERY: "/images/defaults/icons/sparkle.svg",
   TWA: "/images/defaults/icons/twa.svg",
-  UTILS: "/images/utils/trex.wav",
 };

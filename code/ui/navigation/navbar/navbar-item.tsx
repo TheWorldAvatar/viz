@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
+import type { LucideIcon } from "lucide-react";
 
-import { Icon } from "@mui/material";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
+import IconComponent from "@/ui/graphic/icon/icon";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { interpolate } from "@/utils/client-utils";
 
@@ -12,7 +13,7 @@ export type NavBarItemType = "default" | "file" | "date";
 
 export interface NavBarItemProps {
   title: string;
-  icon: string;
+  icon: LucideIcon | string;
   isMobile: boolean;
   url: string;
   tooltip?: string;
@@ -27,7 +28,7 @@ export interface NavBarItemProps {
  * A nav bar item with an icon, title, and caption that may redirect to a URL by default.
  *
  * @param {string} title Title.
- * @param {string} icon Icon to display.
+ * @param {LucideIcon | string} icon Icon to display: a lucide component or a string.
  * @param {boolean} isMobile Indicates if the design should be in mobile mode.
  * @param {string} url Redirects to this url when clicked.
  * @param {string} tooltip Overrides the existing tooltip text to this url when clicked.
@@ -70,15 +71,10 @@ export function NavBarItem(
         onClick={props.handleClick ?? handleClick}
       >
         <div className={"flex items-center justify-center"}>
-          <Icon
-            sx={{
-              color: "#16687B",
-            }}
-            fontSize={props.isMobile ? "medium" : "large"}
-            className="material-symbols-outlined"
-          >
-            {props.icon}
-          </Icon>
+          <IconComponent
+            icon={props.icon}
+            classes={`text-[#16687B] ${props.isMobile ? "size-5.5" : "size-8"}`}
+          />
         </div>
         <div className="flex flex-1 flex-col">
           <h3

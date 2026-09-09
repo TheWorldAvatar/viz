@@ -7,7 +7,7 @@ import {
   SparqlResponseField
 } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
-import { ComparisonOperatorMap } from "@/types/table";
+import { ColFilterValues, ComparisonOperatorMap } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
@@ -36,23 +36,19 @@ export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string, titleDict: Record<string, string>): string {
-  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
+  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as ColFilterValues)?.values?.length > 0);
   return remainingFilters.length === 0 ? "" : filters.map(filter => {
-    if (filter.value === undefined || (filter.value as string[]).length === 0) {
+    if (filter.value === undefined || (filter.value as ColFilterValues).values?.length === 0) {
       return "";
     }
-    // For date filters
-    if (typeof filter.value == "string") {
-      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
-    }
-    const currentFilterValues: string[] = filter.value as string[];
+    const currentFilterValues: ColFilterValues = filter.value as ColFilterValues;
     let filterParams: string[];
-    if (currentFilterValues.includes(translatedBlankText)) {
-      filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
+    if (currentFilterValues.values.includes(translatedBlankText)) {
+      filterParams = [...currentFilterValues.values.filter(val => val != translatedBlankText), "null"];
     } else {
-      filterParams = currentFilterValues;
+      filterParams = currentFilterValues.values;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
+    return `%7E${currentFilterValues.isIncluded ? "" : "-"}${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
 }
 

@@ -42,6 +42,12 @@ console.info('keycloak authorisation required: ', keycloakEnabled ? colourYellow
 // Determine the deployment mode based on NODE_ENV; default to 'development' mode if not specified
 const dev = process.env.NODE_ENV !== "production";
 
+// Dev only: Generate the lucide icon registry from public/config 
+// The script exits non-zero on an unknown icon name, which stops the dev server rather than booting with missing icons.
+if (dev) {
+    await import("./scripts/generate-icon-registry.mjs");
+}
+
 // Initialise the Next.js application
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
@@ -93,6 +99,26 @@ nextApp.prepare().then(async () => {
 
         const keycloak = new Keycloak({ store: store });
         expressServer.use(keycloak.middleware());
+
+        expressServer.post('/api/upload', keycloak.protect(), async (req, res, next) => {
+            try {
+                const refreshGrant = {
+                    ...req.kauth.grant,
+                    isExpired: () => true,
+                };
+
+                const refreshedGrant = await keycloak.grantManager.ensureFreshness(refreshGrant);
+                keycloak.storeGrant(refreshedGrant, req, res);
+                req.kauth.grant = refreshedGrant;
+                return next();
+            } catch (error) {
+                console.error('Error refreshing authentication token for file upload:', error);
+                return res.status(401).json({
+                    apiVersion: '1.0.0',
+                    error: { code: 401, message: 'Unable to refresh authentication token' },
+                });
+            }
+        });
 
         expressServer.get('/api/userinfo', keycloak.protect(), (req, res) => {
             // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles

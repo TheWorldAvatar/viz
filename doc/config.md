@@ -54,7 +54,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, `registry`, and `billing` accordingly.
   - `title`: REQUIRED. Thumbnail title on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
-  - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Optional for only internal links, which defaults to the default if not set.
+  - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon id from the [lucide](https://lucide.dev/icons) icon set, in kebab-case (for example `map-pin` or `trash-2`). Optional for only internal links, which defaults to the default if not set.
   - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
 - `resources`: optional configuration for additional resources. They follow the following format
@@ -62,6 +62,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
     - `url`: optional that is only used with scenario and dashboard resources
     - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
     - `paths`: optional array of configuration options for the registry resources
+    - `exports`: optional array of export options for the registry and billing resources
 
 Note that resources are optional and their configuration options can differ from each other. Please note the list of available resources and their possible options as follows:
 
@@ -72,17 +73,35 @@ Note that resources are optional and their configuration options can differ from
 - Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
   - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
+  - `exports`: OPTIONAL: An array of the export options available from the file export agent. See [Export options](#export-options).
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `caption`: Optional language dictionary to display a message on the table for the general registries. Only `en` and `de` are permitted at this moment.
-    - `icon`: Optional parameter to display an icon from the icon library.
+    - `icon`: Optional parameter to display an icon. Use a [lucide](https://lucide.dev/icons) icon id in kebab-case, for example `clipboard-list`.
     - `permission`: Optional parameter to set the permission required in order to view the registry page on the nav bar IF authentication is enabled.
     - `add`: Optional entity type that can be added directly from each row of this registry. When set, every row gains an `Add <entity>` action that opens the add form for that entity. The value must be an entity type that is mapped to the backend, and is also used for the action's label. Omit this parameter to hide the action.
 - Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
     - `type`: Must be either `account`, `pricing`, or `activity`
     - `key`: The entity type of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
-    - `icon`: Optional parameter to display an icon from the icon library.
+    - `icon`: Optional parameter to display an icon. Use a [lucide](https://lucide.dev/icons) icon id in kebab-case, for example `clipboard-list`.
+  - `exports`: OPTIONAL: An array of the export reports available from the file exporter agent. See [Export options](#export-options).
+
+#### Export options
+
+The `exports` array defines the download options available in registry or billing tables. Each entry represents an export option and renders a download button in the row action menu, or in the bulk action menu when multiple rows are selected. Export options are only displayed for tables that match the configured `stage` or `recordType`.
+
+Note that each `resource` must correspond to a route configured in the export agent, which is targeted through the `FILE_EXPORTER_URL` environment variable. A report declared here but missing from that agent will fail when downloaded.
+
+Each entry must be configured as a JSON object format:
+
+- `resource`: REQUIRED. The export route of the export agent, which is requested at `/export/{resource}`.
+- `format`: REQUIRED. The export format. Must be either `csv` or `pdf`.
+- `caption`: REQUIRED. The label displayed on the download button.
+- `permission`: REQUIRED. The permission required in order to view this button IF authentication is enabled.
+- `isBulk`: OPTIONAL. Set to `true` if the export route accepts more than one record. Defaults to `false`, which hides the button from the bulk action menu.
+- `stage`: OPTIONAL. An array of the lifecycle stages where the export action is available. Please note that if omitted, the option will not show up on any lifecycle stages.
+- `recordType`: OPTIONAL. An array of the record types where the export action is available. Please note that if omitted, the option will not show up on any general registry table.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
@@ -122,7 +141,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "settings": "table-column-settings.json", // Optional table column settings file in /config
       "paths": [{
           "type": "resource_one", // resource name from backend
-          "icon": "people",
+          "icon": "map-pin",
           "caption": { // A caption dictionary to display table message
             "en": "Example", // Only shows up on german site
             "de": "Beispiel" // Only shows up on german site
@@ -131,6 +150,20 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
           "add": "type" // Optional; adds a row action to create this entity
         },{
           "type": "resource_two" // resource name from backend     
+        }],
+      "exports": [{
+          "resource": "invoice", // The resource being exported
+          "format": "csv", // Export format 
+          "caption": "Export", // Button label
+          "permission": "export", // only for users with export permissions
+          "isBulk": true, // Optional: the route accepts more than one record
+          "stage": ["closed"] // Optional: only shown on the closed task table
+        },{
+          "resource": "resource_one",
+          "format": "csv",
+          "caption": "Export",
+          "permission": "export",
+          "recordType": ["service_site"] // Optional: the type of the record   
         }]
     },
     "scenario": {
@@ -168,7 +201,7 @@ Icons on the map are shown by default in the layer tree. Additional legend items
 ```json
 {
   "legend": {
-    // Group one for icons - Only PNG, JPG, SVG, and Google Materials icon are available
+    // Group one for icons - Only PNG, JPG, SVG, and lucide icon ids are available
     "Status Indicators": {
       // Group one, item one
       "Active": {
@@ -183,7 +216,7 @@ Icons on the map are shown by default in the layer tree. Additional legend items
       // Group one, item three
       "Unknown": {
         "type": "symbol",
-        "icon": "question_mark"
+        "icon": "circle-question-mark"
       }
     },
     // Group two for fills
@@ -300,7 +333,7 @@ The `data.json` requires at least one defined data group. Each data group contai
 - `expanded` (optional): A boolean indicating if the starting state of the data group should be expanded. False to collapse the group.
 - `tree-icon` (optional): An image that will be displayed on the layer tree.
 - `stack` (optional): This is the URL for the stack containing metadata on this group's data. Note that this should be the base URL of the stack (i.e. without "/geoserver"). If missing, dynamic metadata from a remote FeatureInfoAgent cannot be utilised. This parameter can also be set with different values for different subgroups.
-- `search` (optional): This is the target resource identifier that will activate the search feature capability to find the requested feature(s). The search feature will depend on the [VisBackendAgent](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Agents/VisBackendAgent) running on the same stack, which must be deployed. Please define filters at the layers if only a subset of features should be visible by default.
+- `search` (optional): Enables search for the group's layers. Set it to a string resource identifier to use API search, or to an object of feature-property names and allowed values to use local search. See [Configuring search](#dataset-configuring-search) below.
 - `sources` (optional): This is an array of objects defining data sources (see below for info on sources).
 - `layers` (optional): This is an array of objects defining data layers (see below for info on layers).
 - `groups` (optional): This is an array of its data subgroups, which follows the same structure and is used to build the data hierarchy.
@@ -333,6 +366,48 @@ Definitions of data sources and layers is optional within a data group so that g
     ]
 }
 ```
+
+##### Dataset: Configuring search
+
+A data group supports two search modes, selected by the type of its `search` value.
+
+**API search**
+
+Set `search` to the target resource identifier used by the search form:
+
+```json
+{
+  "name": "Buildings",
+  "search": "building",
+  "stack": "https://my-example-website.com/stack"
+}
+```
+
+API search requires the [VisBackendAgent](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Agents/VisBackendAgent) to be deployed on the stack.
+
+**Local search**
+
+Set `search` to an object in which each key is a feature property and each value is the list of permitted choices. Choices may be strings or numbers:
+
+```json
+{
+  "name": "Colleges",
+  "search": {
+    "name": ["Clare", "Christ's", "Churchill"],
+    "founded": [1326, 1505, 1960]
+  },
+  "sources": [
+    ...
+  ],
+  "layers": [
+    ...
+  ]
+}
+```
+
+The local search modal creates one dropdown per property. When the user searches, the visualisation applies exact-match filters for all selected properties to every layer in the group; a feature must match every selection to remain visible.
+
+Local search replaces any existing Mapbox filter on the affected layers. Avoid combining it with predefined layer filters unless replacing those filters is intended.
 
 ##### Dataset: Defining a source
 
@@ -382,12 +457,17 @@ As with sources, definitions of layers vary depending on the chosen mapping prov
 - `clickable` (optional): Enables the layer to be clickable. Set to true by default.
 - `hovering` (optional): Creates a highlight effect when hovering over the layer's features. This parameter is an array of two numbers indicating the opacity for the highlighted and non-highlighted states respectively.
 - `isLive` (optional): If set to true, layer will regularly update and repaint. Useful for live data
+- `highlight` (optional): This is to highlight a feature when clicked, a compulsory property is `highlightFeatureId`, this is the column containing the unique ID of the feature in the layer. When activated, a layer hidden from the user is created with the properties specified in `highlight` (excluding `highlightFeatureId`). Please see example below, where the paint properties of the highlight layer is specified.
 
 ```json
 {
   "id": "example-mapbox-layer",
   "name": "My Example Data",
-  "source": "example-mapbox-source"
+  "source": "example-mapbox-source",
+  "highlight": {
+    "highlightFeatureId": "ogc_fid",
+    "paint": {"circle-color": "red"}
+  }
 }
 ```
 
@@ -478,7 +558,7 @@ The following fields are supported, and must be added to the top of the file bef
 - `title`: Displays the title on the browser tab. Required
 - `slug`: Identifier for the page route. Required
 - `description`: Describes the page in the landing page. Required only for non-landing pages
-- `thumbnail`: Displays the associated thumbnail image in the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Required only for non-landing pages
+- `thumbnail`: Displays the associated thumbnail image in the navigation bar. This uses an icon id from the [lucide](https://lucide.dev/icons) icon set, in kebab-case (for example `users` or `cpu`). Required only for non-landing pages
 
 ### 3.2 Sample
 

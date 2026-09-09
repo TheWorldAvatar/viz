@@ -1,6 +1,5 @@
 "use client"
 
-import { Divider } from '@mui/material';
 import { Map } from 'mapbox-gl';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,6 +28,7 @@ import { scenarioTypeIcon } from '../modal/scenario';
 import RibbonComponentClick from './components/ribbon-component-click';
 import RibbonComponentOptions from './components/ribbon-component-options';
 import RibbonComponentToggle from './components/ribbon-component-toggle';
+import { Image as ImageIcon, LocateFixed, Maximize2, Palette, Shapes } from "lucide-react";
 
 // Type definition for Ribbon parameters
 export interface RibbonProps {
@@ -80,7 +80,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
       <div className={styles.ribbon}>
         <RibbonComponentClick
           key="location" id="location"
-          icon="my_location"
+          icon={LocateFixed}
           tooltip={dict.map.tooltip.location}
           action={() => {
             locateUser(props.map);
@@ -88,7 +88,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         />
         <RibbonComponentOptions
           key="map-style" id="map-style"
-          icon="palette"
+          icon={Palette}
           tooltip={dict.map.tooltip.mapStyle}
           options={imageryNames}
           initialOption={currentImagery?.name}
@@ -99,7 +99,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         />
         <RibbonComponentOptions
           key="reset" id="reset"
-          icon="reset_focus"
+          icon={LocateFixed}
           tooltip={dict.map.tooltip.resetCamera}
           options={cameraNames}
           initialOption={cameraDefault}
@@ -109,7 +109,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         />
         <RibbonComponentToggle
           key="placenames" id="placenames"
-          icon="glyphs"
+          icon={Shapes}
           tooltip={dict.map.tooltip.placenames}
           initialState={props.mapSettings.hideLabels}
           action={() => {
@@ -118,7 +118,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         />
         <RibbonComponentToggle
           key="terrain" id="terrain"
-          icon="landscape_2"
+          icon={ImageIcon}
           tooltip={dict.map.tooltip.terrain}
           initialState={false}
           action={state => {
@@ -127,7 +127,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         />
         <RibbonComponentToggle
           key="fullscreen" id="fullscreen"
-          icon="open_in_full"
+          icon={Maximize2}
           tooltip={dict.map.tooltip.fullscreen}
           initialState={false}
           action={state => {
@@ -138,7 +138,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
             }
           }}
         />
-        <Divider orientation="vertical" flexItem />
+        <hr className="self-stretch h-auto border-r border-border" />
         {currentScenarioName &&
           <RibbonComponentToggle
             key="scenario" id="scenario"

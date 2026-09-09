@@ -2,7 +2,8 @@ import styles from './info-tree.module.css';
 
 import React from 'react';
 
-import { MaterialIconButtonWithIndex } from '@/ui/graphic/icon/icon-button';
+import { IconButtonWithIndex } from '@/ui/graphic/icon/icon-button';
+import { ChartLine, List, type LucideIcon } from "lucide-react";
 
 interface InfoTabsProps {
   tabs: {
@@ -16,7 +17,7 @@ interface InfoTabsProps {
 }
 
 interface InfoTabProps {
-  iconName: string;
+  icon: LucideIcon;
   activeTab: {
     index: number; // the index assigned to this tab
     state: number; // the current state of index
@@ -37,7 +38,7 @@ export default function InfoTabs(props: Readonly<InfoTabsProps>) {
     <div className={styles["tab-container"]}>
       {props.tabs?.hasAttributes && (
         <InfoTab
-          iconName="listAlt"
+          icon={List}
           activeTab={{
             index: 0,
             state: props.activeTab.index,
@@ -47,7 +48,7 @@ export default function InfoTabs(props: Readonly<InfoTabsProps>) {
       )}
       {props.tabs?.hasTimeSeries && (
         <InfoTab
-          iconName="timeline"
+          icon={ChartLine}
           activeTab={{
             index: 1,
             state: props.activeTab.index,
@@ -62,16 +63,16 @@ export default function InfoTabs(props: Readonly<InfoTabsProps>) {
 /**
  * This component renders a tab for the parent component.
  * 
- * @param {string} iconName The Material UI icon name.
+ * @param {LucideIcon} icon The lucide icon component to render.
  * @param {number} activeTab.index The index of this tab that will stay static.
  * @param {number} activeTab.state The React state storing the current active index.
  * @param {React.Dispatch<React.SetStateAction<number>>} activeTab.setActiveTab A React function to set the current active index.
  */
 function InfoTab(props: Readonly<InfoTabProps>) {
   return (
-    <MaterialIconButtonWithIndex
+    <IconButtonWithIndex
       index={props.activeTab.index}
-      iconName={props.iconName}
+      icon={props.icon}
       iconStyles={[styles["tab-icon"]]}
       onButtonClick={props.activeTab.setActiveTab}
       className={

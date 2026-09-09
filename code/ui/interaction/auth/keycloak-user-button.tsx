@@ -3,21 +3,26 @@
 import Link from "next/link";
 import PopoverActionButton from "../action/popover/popover-button";
 import { useSession } from "@/hooks/auth/useSession";
+import { User } from "lucide-react";
+import { Dictionary } from "@/types/dictionary";
+import { useDictionary } from "@/hooks/useDictionary";
 
 /**
  * This component renders a widget that displays the user and a log out button.
  *
  */
 export default function KeycloakUserButton() {
+  const dict: Dictionary = useDictionary();
   const { userDisplayName } = useSession();
 
   return (
     <PopoverActionButton
-      leftIcon="person"
+      leftIcon={User}
       size="icon"
       variant="primary"
       placement="bottom"
       className="size-11 md:size-12 rounded-full!"
+      aria-label={dict.title.user}
     >
       <div className="flex flex-col justify-center items-center p-1">
         <div className="p-2">

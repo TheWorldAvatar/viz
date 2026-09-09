@@ -12,6 +12,7 @@ import { useDialog } from "@/hooks/float/useDialog";
 import Button from "../button";
 import { Dictionary } from "@/types/dictionary";
 import { useDictionary } from "@/hooks/useDictionary";
+import { X } from "lucide-react";
 
 interface DrawerProps {
   isExternalOpen?: boolean;
@@ -61,14 +62,11 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     <>
       {dialog.open && (
         <FloatingPortal>
-          <FloatingOverlay className="z-[999] pointer-events-none">
+          <FloatingOverlay className="z-overlay pointer-events-none">
             <FloatingFocusManager context={dialog.context}>
               <div
                 ref={dialog.refs.setFloating}
-                style={{
-                  ...dialog.floatingStyles,
-                  zIndex: 999998,
-                }}
+                style={dialog.floatingStyles}
                 className="fixed right-0 top-0 bottom-0 flex items-end md:items-center md:justify-end pointer-events-none"
                 {...dialog.getFloatingProps()}
               >
@@ -87,13 +85,14 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                 >
                   <div className="absolute top-2 right-4">
                     <Button
-                      leftIcon="close"
+                      leftIcon={X}
                       size="icon"
                       variant="ghost"
                       type="button"
-                      className="!rounded-full"
+                      className="rounded-full!"
                       tooltipText={dict.action.close}
                       tooltipPosition="left"
+                      aria-label={dict.action.close}
                       onClick={() => dialog.setIsOpen(false)}
                     />
                   </div>

@@ -42,6 +42,10 @@ jobs:
         run: pnpm install
         working-directory: code
 
+      - name: Generate icon registry
+        run: node scripts/generate-icon-registry.mjs
+        working-directory: code
+
       - name: Check Types
         run: pnpm tsc
         working-directory: code

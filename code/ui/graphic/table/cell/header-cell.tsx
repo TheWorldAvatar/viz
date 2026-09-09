@@ -1,12 +1,11 @@
 import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
-import { Icon } from "@mui/material";
 import { ColumnFilter, flexRender, Header, Table } from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 
 import { LifecycleStage } from "@/types/form";
-import { TableCellTagMap } from "@/types/table";
+import { ColFilterValues, TableCellTagMap } from "@/types/table";
 import RegistryFilter from "@/ui/container/registry-filter";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
@@ -15,6 +14,7 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
+import { ArrowDown, ArrowUp, ListFilter } from "lucide-react";
 
 interface HeaderCellProps {
   type: string;
@@ -46,7 +46,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const { tableScrollDescriptor, tableDescriptor } = useTableSession();
   const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
-    (props.header.column.getFilterValue() as string[])?.length > 0;
+    (props.header.column.getFilterValue() as ColFilterValues)?.values?.length > 0;
 
   return (
     <TableCell
@@ -75,19 +75,17 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 )}
                 {!props.disableSort && ({
                   asc: (
-                    <Icon className="material-symbols-outlined">arrow_upward</Icon>
+                    <ArrowUp className="size-5" aria-hidden />
                   ),
                   desc: (
-                    <Icon className="material-symbols-outlined">
-                      arrow_downward
-                    </Icon>
+                    <ArrowDown className="size-5" aria-hidden />
                   ),
                 }[props.header.column.getIsSorted() as string] ?? null)}
               </div>
             </Tooltip>
             {!props.disableFilter && <PopoverActionButton
               placement="bottom-start"
-              leftIcon="filter_list"
+              leftIcon={ListFilter}
               variant={isActiveFilter ? "secondary" : "ghost"}
               tooltipText={dict.action.filter}
               tooltipPosition="top-start"
@@ -109,8 +107,11 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 lifecycleStage={props.lifecycleStage}
                 selectedDate={props.selectedDate}
                 filters={props.filters}
-                onSubmission={(selectedOptions: string[]) => {
-                  props.header.column.setFilterValue(selectedOptions);
+                onSubmission={(selectedOptions: string[], isIncluded: boolean = true) => {
+                  props.header.column.setFilterValue({
+                    isIncluded,
+                    values: selectedOptions,
+                  });
                   tableDescriptor.resetRowSelection();
                   props.table.resetPageIndex();
                   tableScrollDescriptor.scrollToTop();

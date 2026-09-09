@@ -13,6 +13,7 @@ import { useIsSyncing, useLiveAccountFilter } from "@/utils/db/dexie-form-reposi
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import RowActionButton from "../row-action-button";
+import { Plus } from "lucide-react";
 
 
 interface AddEntityRowActionProps {
@@ -61,7 +62,7 @@ export default function AddEntityRowAction(
 
 
   return <RowActionButton
-    icon="add"
+    icon={Plus}
     disabled={isLoading || isSyncing || liveAccount?.options?.[0]?.disabled}
     onClick={onAddItem}
   >

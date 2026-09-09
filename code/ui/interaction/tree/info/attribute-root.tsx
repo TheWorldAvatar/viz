@@ -9,6 +9,7 @@ import HeaderField from '@/ui/text/header';
 import { Assets } from '@/io/config/assets';
 import { setHasExistingData } from '@/state/floating-panel-slice';
 import { setIri, setStack } from '@/state/map-feature-slice';
+import { ChevronDown, ChevronRight, type LucideIcon } from "lucide-react";
 
 // type definition for incoming properties
 interface AttributeRootProps {
@@ -72,8 +73,8 @@ function AttributeNode(props: Readonly<AttributeNodeProps>) {
   // State for managing collapse and expansion
   const [isCollapsed, setIsCollapsed] = useState<boolean>(group.isCollapsed);
   const [isSubqueryLoading, setIsSubqueryLoading] = useState<boolean>(false);
-  const collapsedIcon: string = isCollapsed ? "keyboard_arrow_right" : "keyboard_arrow_down";
-  const displayIcon: string = group.subQueryIri ? Assets.SUBQUERY : collapsedIcon;
+  const collapsedIcon: LucideIcon = isCollapsed ? ChevronRight : ChevronDown;
+  const displayIcon: LucideIcon | string = group.subQueryIri ? Assets.SUBQUERY : collapsedIcon;
 
   const toggleExpansion = () => {
     if (group.subQueryIri) {

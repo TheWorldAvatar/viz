@@ -1,8 +1,8 @@
 "use client";
 
-import Icon from "@mui/material/Icon";
 import { ContextItemType } from "@/types/settings";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
+import { Square, SquareCheck } from "lucide-react";
 
 export interface ContextItemDefinition {
     name: string,
@@ -27,9 +27,7 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
             >
                 <span className="flex-1 text-sm">{props.name}</span>
                 {props.toggled != null && (
-                    <Icon className="material-symbols-outlined shrink-0">
-                        {props.toggled ? "check_box" : "check_box_outline_blank"}
-                    </Icon>
+                    props.toggled ? <SquareCheck className="size-5.5 shrink-0" aria-hidden /> : <Square className="size-5.5 shrink-0" aria-hidden />
                 )}
             </div>
         </Tooltip>

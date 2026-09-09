@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useLiveTasks } from "../dexie/useLiveTasks";
 import useOperationStatus from "../useOperationStatus";
+import { ColFilterValues } from "@/types/table";
 
 export interface GridDescriptor {
     isInitialLoading: boolean;
@@ -37,7 +38,7 @@ export interface GridDescriptor {
 }
 
 const GRID_LIMIT: number = dexieTaskRepo.getInitialBatchSize();
-const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistryStatusMap.ASSIGNED] }];
+const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: { isIncluded: true, values: [RegistryStatusMap.ASSIGNED] } }];
 
 /**
  * A custom hook to retrieve grid data into functionalities for the registry.
@@ -70,7 +71,10 @@ export function useRegistryGrid(
             const currentFieldIndex: number = prev.findIndex((f) => f.id === field);
             const filter: ColumnFilter = {
                 id: field,
-                value: selectedOptions,
+                value: {
+                    isIncluded: true,
+                    values: selectedOptions
+                },
             };
             let updatedFilters: ColumnFilter[];
             // Append if there is no previous filter for the field
@@ -82,7 +86,7 @@ export function useRegistryGrid(
             }
             // Check for active filters
             const noActiveFilters: boolean = updatedFilters.filter(filter => filter?.id != "status")
-                .every((filter) => (filter?.value as string[])?.length == 0);
+                .every((filter) => (filter?.value as ColFilterValues[])?.values?.length == 0);
             setHasNoActiveFilters(noActiveFilters);
             if (noActiveFilters) {
                 localStorageManager.clear();

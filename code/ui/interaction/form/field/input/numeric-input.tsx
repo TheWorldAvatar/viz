@@ -10,6 +10,7 @@ import {
   getRegisterOptions
 } from "@/ui/interaction/form/form-utils";
 import NumberInput, { getStepsAndScaleFactor, performIncrementDecrement } from "@/ui/interaction/input/number-input";
+import { Minus, Plus } from "lucide-react";
 
 export interface NumericInputFieldProps {
   field: PropertyShape;
@@ -94,18 +95,20 @@ export default function NumericInputField(
       />
       <div className="flex absolute right-1 top-1/2 -translate-y-1/2 gap-px">
         <Button
-          leftIcon="add"
+          leftIcon={Plus}
           size="icon"
           className="rounded-l-lg rounded-r-none"
           tooltipText={dict.action.clickIncrease}
+          aria-label={dict.action.clickIncrease}
           onClick={handleIncrement}
         />
         <Button
-          leftIcon="remove"
+          leftIcon={Minus}
           variant="secondary"
           size="icon"
           className="rounded-l-none rounded-r-lg"
           tooltipText={dict.action.clickDecrease}
+          aria-label={dict.action.clickDecrease}
           onClick={handleDecrement}
         />
       </div>

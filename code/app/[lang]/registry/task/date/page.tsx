@@ -36,6 +36,7 @@ export default function RegistryTaskByDatePage() {
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={LifecycleStageMap.TASKS}
         tableColumnOptions={tableColumnSettings}
+        exports={uiSettings.resources?.registry?.exports ?? []}
       />
     );
   } else {

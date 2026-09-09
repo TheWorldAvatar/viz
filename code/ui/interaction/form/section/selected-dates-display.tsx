@@ -5,6 +5,7 @@ import Button from "@/ui/interaction/button"
 import { useDictionary } from "@/hooks/useDictionary"
 import { Dictionary } from "@/types/dictionary"
 import { formatDateValue } from "@/utils/client-utils"
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 interface SelectedDatesDisplayProps {
     dates: Date[]
@@ -48,10 +49,11 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                         e.preventDefault()
                         setIsExpanded(!isExpanded)
                     }}
-                    leftIcon={isExpanded ? "expand_less" : "expand_more"}
+                    leftIcon={isExpanded ? ChevronUp : ChevronDown}
                     variant="outline"
                     size="icon"
-                    iconSize="small"
+                    tooltipText={isExpanded ? dict.action.showLess : dict.action.showMore}
+                    aria-label={isExpanded ? dict.action.showLess : dict.action.showMore}
                 />
             </div>
 
@@ -70,10 +72,9 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                 </div>
                                 <Button
                                     type="button"
-                                    leftIcon="close"
+                                    leftIcon={X}
                                     variant="destructiveOutline"
-                                    size="icon"
-                                    iconSize="small"
+                                    size="icon-sm"
                                     className="w-8 h-8"
                                     onClick={() => handleRemoveDate(originalIndex)}
                                     disabled={props.disabled || props.dates.length === 1}

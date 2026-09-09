@@ -14,6 +14,7 @@ import {
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { Dictionary } from "@/types/dictionary";
 import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
+import { RegistryExportSettings } from "@/types/settings";
 import Button from "@/ui/interaction/button";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
 import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
@@ -27,6 +28,7 @@ import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { useConnected } from "@/hooks/useConnected";
+import { ArrowUp } from "lucide-react";
 
 interface RegistryTableProps {
   recordType: string;
@@ -39,6 +41,7 @@ interface RegistryTableProps {
   selectedDate?: DateRange;
   tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
+  exports: RegistryExportSettings[];
 }
 
 /**
@@ -54,6 +57,7 @@ interface RegistryTableProps {
  * @param triggerRefresh A function to refresh the table when required.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
+ * @param {RegistryExportSettings[]} exports The export options available for this table.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -104,6 +108,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return (
       <TableSessionContextProvider
         recordType={props.recordType}
+        exports={props.exports}
         lifecycleStage={props.lifecycleStage}
         tableDescriptor={props.tableDescriptor}
         tableScrollDescriptor={props.tableScrollDescriptor}
@@ -127,7 +132,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 aria-label={`${props.recordType} registry table`}
                 className="border-separate border-spacing-0 w-full"
               >
-                <thead className="bg-muted sticky top-0 z-10">
+                <thead className="bg-muted sticky top-0 z-sticky-cell">
                   {props.tableDescriptor.table
                     .getHeaderGroups()
                     .map((headerGroup) => (
@@ -173,11 +178,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </table>
             </DndContext>
           </div>
-          <div className="absolute bottom-16 right-6 z-20">
+          <div className="absolute bottom-16 right-6">
             <Button
               size="icon"
               variant="secondary"
-              leftIcon="arrow_upward"
+              leftIcon={ArrowUp}
               tooltipText={dict.action.backToTop}
               aria-label={dict.action.backToTop}
               onClick={() => scrollToTop(true)}

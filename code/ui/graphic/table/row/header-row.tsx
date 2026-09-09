@@ -14,6 +14,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStageMap, RegistryTaskOption } from "@/types/form";
 import { JsonObject } from "@/types/json";
+import FileDownloadButtons from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
@@ -24,7 +25,9 @@ import { BULK_IDENTIFIER, FLAG_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
-import { EnhancedColumnDef } from "../registry/registry-table-utils";
+import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
+import { RegistryExportSettings } from "@/types/settings";
+import { Check, ChevronDown, ChevronUp, CircleCheckBig, ClipboardPlus } from "lucide-react";
 
 interface HeaderRowProps {
   accountType: string;
@@ -47,11 +50,13 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
-  const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted, onBulkEditSubmit } = useTableSession();
+  const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted, exportOptions, onBulkEditSubmit } = useTableSession();
   const numberOfSelectedRows: number = tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
   );
+
+  const bulkExportOptions: RegistryExportSettings[] = exportOptions.filter((exportOption) => exportOption.isBulk);
 
   const handleBulkAction = async (action: "approve" | "resubmit") => {
     const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
@@ -102,12 +107,12 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   return (
     <tr className="border-b border-border text-left bg-background text-foreground">
       {tableDescriptor.table.getRowModel().rows.length > 0 && (
-        <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
+        <TableCell className="w-1/10 sticky left-0 z-sticky-cell bg-background">
           <div className="flex justify-end items-center rounded-md gap-2">
             {numberOfSelectedRows > 0 && (
               <PopoverActionButton
                 placement="bottom-start"
-                leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
+                leftIcon={isActionMenuOpen ? ChevronUp : ChevronDown}
                 variant="ghost"
                 size="icon"
                 tooltipText={dict.title.bulkActions}
@@ -118,7 +123,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                 <div className="flex flex-col space-y-3">
                   {
                     tableDescriptor.isBulkDispatchEdit && <Button
-                      leftIcon="assignment_add"
+                      leftIcon={ClipboardPlus}
                       label={dict.action.dispatch}
                       variant="ghost"
                       disabled={isLoading}
@@ -133,7 +138,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                   {lifecycleStage === LifecycleStageMap.PENDING && (
                     <>
                       <Button
-                        leftIcon="done_outline"
+                        leftIcon={Check}
                         label={dict.action.approve}
                         variant="ghost"
                         disabled={isLoading}
@@ -141,7 +146,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       />
                       {hasAmendedStatus && (
                         <Button
-                          leftIcon="published_with_changes"
+                          leftIcon={CircleCheckBig}
                           label={dict.action.resubmit}
                           variant="ghost"
                           disabled={isLoading}
@@ -153,7 +158,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                   {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED)
                     && !tableDescriptor.isBulkDispatchEdit && (
                       <Button
-                        leftIcon="assignment_add"
+                        leftIcon={ClipboardPlus}
                         label={dict.action.dispatch}
                         variant="ghost"
                         disabled={isLoading}
@@ -173,6 +178,16 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                         }}
                       />
                     )}
+                  {!tableDescriptor.isBulkDispatchEdit && bulkExportOptions.length > 0 && (
+                    <FileDownloadButtons
+                      targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
+                        getRowRecordId(row.original))}
+                      exportOptions={bulkExportOptions}
+                      variant="ghost"
+                      disabled={isLoading}
+                      onComplete={() => setIsActionMenuOpen(false)}
+                    />
+                  )}
                   {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
                     <DraftTemplateButton
                       rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}

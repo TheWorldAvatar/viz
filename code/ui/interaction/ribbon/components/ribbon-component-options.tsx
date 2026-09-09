@@ -2,15 +2,15 @@
 
 import styles from './ribbon-component.module.css';
 
-import { Icon, Tooltip } from '@mui/material';
+import Tooltip from '@/ui/interaction/tooltip/tooltip';
+import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOption, setOption } from '@/state/ribbon-component-slice';
-import IconComponent from '@/ui/graphic/icon/icon';
 
 interface RibbonComponentOptionsProps {
     id: string,
-    icon: string,
+    icon: LucideIcon,
     text?: string,
     tooltip: string,
     initialOption: string,
@@ -41,7 +41,7 @@ export default function RibbonComponentOptions(props: Readonly<RibbonComponentOp
 
     const closeAction = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
-        if (!target.classList.contains("material-icons")) {
+        if (!target.closest("[data-ribbon-arrow]")) {
             setExpanded(false);
         }
     }
@@ -69,16 +69,11 @@ export default function RibbonComponentOptions(props: Readonly<RibbonComponentOp
 
     return (
         <div className={styles.ribbonComponent}>
-            <Tooltip
-                title={props.tooltip}
-                enterDelay={1000}
-                leaveDelay={100}
-                placement="bottom-start">
-
+            <Tooltip text={props.tooltip} placement="top-start">
                 <div>
                     <div className={innerClass} onClick={props.action}>
                         <div className={styles.ribbonComponentIcon}>
-                            <IconComponent icon={props.icon} />
+                            <props.icon className="size-6" aria-hidden />
                         </div>
                         {props.text &&
                             <div className={styles.ribbonComponentText}>
@@ -86,11 +81,11 @@ export default function RibbonComponentOptions(props: Readonly<RibbonComponentOp
                             </div>}
                     </div>
                     <div className={styles.dropdownArrowIconContainer}>
-                        <Icon
-                            className={`material-symbols-outlined ${styles.ribbonComponentArrow}`}
-                            onClick={toggleAction}>
-                            keyboard_arrow_down
-                        </Icon>
+                        <ChevronDown
+                            data-ribbon-arrow
+                            className={`size-6 ${styles.ribbonComponentArrow}`}
+                            onClick={toggleAction}
+                            aria-hidden />
                     </div>
                 </div>
             </Tooltip>

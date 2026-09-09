@@ -18,12 +18,12 @@ import {
   interpolate,
   parseWordsForLabels
 } from "@/utils/client-utils";
-import { Icon } from "@mui/material";
 import { useEffect } from "react";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
 import DescriptionList from "../text/field/description-list";
 import LoadingSpinner from "../graphic/loader/spinner";
 import { useConnected } from "@/hooks/useConnected";
+import { CalendarDays, Check, ExternalLink } from "lucide-react";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -107,9 +107,7 @@ export default function RegistryGridComponent(
                   </div>
                   <div className="flex justify-between">
                     <p className="flex items-center gap-1 text-foreground">
-                      <Icon fontSize="small" className="material-symbols-outlined">
-                        {"calendar_month"}
-                      </Icon>
+                      <CalendarDays className="size-4.5" aria-hidden />
                       {date}
                     </p>
                     {isConnected && <ViewAttachmentButton
@@ -121,8 +119,7 @@ export default function RegistryGridComponent(
                   key={virtualItem.key + dict.action.complete}
                   variant="ghost"
                   size="md"
-                  iconSize="medium"
-                  leftIcon="done_outline"
+                  leftIcon={Check}
                   label={dict.action.complete}
                   onClick={() => {
                     browserStorageManager.clear();
@@ -139,8 +136,7 @@ export default function RegistryGridComponent(
                   key={virtualItem.key + dict.action.view}
                   variant="ghost"
                   size="md"
-                  iconSize="medium"
-                  leftIcon="open_in_new"
+                  leftIcon={ExternalLink}
                   label={parseWordsForLabels(dict.action.view)}
                 >
                   <section className="h-[75vh] overflow-y-auto">

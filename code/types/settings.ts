@@ -1,6 +1,7 @@
 import { NavBarItemType } from "@/ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 import { LanguageDictionary } from "./dictionary";
+import { LifecycleStage } from "./form";
 
 export const ScreenTypeMap = {
   MOBILE: "mobile",
@@ -33,6 +34,7 @@ export type UISettings = {
       data?: string;
       settings?: string;
       paths?: ResourcesPathSettings[];
+      exports?: RegistryExportSettings[];
     };
   }
 }
@@ -46,6 +48,16 @@ export type TableColumnOption = {
 };
 
 export type TableColumnSettings = Record<string, TableColumnOption[]>;
+
+export interface RegistryExportSettings {
+  resource: string;
+  format: "csv" | "pdf";
+  caption: string;
+  permission: keyof HasPermissions;
+  isBulk?: boolean;
+  stage?: LifecycleStage[];
+  recordType?: string[];
+}
 
 export interface ResourcesPathSettings {
   type: string;

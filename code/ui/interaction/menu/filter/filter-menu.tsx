@@ -13,6 +13,8 @@ import { getInitialDateFromLifecycleStage } from "@/utils/client-utils";
 import { ColumnFilter } from "@tanstack/react-table";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { FunnelX, ListFilter } from "lucide-react";
+import { ColFilterValues } from "@/types/table";
 
 interface FilterMenuProps {
     hasNoActiveFilters: boolean;
@@ -60,7 +62,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         placement="bottom"
         draggable
         bottomSheet
-        leftIcon="filter_list"
+        leftIcon={ListFilter}
         variant={props.hasNoActiveFilters ? "outline" : "secondary"}
         isOpen={isMenuOpen}
         setIsOpen={setIsOpen}
@@ -80,7 +82,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                     const fieldId: string = column.id;
                     const fieldTitle: string = column.header.toString();
                     const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
-                    const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
+                    const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as ColFilterValues).values;
                     return <Accordion
                         key={index}
                         id={fieldId}
@@ -96,6 +98,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                             selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
                             filters={props.filters}
                             disabled={!isConnected}
+                            disableExclusion={true}
                             className="w-full"
                             onSubmission={(selectedOptions: string[]) => {
                                 if (isConnected) {
@@ -111,10 +114,9 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         </section>
         <footer className="shrink-0 -mx-2 border-t border-border pt-2 px-3">
             <Button
-                leftIcon="filter_list_off"
+                leftIcon={FunnelX}
                 label={dict.action.clearAllFilters}
                 aria-label={dict.action.clearAllFilters}
-                iconSize="medium"
                 disabled={props.hasNoActiveFilters || !isConnected}
                 onClick={() => props.resetFilters()}
                 variant="outline"

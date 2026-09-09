@@ -48,17 +48,9 @@
   justify-content: center;
 }
 
-.icon span {
-  font-size: var(--icon-size);
-  color: var(--text-color-primary);
-}
-
 .icon svg {
   padding: 2px;
-}
-
-.icon.small span {
-  font-size: var(--small-icon-size);
+  color: var(--text-color-primary);
 }
 
 .treeIcon {

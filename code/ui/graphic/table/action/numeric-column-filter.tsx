@@ -5,9 +5,9 @@ import Button from "@/ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import NumberInput from "@/ui/interaction/input/number-input";
 import { interpolate } from "@/utils/client-utils";
-import { Icon } from "@mui/material";
 import { useState } from "react";
 import { getInitialFilters } from "../registry/registry-table-utils";
+import { Filter, FunnelX, Search } from "lucide-react";
 
 interface NumericColumnFilterProps {
   label: string;
@@ -117,8 +117,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           />
         </div>
         <Button
-          leftIcon="filter_alt"
-          iconSize="medium"
+          leftIcon={Filter}
           size="icon"
           variant="primary"
           className="p-5"
@@ -132,8 +131,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           aria-label={interpolate(dict.action.filterBy, props.label)}
         />
         <Button
-          leftIcon="filter_list_off"
-          iconSize="medium"
+          leftIcon={FunnelX}
           size="icon"
           variant="secondary"
           className="p-5 border border-border"
@@ -150,7 +148,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <div className="relative">
         <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-          <Icon className="material-symbols-outlined text-lg! leading-none">search</Icon>
+          <Search className="size-4 leading-none" aria-hidden />
         </span>
         <NumberInput
           autoFocus
@@ -167,7 +165,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         <>
           <div className="relative">
             <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-              <Icon className="material-symbols-outlined text-lg! leading-none">search</Icon>
+              <Search className="size-4 leading-none" aria-hidden />
             </span>
             <NumberInput
               autoFocus

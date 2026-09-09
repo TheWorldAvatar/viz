@@ -9,7 +9,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "@/types/form";
 import { JsonObject } from "@/types/json";
-import { FileDownloadButton } from "@/ui/interaction/action/download/file-download";
+import FileDownloadButtons from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
@@ -23,6 +23,7 @@ import AddEntityRowAction from "./registry/add-entity-row-action";
 import ReviewBillableRowAction from "./registry/review-billable-row-action";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
+import { Ban, BanknoteX, Check, CircleDollarSign, CircleX, ClipboardList, Clock, EllipsisVertical, ExternalLink, Flag, Pencil, Trash2, TriangleAlert, Undo2, CircleCheckBig, HandCoins } from "lucide-react";
 
 
 interface RegistryRowActionProps {
@@ -48,7 +49,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
-  const { addEntity } = useTableSession();
+  const { addEntity, exportOptions } = useTableSession();
 
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -194,7 +195,7 @@ export default function RegistryRowAction(
     <div aria-label="Actions">
       <PopoverActionButton
         placement="bottom-start"
-        leftIcon="more_vert"
+        leftIcon={EllipsisVertical}
         variant="ghost"
         tooltipText={dict.title.actions}
         size="icon"
@@ -207,7 +208,7 @@ export default function RegistryRowAction(
           {isSubmissionOrGeneralPage && (
             <>
               <RowActionButton
-                icon="open_in_new"
+                icon={ExternalLink}
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   handleClickRowAction();
@@ -224,7 +225,7 @@ export default function RegistryRowAction(
               }
               {isActionAllowed("TERMINATE_CONTRACT") &&
                 <RowActionButton
-                  icon="block"
+                  icon={Ban}
                   disabled={isLoading}
                   label={dict.action.terminate}
                   onClick={() => {
@@ -234,14 +235,14 @@ export default function RegistryRowAction(
                 />}
               {isActionAllowed("APPROVE_CONTRACT") &&
                 <RowActionButton
-                  icon="done_outline"
+                  icon={Check}
                   disabled={isLoading}
                   label={dict.action.approve}
                   onClick={onApproval}
                 />}
               {isActionAllowed("RESUBMIT") &&
                 <RowActionButton
-                  icon="published_with_changes"
+                  icon={CircleCheckBig}
                   disabled={isLoading}
                   label={dict.action.resubmit}
                   onClick={onResubmissionForApproval}
@@ -249,7 +250,7 @@ export default function RegistryRowAction(
               }
               {isActionAllowed("EDIT") && <RowActionButton
 
-                icon="edit"
+                icon={Pencil}
                 disabled={isLoading}
                 label={dict.action.edit}
                 onClick={() => {
@@ -258,7 +259,7 @@ export default function RegistryRowAction(
                 }}
               />}
               {isActionAllowed("DELETE") && <RowActionButton
-                icon="delete"
+                icon={Trash2}
                 disabled={isLoading}
                 label={dict.action.delete}
                 onClick={() => {
@@ -271,7 +272,7 @@ export default function RegistryRowAction(
           {!isSubmissionOrGeneralPage && (
             <>
               {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <RowActionButton
-                icon="open_in_new"
+                icon={ExternalLink}
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   handleClickRowAction();
@@ -279,7 +280,7 @@ export default function RegistryRowAction(
                 }}
               />}
               {isActionAllowed("COMPLETE_TASK") && <RowActionButton
-                icon="done_outline"
+                icon={Check}
                 disabled={isLoading}
                 label={dict.action.complete}
                 onClick={() => {
@@ -291,7 +292,7 @@ export default function RegistryRowAction(
                 }}
               />}
               {isActionAllowed("ASSIGN_TASK") && <RowActionButton
-                icon="assignment"
+                icon={ClipboardList}
                 label={dict.action.dispatch}
                 onClick={() => {
                   handleClickRowAction();
@@ -301,7 +302,7 @@ export default function RegistryRowAction(
               {isActionAllowed("RESCHEDULE_TASK") &&
                 props.row.scheduleType == "singleService" && (
                   <RowActionButton
-                    icon="schedule"
+                    icon={Clock}
                     disabled={isLoading}
                     label={dict.action.reschedule}
                     onClick={() => {
@@ -312,7 +313,7 @@ export default function RegistryRowAction(
                 )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, true) && (
                 <RowActionButton
-                  icon="cancel"
+                  icon={CircleX}
                   disabled={isLoading}
                   label={dict.action.cancel}
                   onClick={() => {
@@ -323,7 +324,7 @@ export default function RegistryRowAction(
               )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, false) && (
                 <RowActionButton
-                  icon="report"
+                  icon={TriangleAlert}
                   label={dict.action.report}
                   disabled={isLoading}
                   onClick={() => {
@@ -338,7 +339,7 @@ export default function RegistryRowAction(
             id={getId(props.row.id)}
           />}
           {(isActionAllowed("ADJUST_PRICING")) && <RowActionButton
-            icon="price_change"
+            icon={HandCoins}
             label={dict.action.adjustPricing}
             disabled={isLoading}
             onClick={() => {
@@ -355,19 +356,19 @@ export default function RegistryRowAction(
             triggerRefresh={props.triggerRefresh}
           />}
           {(isActionAllowed("VOID_TASK")) && <RowActionButton
-            icon="block"
+            icon={Ban}
             label={dict.action.voidTask}
             disabled={isLoading}
             onClick={onVoidTask}
           />}
           {(isActionAllowed("UNDO_CANCEL_OR_REPORT_TASK") || isActionAllowed("UNVOID_TASK")) && <RowActionButton
-            icon="undo"
+            icon={Undo2}
             label={dict.action.revertStatus}
             disabled={isLoading}
             onClick={onRevertTask}
           />}
           {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
-            icon="money_off"
+            icon={BanknoteX}
             label={dict.action.exemptBillable}
             disabled={isLoading}
             onClick={() => {
@@ -376,7 +377,7 @@ export default function RegistryRowAction(
             }}
           />}
           {isActionAllowed("VIEW_BILLABLES") && <RowActionButton
-            icon="monetization_on"
+            icon={CircleDollarSign}
             label={dict.action.viewServiceCost}
             disabled={isLoading}
             onClick={(e) => {
@@ -386,34 +387,14 @@ export default function RegistryRowAction(
               setIsOpenBillingModal(true);
             }}
           />}
-          {isActionAllowed("VIEW_INVOICE") &&
-            <FileDownloadButton
-              id={recordId}
-              resource={props.recordType}
-              format="csv"
-              leftIcon="download"
-              variant="ghost"
-              size="md"
-              iconSize="medium"
-              className="w-full justify-start"
-              label={dict.action.exportAsCsv}
-              disabled={isLoading}
-              onComplete={() => setIsActionMenuOpen(false)}
-            />}
-          {isActionAllowed("VIEW_INVOICE") &&
-            <FileDownloadButton
-              id={recordId}
-              resource={props.recordType}
-              format="pdf"
-              leftIcon="download"
-              variant="ghost"
-              size="md"
-              iconSize="medium"
-              className="w-full justify-start"
-              label={dict.action.exportAsPdf}
-              disabled={isLoading}
-              onComplete={() => setIsActionMenuOpen(false)}
-            />}
+          {exportOptions.length > 0 && <FileDownloadButtons
+            targetId={recordId}
+            exportOptions={exportOptions}
+            disabled={isLoading}
+            variant="ghost"
+            className="w-full justify-start"
+            onComplete={() => setIsActionMenuOpen(false)}
+          />}
           {isActionAllowed("DRAFT_TEMPLATE") &&
             <DraftTemplateButton
               rowId={[props.row.id]}
@@ -423,7 +404,7 @@ export default function RegistryRowAction(
             />
           }
           {isActionAllowed("ACCOUNT_FLAG") && <RowActionButton
-            icon="flag"
+            icon={Flag}
             label={props.row.flag === "true" ? dict.action.flagResolution : dict.action.flag}
             disabled={isLoading}
             onClick={onUpdateAccountFlag}

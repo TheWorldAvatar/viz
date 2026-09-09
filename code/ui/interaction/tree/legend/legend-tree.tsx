@@ -6,6 +6,7 @@ import { LegendGroup, LegendSettings } from "@/types/settings";
 import DecagonIconComponent from "@/ui/graphic/icon/decagon";
 import IconComponent from "@/ui/graphic/icon/icon";
 import HeaderField from "@/ui/text/header";
+import { ChevronDown, ChevronRight, type LucideIcon } from "lucide-react";
 
 // Incoming parameters for component.
 interface LegendTreeProps {
@@ -34,9 +35,7 @@ export default function LegendTree(props: Readonly<LegendTreeProps>) {
 
 function LegendTreeNode(props: Readonly<LegendTreeNodeProps>) {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const collapsedIcon: string = isCollapsed
-    ? "keyboard_arrow_right"
-    : "keyboard_arrow_down";
+  const collapsedIcon: LucideIcon = isCollapsed ? ChevronRight : ChevronDown;
   const toggleExpansion = () => {
     setIsCollapsed(!isCollapsed);
   };

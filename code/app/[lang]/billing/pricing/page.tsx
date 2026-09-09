@@ -33,6 +33,7 @@ export default function PricingModelsPage() {
       accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
       lifecycleStage={LifecycleStageMap.PRICING}
       tableColumnOptions={tableColumnSettings}
+      exports={uiSettings.resources?.billing?.exports ?? []}
     />
   );
 }

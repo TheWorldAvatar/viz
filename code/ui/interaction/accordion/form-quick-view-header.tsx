@@ -11,6 +11,7 @@ import { FormTypeMap } from "@/types/form";
 import { buildUrl, interpolate } from "@/utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
+import { ListChevronsUpDown, Pencil, Plus, Trash2 } from "lucide-react";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -85,9 +86,8 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     <div className="flex justify-between items-center">
       {props.selectedEntityId && <Button
         type="button"
-        leftIcon="menu_open"
+        leftIcon={ListChevronsUpDown}
         size="sm"
-        iconSize="small"
         variant="outline"
         onClick={toggleContent}
         aria-label={interpolate(dict.title.quickViewFor, props.fieldLabel)}
@@ -100,9 +100,8 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       {formType !== FormTypeMap.VIEW && formType !== FormTypeMap.DELETE && !props.disableActions &&
         <div className="flex gap-2">
           <RedirectButton
-            leftIcon="add"
+            leftIcon={Plus}
             size="icon"
-            iconSize="small"
             tooltipText={dict.action.add}
             aria-label={interpolate(dict.action.addItem, props.fieldLabel)}
             url={genSubEntityUrl("add", props.entityType)}
@@ -111,9 +110,8 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             additionalAction={onSaveSessionWithPropagation}
           />
           {props.selectedEntityId && isPermitted("edit") && <RedirectButton
-            leftIcon="edit"
+            leftIcon={Pencil}
             size="icon"
-            iconSize="small"
             tooltipText={dict.action.edit}
             aria-label={interpolate(dict.action.editItem, props.fieldLabel)}
             url={genSubEntityUrl(
@@ -126,9 +124,8 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             additionalAction={onSaveSessionWithPropagation}
           />}
           {props.selectedEntityId && isPermitted("delete") && <RedirectButton
-            leftIcon="delete"
+            leftIcon={Trash2}
             size="icon"
-            iconSize="small"
             tooltipText={dict.action.delete}
             aria-label={interpolate(dict.action.deleteItem, props.fieldLabel)}
             url={genSubEntityUrl(

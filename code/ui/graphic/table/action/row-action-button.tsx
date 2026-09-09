@@ -1,8 +1,9 @@
 import Button from "@/ui/interaction/button";
+import type { LucideIcon } from "lucide-react";
 import { MouseEventHandler, ReactNode } from "react";
 
 export interface RowActionButtonProps {
-  icon: string;
+  icon: LucideIcon;
   label?: string;
   onClick: MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
@@ -12,7 +13,7 @@ export interface RowActionButtonProps {
 /**
  * A generic row action button template.
  *
- * @param {string} icon Display icon.
+ * @param {LucideIcon} icon Display icon.
  * @param {string} label Optional text content, and only rendered when there are no children.
  * @param onClick Click handler for the button.
  * @param {boolean} disabled Optional disabled state for the button.
@@ -22,7 +23,6 @@ export default function RowActionButton(props: Readonly<RowActionButtonProps>) {
   return <Button
     variant="ghost"
     size="md"
-    iconSize="medium"
     className="w-full justify-start"
     leftIcon={props.icon}
     label={props.label}

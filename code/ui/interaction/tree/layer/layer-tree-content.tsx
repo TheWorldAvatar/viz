@@ -8,14 +8,16 @@ import SVG from "react-inlinesvg";
 
 import { MapLayer, MapLayerGroup } from "@/types/map-layer";
 import IconComponent from "@/ui/graphic/icon/icon";
-import MaterialIconButton from "@/ui/graphic/icon/icon-button";
+import IconButton from "@/ui/graphic/icon/icon-button";
 import SimpleDropdownField from "@/ui/interaction/dropdown/simple-dropdown";
-import SearchModal from "@/ui/interaction/modal/search/search-modal";
+import ApiSearchModal from "@/ui/interaction/modal/search/api-search-modal";
+import LocalSearchModal from "@/ui/interaction/modal/search/local-search-modal";
 import {
   setFilterFeatureIris,
   setFilterLayerIds,
   setFilterTimes,
 } from "@/state/map-feature-slice";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Search } from "lucide-react";
 
 // type definition for incoming properties
 interface LayerTreeHeaderProps {
@@ -31,7 +33,7 @@ interface LayerTreeEntryProps {
   layer: MapLayer;
   depth: number;
   currentGrouping: string;
-  handleLayerVisibility: (_layerIds: string, _isVisible: boolean) => void;
+  handleLayerVisibility: (_layer: MapLayer, _isVisible: boolean) => void;
 }
 
 /**
@@ -92,7 +94,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
           : layer.grouping === currentGroupingView
             ? isExpanded
             : true;
-      toggleMapLayerVisibility(layer.ids, visibleState);
+      toggleMapLayerVisibility(layer, visibleState);
     });
   };
 
@@ -122,13 +124,19 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
    * Currently visible layers will become hidden.
    * Currently hidden layers will become shown.
    */
-  const toggleMapLayerVisibility = (layerIds: string, isVisible: boolean) => {
+  const toggleMapLayerVisibility = (layer: MapLayer, isVisible: boolean) => {
     // Split layer IDs in case there are multiple
-    layerIds.split(" ").forEach((id) => {
+    layer.ids.forEach((id) => {
       if (isVisible) {
         props.map?.setLayoutProperty(id, "visibility", "none");
       } else {
         props.map?.setLayoutProperty(id, "visibility", "visible");
+      }
+    });
+
+    layer.highlightLayerIds.forEach((id) => {
+      if (isVisible) {
+        props.map?.setLayoutProperty(id, "visibility", "none");
       }
     });
   };
@@ -141,7 +149,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
       // This state should be the inverse of the toggled state
       // If we want to switch off the layer, it should start as true
       const visibleState: boolean = layer.grouping !== currentView;
-      toggleMapLayerVisibility(layer.ids, visibleState);
+      toggleMapLayerVisibility(layer, visibleState);
     });
     // Reorder the groupings so that the selected grouping is always first and this state is saved
     const selectedIndex = groupings.indexOf(currentView);
@@ -164,7 +172,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
   /** A method to open the search modal on click.
    */
   const openSearchModal = () => {
-    const layerIds: string[] = group.layers.map((layer) => layer.ids);
+    const layerIds: string[] = group.layers.map((layer) => layer.ids).flat();
     // Add filter layer IDs
     dispatch(setFilterLayerIds(layerIds));
     // Reset filtered features state when opened
@@ -180,8 +188,8 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         <span style={{ width: spacing }} />
 
         {/* Expand/collapse icon */}
-        <MaterialIconButton
-          iconName={isExpanded ? "keyboard_arrow_down" : "keyboard_arrow_right"}
+        <IconButton
+          icon={isExpanded ? ChevronDown : ChevronRight}
           iconStyles={[iconStyles.hover]}
           onClick={toggleExpansion}
         />
@@ -209,26 +217,35 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
 
         {/* A button to open the search modal when available */}
         {group.search && (
-          <MaterialIconButton
-            iconName={"find_replace"}
+          <IconButton
+            icon={Search}
             iconStyles={[iconStyles.hover]}
             onClick={openSearchModal}
+            className="ml-2"
           />
         )}
-        {group.search && isSearchOpenState && (
-          <SearchModal
-            id={group.search}
-            stack={group.stack}
-            show={isSearchOpenState}
-            setShowState={setIsSearchOpenState}
-          />
-        )}
+        {group.search && isSearchOpenState &&
+          (typeof group.search === "string" ? (
+            <ApiSearchModal
+              search={group.search}
+              show={isSearchOpenState}
+              setShowState={setIsSearchOpenState}
+            />
+          ) : (
+            <LocalSearchModal
+              search={group.search}
+              show={isSearchOpenState}
+              setShowState={setIsSearchOpenState}
+              layers={group.layers}
+              map={props.map}
+            />
+          ))}
       </div>
 
-      {/* Conditionally show subgroups when expanded */}
+      {/* Conditionally show subgroups when expanded, highlight layers are hidden */}
       {isExpanded && (
         <div className={styles.treeEntryContent}>
-          {group.layers.map((layer) => {
+          {group.layers.filter(layer => !layer.isAHighlightLayer).map((layer) => {
             if (
               groupings.length === 0 ||
               layer.grouping === currentGroupingView
@@ -274,7 +291,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
  */
 function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
   const layer: MapLayer = props.layer;
-  const firstLayerId: string = layer.ids.split(" ")[0];
+  const firstLayerId: string = layer.ids[0];
   // Size of left hand indentation
   const spacing: string = props.depth * 0.8 + "rem";
 
@@ -292,7 +309,7 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
    */
   const toggleLayerVisibility = () => {
     // Toggle visibility on the map based on current state
-    props.handleLayerVisibility(layer.ids, isVisible);
+    props.handleLayerVisibility(layer, isVisible);
     // Get current visibility state of the layer after any toggling
     setIsVisible(
       props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible"
@@ -336,8 +353,8 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
         </div>
 
         {/* Toggle visibility state */}
-        <MaterialIconButton
-          iconName={isVisible ? "visibility" : "visibility_off"}
+        <IconButton
+          icon={isVisible ? Eye : EyeOff}
           iconStyles={[iconStyles.hover]}
           onClick={toggleLayerVisibility}
         />

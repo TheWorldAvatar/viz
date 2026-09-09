@@ -8,6 +8,7 @@ import { JsonObject } from "@/types/json";
 import Button from "@/ui/interaction/button";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { toast } from "../toast/toast";
+import { Copy } from "lucide-react";
 
 interface DraftTemplateButtonProps {
     recordType: string;
@@ -60,7 +61,7 @@ export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonP
     return (
         <div className="flex gap-1 items-center">
             <Button
-                leftIcon="content_copy"
+                leftIcon={Copy}
                 label={dict.action.draftTemplate + " x "}
                 variant="ghost"
                 disabled={isLoading}

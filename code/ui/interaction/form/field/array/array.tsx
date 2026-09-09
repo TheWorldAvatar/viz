@@ -11,6 +11,7 @@ import { genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
 import useRefresh from "@/hooks/useRefresh";
 import { interpolate } from "@/utils/client-utils";
+import { Minus, Plus } from "lucide-react";
 
 export interface FormArrayProps {
   fieldId: string;
@@ -65,7 +66,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             {(Number.isNaN(props.maxSize) || fields.length < props.maxSize) && (
               <Button
                 size="icon"
-                leftIcon="add"
+                leftIcon={Plus}
+                tooltipText={interpolate(dict.action.addItem, props.fieldId)}
                 aria-label={interpolate(dict.action.addItem, props.fieldId)}
                 disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,10 +78,11 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             )}
             {fields.length > minArraySize && (
               <Button
-                leftIcon="remove"
+                leftIcon={Minus}
                 aria-label={interpolate(dict.action.removeItem, props.fieldId)}
+                tooltipText={interpolate(dict.action.removeItem, props.fieldId)}
                 size="icon"
-                variant="destructive"
+                variant="secondary"
                 disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();

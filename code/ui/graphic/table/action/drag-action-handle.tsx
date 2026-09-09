@@ -3,6 +3,7 @@ import Button from "@/ui/interaction/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
+import { GripVertical } from "lucide-react";
 
 interface DragActionHandleProps {
   id: string;
@@ -23,7 +24,7 @@ export default function DragActionHandle(
 
   return (
     <Button
-      leftIcon="drag_indicator"
+      leftIcon={GripVertical}
       size="icon"
       variant="ghost"
       disabled={props.disabled}

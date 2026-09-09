@@ -6,6 +6,7 @@ import PopoverActionButton from "@/ui/interaction/action/popover/popover-button"
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { YEARS_PER_PAGE } from "@/utils/constants";
 import Button from "../../button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 // Custom dropdown component for selecting years in react-day-picker
 // This component implements pagination to show a range of years, with buttons to navigate to the next/previous range.
@@ -31,9 +32,8 @@ export default function CustomYearsDropdown(props: DropdownProps) {
         <PopoverActionButton
             variant="outline"
             placement="bottom-start"
-            rightIcon="expand_more"
+            rightIcon={ChevronDown}
             size="sm"
-            iconSize="small"
             className="text-sm"
             label={String(selectedYear)}
             aria-label={`${dict.form.year}, ${selectedYear}`}
@@ -50,8 +50,7 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            leftIcon="keyboard_arrow_up"
-                            iconSize="small"
+                            leftIcon={ChevronUp}
                             onClick={() => setPageStart(pageStart - YEARS_PER_PAGE)}
                             aria-label={dict.action.previousYears}
                         />
@@ -60,8 +59,7 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            iconSize="small"
-                            leftIcon="keyboard_arrow_down"
+                            leftIcon={ChevronDown}
                             onClick={() => setPageStart(pageStart + YEARS_PER_PAGE)}
                             aria-label={dict.action.nextYears}
                         />

@@ -6,11 +6,11 @@ import React from 'react';
 import Tooltip from '@/ui/interaction/tooltip/tooltip';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOption, setOption } from '@/state/ribbon-component-slice';
-import IconComponent from '@/ui/graphic/icon/icon';
+import type { LucideIcon } from "lucide-react";
 
 interface RibbonComponentToggleProps {
     id: string,
-    icon?: string,
+    icon?: LucideIcon,
     text?: string,
     tooltip: string,
     initialState: boolean,
@@ -45,7 +45,7 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
                     <div className={styles.ribbonComponentInner}>
                         {props.icon &&
                             <div className={styles.ribbonComponentIcon}>
-                                <IconComponent icon={props.icon} />
+                                <props.icon className="size-6" aria-hidden />
                             </div>
                         }
                         {props.children}

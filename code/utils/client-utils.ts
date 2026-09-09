@@ -20,6 +20,9 @@ import {
 } from "@/types/form";
 import { JsonObject } from "@/types/json";
 import { ToastConfig, ToastType } from "@/types/toast";
+import { Map } from "mapbox-gl";
+import { DataLayer } from '@/io/data/data-layer';
+import { CircleAlert, CircleCheck, Hourglass, Info } from "lucide-react";
 
 /**
  * Open full screen mode.
@@ -63,6 +66,7 @@ export function parseMapDataSettings(
  */
 export function setSelectedFeature(
   selectedFeature: MapFeaturePayload,
+  map: Map,
   dispatch: Dispatch
 ): void {
   if (selectedFeature) {
@@ -79,6 +83,24 @@ export function setSelectedFeature(
     dispatch(setProperties(selectedProperties));
     dispatch(setStack(stack));
     dispatch(clearFeatures());
+  }
+}
+
+/**
+ * Check if an accompanying highlight layer exists, if it exists, make it visible and only show the selected feature
+ * @param selectedFeature 
+ * @param map 
+ * @param dataStore 
+ */
+export function highlightFeature(selectedFeature: MapFeaturePayload, map: Map, dataStore: DataStore) {
+
+  const layerArray: DataLayer[] = dataStore?.getLayerList();
+  const layerContainingFeature: DataLayer = layerArray.find(layer => layer.id === selectedFeature.layerId);
+
+  if (layerContainingFeature.hasHighlight) {
+    const highlightLayer = layerArray.find(layer => layer.id === selectedFeature.layerId + '-highlight');
+    map.setFilter(highlightLayer.id, ['in', highlightLayer.highlightFeatureId, selectedFeature[highlightLayer.highlightFeatureId]]);
+    map.setLayoutProperty(highlightLayer.id, "visibility", "visible");
   }
 }
 
@@ -334,14 +356,14 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
         bg: "bg-muted",
         border: "border-border",
         text: "text-foreground",
-        icon: "info",
+        icon: Info,
       };
     case "success":
       return {
         bg: "bg-success-background",
         border: "border-green-200",
         text: "text-success-foreground",
-        icon: "check_circle",
+        icon: CircleCheck,
         title: dict.title.success,
       };
     case "error":
@@ -349,7 +371,7 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
         bg: "bg-error-background",
         border: "border-red-200",
         text: "text-error-foreground",
-        icon: "error",
+        icon: CircleAlert,
         title: dict.title.error,
       };
     case "loading":
@@ -357,7 +379,7 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
         bg: "bg-muted",
         border: "border-border",
         text: "text-foreground",
-        icon: "hourglass_bottom",
+        icon: Hourglass,
         title: dict.title.loading,
         animate: "animate-spin",
       };

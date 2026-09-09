@@ -83,13 +83,11 @@ export default function PopoverActionButton({
       bottom: 0,
       left: 0,
       right: 0,
-      // Second highest z-index so it is below the tooltips
-      zIndex: 999998,
+      zIndex: "var(--z-index-overlay)",
     }
     : {
       ...popover.floatingStyles,
-      // Second highest z-index so it is below the tooltips
-      zIndex: 999998,
+      zIndex: "var(--z-index-overlay)",
     };
 
   const sheet: ReturnType<typeof useDraggableSheet> = useDraggableSheet(

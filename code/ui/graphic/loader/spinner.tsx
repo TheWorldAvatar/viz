@@ -23,7 +23,7 @@ export default function LoadingSpinner(props: Readonly<LoadingSpinnerProps>) {
   const sizeClasses = SIZE_CLASSES[props.size] ?? SIZE_CLASSES.md;
   return (
     <svg
-      className={`animate-spin text-ring relative overflow-hidden z-1 flex items-ceter justify-center m-auto ${sizeClasses}`}
+      className={`animate-spin text-ring relative overflow-hidden flex items-ceter justify-center m-auto ${sizeClasses}`}
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

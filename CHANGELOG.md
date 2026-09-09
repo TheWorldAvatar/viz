@@ -2,6 +2,98 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.88.0
+
+### Changes
+
+- Extended filters to support exclusionary capabilities
+- Updated min version of `VisBackend Agent` from `v1.66.0` to `v1.69.0`
+
+## 5.87.4
+
+### Bug fixes
+
+- Fix to allow negative number inputs
+
+## 5.87.3
+
+### Changes
+
+- Enable conflict checks only for mobile registry of task completion
+- Updated min version of `VisBackend Agent` from `v1.64.0` to `v1.66.0`
+
+## 5.87.2
+
+### Changes
+
+- Added a standardised z-index scale to global.css using Tailwind CSS theme variables.
+- Fixed styling issue with the `local-search-modal.tsx`
+
+## 5.87.1
+
+### Changes
+
+- Replaced all remaining MUI components with our custom components or native HTML elements
+- Removed `@mui/material`, `@emotion/react` and `@emotion/styled` as dependencies.
+
+## 5.87.0
+
+### Changes
+
+- Added support for configuring local map searches with dropdown filters directly in `data.json`.
+- Local search filters are combined with each layer's configured default filter.
+- Split `search-modal.tsx` into `api-search-modal.tsx` and the new `local-search-modal.tsx`.
+
+## 5.86.0
+
+### Changes
+
+- Replaced the `material-symbols` icon font with `lucide-react` SVG components.
+- Added `generate-icon-registry.mjs` script, which resolves the icon names in a deployment's `public/config` into `ui/graphic/icon/icon-registry.generated.ts`. It runs at dev server start and at container launch, so it sees the mounted configuration.
+- An unknown icon name now fails the build and names the file it came from, rather than rendering nothing.
+
+## 5.85.3
+
+### Changes
+
+- Removed `framer-motion` , `react-confetti` and `react-konami-code` libraries
+- Removed `trex.wav` and `trex.png`
+
+## 5.85.2
+
+### Changes
+
+- Updated task data hook to work with bulk assign mode
+
+## 5.85.1
+
+### Changes
+
+- Removed mui/icons-material library as a dependency
+- Imported only `material-symbols/outlined.css` in `global.css`, reducing the application bundle size.
+
+## 5.85.0
+
+### Changes
+
+- Added ability to highlight a selected feature.
+
+## 5.84.4
+
+### Changes
+
+- Added Keycloak authentication to file uploads by refreshing and forwarding the user's bearer token to the configured Upload Agent.
+- Improved long toast messages by keeping them visible, displaying a concise preview and allowing users to download the full message as a log file.
+
+## 5.84.3
+
+### Changes
+
+- Updated ui-settings.json to extend the existing resources configuration so that export actions can be defined and consumed by the Export Agent.
+- Added a download button in the row and bulk action menus for every configured export option
+- Export options are filtered by user permissions, lifecycle stage and record type
+- Updated documentation `config.md`
+
 ## 5.84.2
 
 ### Changes
@@ -34,7 +126,7 @@
 
 - Updated the registry table rows to have a consistent height. Cell text is clamped to a single line.
 - Text truncation is now measured against the width a column actually renders at, instead of being estimated from a character count. The widths configured in `table-column-settings.json` are therefore always respected.
-- Array cells now show only the first nested field when collapsed, and stack every nested field on its own line when expanded. 
+- Array cells now show only the first nested field when collapsed, and stack every nested field on its own line when expanded.
 
 ## 5.83.8
 

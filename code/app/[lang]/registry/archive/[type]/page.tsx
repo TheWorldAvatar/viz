@@ -42,6 +42,7 @@ export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistr
         entityType={decodedType}
         lifecycleStage={LifecycleStageMap.ARCHIVE}
         tableColumnOptions={tableColumnSettings}
+        exports={uiSettings.resources?.registry?.exports ?? []}
       />
     );
   } else {

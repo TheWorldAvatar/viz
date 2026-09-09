@@ -5,6 +5,7 @@ import { Dictionary } from "@/types/dictionary";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import FileMenu from "@/ui/interaction/menu/file/file-menu";
 import React from "react";
+import { Paperclip } from "lucide-react";
 
 interface ViewAttachmentButtonProps {
     id: string;
@@ -27,10 +28,9 @@ export default function ViewAttachmentButton(
     if (contractDirectory?.files.length > 0) {
         return <PopoverActionButton
             placement="bottom-end"
-            leftIcon="attach_file"
+            leftIcon={Paperclip}
             variant="ghost"
             size={!!props.hideLabel ? "icon" : "md"}
-            iconSize="medium"
             className="w-full justify-start"
             label={!!props.hideLabel ? "" : dict.action.viewAttachment}
             isOpen={isAttachmentViewerOpen}

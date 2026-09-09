@@ -66,6 +66,7 @@ export default class MapEventManager {
             name: twaFeature.properties.name ?? (twaFeature.id !== undefined ? "Feature #" + twaFeature.id : "Feature"),
             stack: dataStore?.getStackEndpoint(feature.source), // Store the associated stack if available
             layer: dataStore?.getLayerWithID(feature.layer.id)?.name, // Store the layer's public-facing name
+            layerId: feature.layer.id, // used to highlight feature from the correct layer
           };
         });
 

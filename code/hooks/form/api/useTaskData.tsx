@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
-import { RegistryStatusMap, RegistryTaskOption, SparqlResponseField } from "@/types/form";
+import { FORM_IDENTIFIER, RegistryStatusMap, RegistryTaskOption, SparqlResponseField } from "@/types/form";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { DynamicTask } from "@/utils/db/db";
 import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
@@ -64,7 +64,13 @@ export function useTaskData(
             }
         };
 
-        if (id && id != BULK_IDENTIFIER) {
+        if (id === BULK_IDENTIFIER) {
+            setTask({
+                id: FORM_IDENTIFIER,
+                contract: "",
+                date: "",
+            });
+        } else if (id) {
             fetchTask();
         }
     }, [id, isConnected, setIsFetching]);

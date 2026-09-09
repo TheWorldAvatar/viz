@@ -6,6 +6,7 @@ import { RegistryFieldValues, SparqlResponseField } from "@/types/form";
 
 import Button, { ButtonProps } from "@/ui/interaction/button";
 import { handleDownload } from "@/utils/client-utils";
+import { Download } from "lucide-react";
 
 interface DownloadButtonProps extends ButtonProps {
   instances: RegistryFieldValues[];
@@ -47,7 +48,7 @@ export function DownloadButton({
 
   return (
     <Button
-      leftIcon="download"
+      leftIcon={Download}
       size="icon"
       variant="outline"
       tooltipText={dict.action.export}
