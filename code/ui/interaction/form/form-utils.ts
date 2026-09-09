@@ -10,6 +10,7 @@ import {
   FormType,
   FormTypeMap,
   ID_KEY,
+  JsonLdInstance,
   NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,
@@ -885,6 +886,7 @@ export function parseFormTemplateForQuickViewGroupings(
         quickViewGroups = parseQuickViewFields(
           fieldProp.name[VALUE_KEY],
           fieldProp.class?.[ID_KEY],
+          fieldProp.in,
           groupName,
           fieldProp.defaultValue,
           quickViewGroups
@@ -897,6 +899,7 @@ export function parseFormTemplateForQuickViewGroupings(
         quickViewGroups = parseQuickViewFields(
           fieldName,
           fieldShape.class?.[ID_KEY],
+          fieldShape.in,
           "default",
           fieldShape.defaultValue,
           quickViewGroups
@@ -912,6 +915,7 @@ export function parseFormTemplateForQuickViewGroupings(
  *
  * @param {string} fieldName Name of the field.
  * @param {string} fieldClass The class of the field if available.
+ * @param {JsonLdInstance[]} fieldIn The sh:in classes of the field if available.
  * @param {string} groupName Name of the associated group. Default is default
  * @param {SparqlResponseField | SparqlResponseField[]} fieldValue Value for the field.
  * @param {QuickViewGroupings} output Stores the parsing results.
@@ -919,6 +923,7 @@ export function parseFormTemplateForQuickViewGroupings(
 function parseQuickViewFields(
   fieldName: string,
   fieldClass: string,
+  fieldIn: JsonLdInstance[],
   groupName: string,
   fieldValue: SparqlResponseField | SparqlResponseField[],
   output: QuickViewGroupings
@@ -928,7 +933,16 @@ function parseQuickViewFields(
     let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue)
       ? fieldValue
       : [fieldValue];
-    if (
+    // Concept fields target an ontology class rather than an instance, and must be
+    // displayed as a label instead of an expandable nested entity
+    if (fieldIn?.length > 0) {
+      parsedFieldValues = parsedFieldValues.map((fieldVal) => {
+        return {
+          ...fieldVal,
+          type: "concept",
+        };
+      });
+    } else if (
       fieldClass ===
       "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
     ) {

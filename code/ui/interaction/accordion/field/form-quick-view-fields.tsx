@@ -2,6 +2,7 @@
 
 import { QuickViewGroupings } from "@/types/form";
 import TextField from "@/ui/text/field/field";
+import { getId, parseWordsForLabels } from "@/utils/client-utils";
 import FormQuickViewExpandable from "./form-quick-view-expandable";
 import FormQuickViewMap from "./form-quick-view-map";
 
@@ -31,7 +32,7 @@ export default function FormQuickViewFields(
                 </h4>
               )}
               {Object.entries(fields).map(([field, valueArray], fieldIndex) => {
-                if (valueArray?.[0].type === "mapUri") {
+                if (valueArray?.[0]?.type === "mapUri") {
                   return valueArray.map((value, arrayIndex) => (
                     <FormQuickViewMap
                       key={groupIndex + fieldIndex + arrayIndex}
@@ -41,7 +42,20 @@ export default function FormQuickViewFields(
                   ));
                 }
 
-                if (valueArray?.[0].type === "uri") {
+                // Concepts target an ontology class rather than an instance
+                if (valueArray?.[0]?.type === "concept") {
+                  return (
+                    <TextField
+                      key={groupIndex + fieldIndex}
+                      label={field}
+                      content={valueArray
+                        .map((item) => parseWordsForLabels(getId(item.value).replace(/([a-z0-9])([A-Z])/g, "$1 $2")))
+                        .join(", ")}
+                    />
+                  );
+                }
+
+                if (valueArray?.[0]?.type === "uri") {
                   return valueArray.map((value, arrayIndex) => (
                     <FormQuickViewExpandable
                       key={groupIndex + fieldIndex + arrayIndex}
