@@ -910,6 +910,32 @@ export function parseFormTemplateForQuickViewGroupings(
 }
 
 /**
+ * Parses an ontology concept into quick view groupings for easy access. Concepts have no
+ * form template of their own, and are described only by their label and description.
+ *
+ * @param {OntologyConcept[]} concepts The concepts returned for the requested IRI.
+ * @param {string} conceptIri The IRI of the target concept.
+ */
+export function parseConceptForQuickViewGroupings(
+  concepts: OntologyConcept[],
+  conceptIri: string
+): QuickViewGroupings {
+  // The concept endpoint sometimes returns the entire hierarchy associated with the requested IRI,
+  // and not just the requested concept, so the target must be matched on its own IRI
+  const concept: OntologyConcept = concepts?.find(
+    (conceptOption) => conceptOption.type?.value === conceptIri
+  );
+  const fields: QuickViewFields = {};
+  if (concept?.label) {
+    fields.name = [concept.label];
+  }
+  if (concept?.description) {
+    fields.description = [concept.description];
+  }
+  return { default: fields };
+}
+
+/**
  * Parses quick view fields based on the input parameters.
  *
  * @param {string} fieldName Name of the field.
@@ -937,7 +963,8 @@ function parseQuickViewFields(
       parsedFieldValues = parsedFieldValues.map((fieldVal) => {
         return {
           ...fieldVal,
-          type: "concept",
+          type: "uri",
+          dataType: "concept"
         };
       });
     } else if (

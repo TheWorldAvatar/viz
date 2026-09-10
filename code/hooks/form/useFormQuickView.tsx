@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useId, useState } from 'react';
 import { AgentResponseBody, InternalApiIdentifierMap } from '@/types/backend-agent';
-import { FormTemplateType, QuickViewGroupings } from '@/types/form';
-import { parseFormTemplateForQuickViewGroupings } from '@/ui/interaction/form/form-utils';
+import { FormTemplateType, OntologyConcept, QuickViewGroupings } from '@/types/form';
+import { parseConceptForQuickViewGroupings, parseFormTemplateForQuickViewGroupings } from '@/ui/interaction/form/form-utils';
 import { getAfterDelimiter } from '@/utils/client-utils';
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from '@/utils/internal-api-services';
 
@@ -20,10 +20,12 @@ export interface FormQuickViewState {
  * 
  * @param {string} selectedEntity - The currently selected entity.
  * @param {string} entityType - The type of the entity.
+ * @param {boolean} isOntologyConcept - Optionally indicates that the entity is an ontology concept.
  */
 export function useFormQuickView(
     selectedEntity: string,
     entityType: string,
+    isOntologyConcept?: boolean,
 ): FormQuickViewState {
     const id: string = useId();
     const selectedEntityId: string = selectedEntity ? getAfterDelimiter(selectedEntity, "/") : undefined;
@@ -37,10 +39,13 @@ export function useFormQuickView(
             try {
                 setIsQuickViewLoading(true);
                 const body: AgentResponseBody = await queryInternalApi(
-                    makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, entityType, selectedEntityId)
+                    isOntologyConcept
+                        ? makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONCEPT, selectedEntity)
+                        : makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, entityType, selectedEntityId)
                 );
-                const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
-                const quickViewGroups: QuickViewGroupings = parseFormTemplateForQuickViewGroupings(template);
+                const quickViewGroups: QuickViewGroupings = isOntologyConcept
+                    ? parseConceptForQuickViewGroupings(body.data?.items as OntologyConcept[], selectedEntity)
+                    : parseFormTemplateForQuickViewGroupings(body.data?.items?.[0] as FormTemplateType);
                 setQuickViewGroups(quickViewGroups)
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -52,7 +57,7 @@ export function useFormQuickView(
         if (isQuickViewOpen) {
             fetchData();
         };
-    }, [isQuickViewOpen, entityType, selectedEntity]);
+    }, [isQuickViewOpen, entityType, selectedEntity, isOntologyConcept]);
 
     return {
         id,

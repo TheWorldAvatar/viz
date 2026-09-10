@@ -2,7 +2,6 @@
 
 import { QuickViewGroupings } from "@/types/form";
 import TextField from "@/ui/text/field/field";
-import FormQuickViewConcept from "./form-quick-view-concept";
 import FormQuickViewExpandable from "./form-quick-view-expandable";
 import FormQuickViewMap from "./form-quick-view-map";
 
@@ -42,16 +41,6 @@ export default function FormQuickViewFields(
                   ));
                 }
 
-                if (valueArray?.[0]?.type === "concept") {
-                  return valueArray.map((value, arrayIndex) => (
-                    <FormQuickViewConcept
-                      key={groupIndex + fieldIndex + arrayIndex}
-                      label={field}
-                      conceptUri={value.value}
-                    />
-                  ));
-                }
-
                 if (valueArray?.[0]?.type === "uri") {
                   return valueArray.map((value, arrayIndex) => (
                     <FormQuickViewExpandable
@@ -59,6 +48,7 @@ export default function FormQuickViewFields(
                       entity={value.value}
                       entityType={field}
                       nestedLevel={props.nestedLevel + 1}
+                      isOntologyConcept={value.dataType === "concept"}
                     />
                   ));
                 }
