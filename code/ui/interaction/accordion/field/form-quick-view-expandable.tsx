@@ -12,7 +12,7 @@ interface FormQuickViewExpandableProps {
   entity: string;
   entityType: string;
   nestedLevel: number;
-  isOntologyConcept?: boolean;
+  isOntologyConcept: boolean;
 }
 
 /**
@@ -21,7 +21,7 @@ interface FormQuickViewExpandableProps {
  * @param {string} entity - The target entity instance.
  * @param {string} entityType - The type of the entity.
  * @param {number} nestedLevel - The current level of nesting/recursion.
- * @param {boolean} isOntologyConcept - Optionally indicates that the entity is an ontology concept.
+ * @param {boolean} isOntologyConcept - Indicates that the entity is an ontology concept.
  **/
 export default function FormQuickViewExpandable(
   props: Readonly<FormQuickViewExpandableProps>
