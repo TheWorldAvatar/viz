@@ -2,6 +2,7 @@
 
 import { QuickViewGroupings } from "@/types/form";
 import TextField from "@/ui/text/field/field";
+import FormQuickViewConcept from "./form-quick-view-concept";
 import FormQuickViewExpandable from "./form-quick-view-expandable";
 import FormQuickViewMap from "./form-quick-view-map";
 
@@ -37,6 +38,16 @@ export default function FormQuickViewFields(
                       key={groupIndex + fieldIndex + arrayIndex}
                       label={field}
                       locationUri={value.value}
+                    />
+                  ));
+                }
+
+                if (valueArray?.[0]?.type === "concept") {
+                  return valueArray.map((value, arrayIndex) => (
+                    <FormQuickViewConcept
+                      key={groupIndex + fieldIndex + arrayIndex}
+                      label={field}
+                      conceptUri={value.value}
                     />
                   ));
                 }

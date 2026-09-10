@@ -115,7 +115,6 @@ export function makeInternalRegistryAPIwithParams(
       searchParams = new URLSearchParams({
         type: parseStringsForUrls(params[0]),
         identifier: params[1] ?? null,
-        label: params[2] ?? null,
       });
       break;
     case InternalApiIdentifierMap.GEOCODE_ADDRESS:

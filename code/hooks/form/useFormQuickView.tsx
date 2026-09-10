@@ -36,10 +36,8 @@ export function useFormQuickView(
         const fetchData = async () => {
             try {
                 setIsQuickViewLoading(true);
-                // The label route is used as this is a read only view, and returns
-                // concept fields already resolved to their label rather than an IRI
                 const body: AgentResponseBody = await queryInternalApi(
-                    makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, entityType, selectedEntityId, "true")
+                    makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, entityType, selectedEntityId)
                 );
                 const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
                 const quickViewGroups: QuickViewGroupings = parseFormTemplateForQuickViewGroupings(template);

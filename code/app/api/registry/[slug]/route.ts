@@ -405,16 +405,11 @@ function makeExternalEndpoint(
     case InternalApiIdentifierMap.FORM: {
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");
-      const requireLabel: string = searchParams.get("label");
       if (entityType == FormTypeMap.ASSIGN_PRICE) {
         return buildUrl(agentBaseApi, "report", "contract", "pricing", "form", encodeURIComponent(identifier));
       }
       let url: string = `${agentBaseApi}/form/${entityType}`;
       if (identifier != "null") {
-        // The label route resolves concept fields to their label for read only views
-        if (requireLabel === "true") {
-          url += "/label";
-        }
         url += `/${encodeURIComponent(identifier)}`;
       }
       return url;

@@ -885,6 +885,7 @@ export function parseFormTemplateForQuickViewGroupings(
         quickViewGroups = parseQuickViewFields(
           fieldProp.name[VALUE_KEY],
           fieldProp.class?.[ID_KEY],
+          fieldProp.in?.length > 0,
           groupName,
           fieldProp.defaultValue,
           quickViewGroups
@@ -897,6 +898,7 @@ export function parseFormTemplateForQuickViewGroupings(
         quickViewGroups = parseQuickViewFields(
           fieldName,
           fieldShape.class?.[ID_KEY],
+          fieldShape.in?.length > 0,
           "default",
           fieldShape.defaultValue,
           quickViewGroups
@@ -912,6 +914,7 @@ export function parseFormTemplateForQuickViewGroupings(
  *
  * @param {string} fieldName Name of the field.
  * @param {string} fieldClass The class of the field if available.
+ * @param {boolean} isConceptField Indicates if the field targets ontology concepts ie sh:in.
  * @param {string} groupName Name of the associated group. Default is default
  * @param {SparqlResponseField | SparqlResponseField[]} fieldValue Value for the field.
  * @param {QuickViewGroupings} output Stores the parsing results.
@@ -919,6 +922,7 @@ export function parseFormTemplateForQuickViewGroupings(
 function parseQuickViewFields(
   fieldName: string,
   fieldClass: string,
+  isConceptField: boolean,
   groupName: string,
   fieldValue: SparqlResponseField | SparqlResponseField[],
   output: QuickViewGroupings
@@ -928,7 +932,15 @@ function parseQuickViewFields(
     let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue)
       ? fieldValue
       : [fieldValue];
-    if (
+
+    if (isConceptField) {
+      parsedFieldValues = parsedFieldValues.map((fieldVal) => {
+        return {
+          ...fieldVal,
+          type: "concept",
+        };
+      });
+    } else if (
       fieldClass ===
       "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
     ) {

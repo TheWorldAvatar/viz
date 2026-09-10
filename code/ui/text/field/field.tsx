@@ -1,5 +1,5 @@
 interface TextFieldProps {
-  label: string;
+  label?: string;
   content: string;
 }
 
@@ -13,10 +13,12 @@ export default function TextField(props: Readonly<TextFieldProps>) {
 
   return (
     <div className="flex flex-row sm:items-start py-2 min-w-0">
-      <h4 className="shrink-0 w-28 sm:w-32 text-sm sm:text-base font-semibold text-foreground capitalize">
-        {props.label}
-      </h4>
-      <p className="min-w-0 flex-1 text-wrap hyphens-auto break-all text-sm text-muted-foreground">
+      {props.label && (
+        <h4 className="shrink-0 w-28 sm:w-32 text-sm sm:text-base font-semibold text-foreground capitalize">
+          {props.label}
+        </h4>
+      )}
+      <p className="min-w-0 flex-1 text-wrap hyphens-auto  text-sm text-muted-foreground">
         {props.content}
       </p>
     </div>
