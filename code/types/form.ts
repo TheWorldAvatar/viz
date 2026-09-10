@@ -174,7 +174,7 @@ interface DependentInstance {
   label?: string;
 }
 
-export interface JsonLdInstance {
+interface JsonLdInstance {
   "@id": string;
 }
 
