@@ -2,11 +2,12 @@ import iconStyles from "@/ui/graphic/icon/icon-button.module.css";
 import styles from "./layer-tree.module.css";
 
 import { Map } from "mapbox-gl";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import SVG from "react-inlinesvg";
 
-import { MapLayer, MapLayerGroup } from "@/types/map-layer";
+import { MapLayer, MapLayerGroup, MapSearchConfigValue } from "@/types/map-layer";
+import { parseWordsForLabels } from "@/utils/client-utils";
 import IconComponent from "@/ui/graphic/icon/icon";
 import IconButton from "@/ui/graphic/icon/icon-button";
 import SimpleDropdownField from "@/ui/interaction/dropdown/simple-dropdown";
@@ -58,6 +59,10 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
     groupings.length > 0 ? groupings[0] : ""
   );
   const [isSearchOpenState, setIsSearchOpenState] = useState<boolean>(false);
+  const [appliedFilters, setAppliedFilters] = useState<Record<string, MapSearchConfigValue>>({});
+  const filterSummary = Object.entries(appliedFilters)
+    .map(([key, value]) => `${parseWordsForLabels(key)}: ${value}`)
+    .join(" · ");
 
   // A function to hide or show the current group's content and its associated layers based on the expansion button
   const toggleExpansion = () => {
@@ -125,6 +130,11 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
    * Currently hidden layers will become shown.
    */
   const toggleMapLayerVisibility = (layer: MapLayer, isVisible: boolean) => {
+    // Highlight overlays are enabled only by feature selection, never by group expansion.
+    // They must still be hidden when their group is collapsed.
+    if (layer.isAHighlightLayer && !isVisible) {
+      return;
+    }
     // Split layer IDs in case there are multiple
     layer.ids.forEach((id) => {
       if (isVisible) {
@@ -204,6 +214,11 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         {/* Name of group */}
         <div className={styles.textContainer} onClick={toggleExpansion}>
           <span>{group.name}</span>
+          {filterSummary && (
+            <span className="ml-2 text-xs text-muted-foreground" title={filterSummary}>
+              ({filterSummary})
+            </span>
+          )}
         </div>
 
         {groupings.length > 0 && (
@@ -224,6 +239,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
             className="ml-2"
           />
         )}
+        {/* Recreate draft selections from the applied filters each time search opens. */}
         {group.search && isSearchOpenState &&
           (typeof group.search === "string" ? (
             <ApiSearchModal
@@ -234,6 +250,8 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
           ) : (
             <LocalSearchModal
               search={group.search}
+              appliedFilters={appliedFilters}
+              onApply={setAppliedFilters}
               show={isSearchOpenState}
               setShowState={setIsSearchOpenState}
               layers={group.layers}
@@ -295,25 +313,22 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
   // Size of left hand indentation
   const spacing: string = props.depth * 0.8 + "rem";
 
-  // Initial visibility state depends on only the layer's visibility
-  // It will not depends on the parent component initially, as any possible states becomes tricky to enforce
-  const [isVisible, setIsVisible] = useState<boolean>(
-    // If the map has loaded (ie users are still on the page but switch components), retrieve the current state
-    // Else, follow the data's initial state
-    props.map?.loaded()
-      ? props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible"
-      : props.currentGrouping === layer.grouping || layer.isVisible
-  );
+  // Layer layout is available even while tiles are still loading.
+  const readVisibility = useCallback((): boolean => {
+    if (props.map?.getLayer(firstLayerId)) {
+      return props.map.getLayoutProperty(firstLayerId, "visibility") !== "none";
+    }
+    return props.currentGrouping === layer.grouping || Boolean(layer.isVisible);
+  }, [props.map, firstLayerId, props.currentGrouping, layer.grouping, layer.isVisible]);
+  const [isVisible, setIsVisible] = useState<boolean>(readVisibility);
 
   /** This method toggles the layer visibility when the layer icon is clicked
    */
   const toggleLayerVisibility = () => {
     // Toggle visibility on the map based on current state
-    props.handleLayerVisibility(layer, isVisible);
+    props.handleLayerVisibility(layer, readVisibility());
     // Get current visibility state of the layer after any toggling
-    setIsVisible(
-      props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible"
-    );
+    setIsVisible(readVisibility());
   };
   let iconDisplay;
   if (layer.icon?.startsWith("l#")) {

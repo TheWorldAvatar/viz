@@ -18,6 +18,8 @@ import { useDictionary } from "@/hooks/useDictionary";
 
 interface LocalSearchModalProps {
   search: MapSearchConfig;
+  appliedFilters: Record<string, MapSearchConfigValue>;
+  onApply: (_filters: Record<string, MapSearchConfigValue>) => void;
   show: boolean;
   setShowState: React.Dispatch<React.SetStateAction<boolean>>;
   layers: MapLayer[];
@@ -31,9 +33,12 @@ export default function LocalSearchModal(
   const dict: Dictionary = useDictionary();
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, MapSearchConfigValue>
-  >(
+  >(() =>
     Object.fromEntries(
-      Object.entries(props.search).map(([key, values]) => [key, values[0]])
+      Object.entries(props.search).map(([key, values]) => [
+        key,
+        props.appliedFilters[key] ?? values[0],
+      ])
     )
   );
 
@@ -69,6 +74,7 @@ export default function LocalSearchModal(
       });
     });
 
+    props.onApply({ ...selectedFilters });
     props.setShowState(false);
   };
 
@@ -83,6 +89,7 @@ export default function LocalSearchModal(
       });
     });
 
+    props.onApply({});
     props.setShowState(false);
   };
 
