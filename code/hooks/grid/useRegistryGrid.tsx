@@ -63,6 +63,7 @@ export function useRegistryGrid(
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
+    const mobileColumnOptions = useRef<TableColumnOption[]>(mobileFieldOptions ?? []);
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
     const [filters, setFilters] = useState<ColumnFilter[]>(localStorageManager.get(TASK_VIEWER_FILTER) ? JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)) : INITIAL_FILTER_STATE);
 
@@ -153,7 +154,7 @@ export function useRegistryGrid(
                     tasks?.columns.filter(col => mobileFields.current.includes(col.value)
                         || col.value == "id" || col.value == "event_id"
                         || col.value == "date");
-                const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
+                const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, mobileColumnOptions.current, dict);
                 setColumns(columnData);
             }
             // If total length is equal or more than limit, start a background sync

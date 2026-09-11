@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.88.1
+
+### Changes
+
+- Extend table column setting to allow control over filtering and sorting.
+
 ## 5.88.0
 
 ### Changes
