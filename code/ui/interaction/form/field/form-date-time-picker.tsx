@@ -62,6 +62,9 @@ export default function FormDateTimePicker(
   const isOptionalDateField: boolean =
     inputType === dateType && Number(props.field.minCount?.[VALUE_KEY]) === 0;
 
+  const isOptionalTimeField: boolean =
+    inputType === timeType && Number(props.field.minCount?.[VALUE_KEY]) === 0;
+
   // useEffect to avoid calling setValue during render
   useEffect(() => {
     if (inputType === dateType) {
@@ -72,8 +75,9 @@ export default function FormDateTimePicker(
         props.form.setValue(props.field.fieldId, "");
       }
     } else if (
-      !props.form.getValues(props.field.fieldId) ||
-      props.form.getValues(props.field.fieldId) === ""
+      !isOptionalTimeField &&
+      (!props.form.getValues(props.field.fieldId) ||
+        props.form.getValues(props.field.fieldId) === "")
     ) {
       // Retrieve current date or time depending on field required
       let currentDateTime: string = new Date().toISOString();
@@ -87,7 +91,7 @@ export default function FormDateTimePicker(
       }
       props.form.setValue(props.field.fieldId, currentDateTime);
     }
-  }, [props.form, props.field.fieldId, selectedDate, inputType, props.field.datatype, watchedDateValue, isOptionalDateField]);
+  }, [props.form, props.field.fieldId, selectedDate, inputType, props.field.datatype, watchedDateValue, isOptionalDateField, isOptionalTimeField]);
 
   return (
     <FormInputContainer
