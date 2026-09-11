@@ -232,8 +232,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             selectedDate={props.selectedDate}
             filters={tableDescriptor.filters}
             isEditable={tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
-            disableSort={colDef.dataType == "array" || colDef.dataType == FLAG_KEY}
-            disableFilter={colDef.dataType == "array" || colDef.dataType == FLAG_KEY ||
+            disableSort={!header.column.getCanSort() || colDef.dataType == "array" || colDef.dataType == FLAG_KEY}
+            disableFilter={!header.column.getCanFilter() || colDef.dataType == "array" || colDef.dataType == FLAG_KEY ||
               (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
           />
         );

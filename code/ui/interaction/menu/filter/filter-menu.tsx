@@ -39,7 +39,8 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
     const dict: Dictionary = useDictionary();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(props.hasNoActiveFilters);
     const isConnected: boolean = useConnected();
-    const filterableColumns: EnhancedColumnDef<FieldValues>[] = props.columns.filter(column => column.dataType !== "array");
+    const filterableColumns: EnhancedColumnDef<FieldValues>[] = props.columns.filter(column =>
+        column.dataType !== "array" && column.enableColumnFilter !== false);
 
     const setIsOpen: Dispatch<SetStateAction<boolean>> = (valueOrFn) => {
         // Early termination without active filter to prevent data view
