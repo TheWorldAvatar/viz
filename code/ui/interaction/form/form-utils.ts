@@ -885,6 +885,7 @@ export function parseFormTemplateForQuickViewGroupings(
         quickViewGroups = parseQuickViewFields(
           fieldProp.name[VALUE_KEY],
           fieldProp.class?.[ID_KEY],
+          fieldProp.in?.length > 0,
           groupName,
           fieldProp.defaultValue,
           quickViewGroups
@@ -897,6 +898,7 @@ export function parseFormTemplateForQuickViewGroupings(
         quickViewGroups = parseQuickViewFields(
           fieldName,
           fieldShape.class?.[ID_KEY],
+          fieldShape.in?.length > 0,
           "default",
           fieldShape.defaultValue,
           quickViewGroups
@@ -908,10 +910,37 @@ export function parseFormTemplateForQuickViewGroupings(
 }
 
 /**
+ * Parses an ontology concept into quick view groupings for easy access. Concepts have no
+ * form template of their own, and are described only by their label and description.
+ *
+ * @param {OntologyConcept[]} concepts The concepts returned for the requested IRI.
+ * @param {string} conceptIri The IRI of the target concept.
+ */
+export function parseConceptForQuickViewGroupings(
+  concepts: OntologyConcept[],
+  conceptIri: string
+): QuickViewGroupings {
+  // The concept endpoint sometimes returns the entire hierarchy associated with the requested IRI,
+  // and not just the requested concept, so the target must be matched on its own IRI
+  const concept: OntologyConcept = concepts?.find(
+    (conceptOption) => conceptOption.type?.value === conceptIri
+  );
+  const fields: QuickViewFields = {};
+  if (concept?.label) {
+    fields.name = [concept.label];
+  }
+  if (concept?.description) {
+    fields.description = [concept.description];
+  }
+  return { default: fields };
+}
+
+/**
  * Parses quick view fields based on the input parameters.
  *
  * @param {string} fieldName Name of the field.
  * @param {string} fieldClass The class of the field if available.
+ * @param {boolean} isConceptField Indicates if the field targets ontology concepts ie sh:in.
  * @param {string} groupName Name of the associated group. Default is default
  * @param {SparqlResponseField | SparqlResponseField[]} fieldValue Value for the field.
  * @param {QuickViewGroupings} output Stores the parsing results.
@@ -919,6 +948,7 @@ export function parseFormTemplateForQuickViewGroupings(
 function parseQuickViewFields(
   fieldName: string,
   fieldClass: string,
+  isConceptField: boolean,
   groupName: string,
   fieldValue: SparqlResponseField | SparqlResponseField[],
   output: QuickViewGroupings
@@ -928,7 +958,16 @@ function parseQuickViewFields(
     let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue)
       ? fieldValue
       : [fieldValue];
-    if (
+
+    if (isConceptField) {
+      parsedFieldValues = parsedFieldValues.map((fieldVal) => {
+        return {
+          ...fieldVal,
+          type: "uri",
+          dataType: "concept"
+        };
+      });
+    } else if (
       fieldClass ===
       "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
     ) {
