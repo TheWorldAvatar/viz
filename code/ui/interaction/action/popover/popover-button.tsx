@@ -37,7 +37,8 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param {boolean} bottomSheet Optional flag to force the bottom-sheet presentation on larger screens; mobile always renders as a sheet.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
- * @param {Placement} tooltipPosition Optional tooltip positioning.
+ * @param {string} tooltipSide Optional side of the button to show the tooltip on: "top", "bottom", "left" or "right".
+ * @param {string} tooltipAlign Optional alignment along that side: "start", "center" or "end".
  * @param {string} leftIcon Optional left icon, can be a string or React node.
  * @param {string} rightIcon Optional right icon, can be a string or React node.
  * @param {string} size Optional button size, e.g., "sm", "md", "lg", "default", or "icon".
@@ -57,7 +58,8 @@ export default function PopoverActionButton({
   label,
   size,
   tooltipText,
-  tooltipPosition,
+  tooltipSide,
+  tooltipAlign,
   variant,
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
@@ -108,7 +110,8 @@ export default function PopoverActionButton({
           className={rest.className}
           label={label}
           tooltipText={tooltipText}
-          tooltipPosition={tooltipPosition}
+          tooltipSide={tooltipSide}
+          tooltipAlign={tooltipAlign}
           onClick={rest.onClick}
           size={size}
           variant={variant}

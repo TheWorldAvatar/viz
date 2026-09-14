@@ -63,7 +63,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
       {dialog.open && (
         <FloatingPortal>
           <FloatingOverlay className="z-overlay pointer-events-none">
-            <FloatingFocusManager context={dialog.context}>
+            <FloatingFocusManager context={dialog.context} initialFocus={-1}>
               <div
                 ref={dialog.refs.setFloating}
                 style={dialog.floatingStyles}
@@ -91,7 +91,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                       type="button"
                       className="rounded-full!"
                       tooltipText={dict.action.close}
-                      tooltipPosition="left"
+                      tooltipSide="left"
                       aria-label={dict.action.close}
                       onClick={() => dialog.setIsOpen(false)}
                     />
