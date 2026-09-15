@@ -39,11 +39,9 @@ export default function Tooltip({
 }: Readonly<TooltipProps>) {
   const screenType: ScreenType = useScreenType();
 
-  // Tooltips are desktop only, and there is nothing to anchor when the text is
-  // missing or the child cannot receive the trigger props, so pass it straight through
-  if (screenType !== ScreenTypeMap.DESKTOP || !text ||
-    React.Children.count(children) !== 1 ||
-    !React.isValidElement(children)) {
+  // Tooltips are desktop only, and there is nothing to show without text,
+  // so pass the child straight through in either case
+  if (screenType !== ScreenTypeMap.DESKTOP || !text) {
     return children;
   }
 
