@@ -181,15 +181,17 @@ export default function Button({
     </button>
   );
 
-  // A disabled button emits no pointer events, so the tooltip is anchored to a wrapper
-  // instead. This is done so that the tooltip can still be displayed for disabled buttons
-  const isWrapped: boolean = isInactive && !!tooltipText;
+  if (!tooltipText) {
+    return button;
+  }
 
   return (
-    // Base UI binds its hover listeners to the trigger element once, so when the trigger
-    // swaps between the wrapper and the bare button the tooltip must remount to rebind them
-    <Tooltip key={isWrapped ? "wrapped" : "unwrapped"} text={tooltipText} side={tooltipSide} align={tooltipAlign}>
-      {isWrapped ? <span className="inline-flex">{button}</span> : button}
+    // A disabled button emits no pointer events, so the tooltip is anchored to a wrapper
+    // instead so that it can still be displayed. Base UI binds its hover listeners to the
+    // trigger element once, so the tooltip must remount when the trigger swaps between
+    // the wrapper and the bare button
+    <Tooltip key={isInactive ? "wrapped" : "unwrapped"} text={tooltipText} side={tooltipSide} align={tooltipAlign}>
+      {isInactive ? <span className="inline-flex">{button}</span> : button}
     </Tooltip>
   );
 }
