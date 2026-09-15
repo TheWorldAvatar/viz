@@ -192,9 +192,9 @@ const useFormSession = (): useFormSessionReturn => {
                 const seededBranch: NodeShape = nodeShapes.find((node) => node.label[VALUE_KEY] === initialState[branchKey]);
                 const restoredBranch: NodeShape = nodeShapes.find((node) => node.label[VALUE_KEY] === overrides[branchKey]);
                 if (seededBranch && restoredBranch && seededBranch !== restoredBranch) {
-                    const restoredFieldIds: Set<string> = new Set(getBranchFieldIds(restoredBranch));
+                    const restoredFieldIds: string[] = getBranchFieldIds(restoredBranch);
                     getBranchFieldIds(seededBranch)
-                        .filter((fieldId) => !restoredFieldIds.has(fieldId))
+                        .filter((fieldId) => !restoredFieldIds.includes(fieldId))
                         .forEach((fieldId) => delete updatedState[fieldId]);
                 }
                 initialState = updatedState;
