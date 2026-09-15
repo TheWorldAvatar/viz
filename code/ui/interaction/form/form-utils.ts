@@ -332,6 +332,26 @@ export function parseBranches(
   return [nodeWithMostNonEmpty, ...results.filter(node => node != nodeWithMostNonEmpty)];
 }
 
+/**
+ * Retrieves the field IDs of a parsed branch as registered in the form.
+ * The branch must have been parsed beforehand so that each property carries its field ID.
+ *
+ * @param {NodeShape} node The parsed branch of interest.
+ */
+export function getBranchFieldIds(node: NodeShape): string[] {
+  const fieldIds: string[] = [];
+  node.property.forEach((field) => {
+    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+      const fieldset: PropertyGroup = field as PropertyGroup;
+      fieldIds.push(fieldset.label[VALUE_KEY]);
+      fieldset.property.forEach((fieldProp) => fieldIds.push(fieldProp.fieldId));
+    } else {
+      fieldIds.push((field as PropertyShape).fieldId);
+    }
+  });
+  return fieldIds;
+}
+
 
 /**
  * Initialises a form field based on the property shape. This function will retrieve the default value
