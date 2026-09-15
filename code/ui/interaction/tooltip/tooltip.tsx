@@ -1,68 +1,69 @@
-import {
-  FloatingPortal,
-  Placement,
-  useTransitionStyles,
-} from "@floating-ui/react";
-import { useTooltip } from "@/hooks/float/useTooltip";
+"use client";
+
+import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
+import React from "react";
 import { useScreenType } from "@/hooks/screen/useScreenType";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 
-export interface TooltipProps {
-  text: string;
-  children: React.ReactNode;
-  placement?: Placement;
+export interface TooltipProps extends Pick<TooltipPrimitive.Positioner.Props, "side" | "align" | "sideOffset" | "alignOffset"> {
+  text?: string;
+  children: React.ReactElement;
 }
+
+const tooltipStyles: string = [
+  "inline-flex w-fit max-w-sm items-center p-2",
+  "bg-muted text-sm border border-border text-foreground rounded-md shadow-xs",
+  "origin-[var(--transform-origin)] transition-[opacity,scale] duration-100 ease-out",
+  "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.9]",
+  "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.98]",
+  "data-[instant]:transition-none",
+].join(" ");
 
 /**
  * A floating component to render labels upon hovering or focus.
  *
- * @param {string} text Tooltip text content.
- * @param {Placement} placement Position of tooltip.
+ * @param {string} text Optional tooltip text. When empty the child is rendered as-is with no tooltip.
+ * @param {React.ReactElement} children The child element to render the trigger for.
+ * @param {string} side Optional side of the trigger to show the tooltip on: "top", "bottom", "left" or "right". Defaults to "top".
+ * @param {string} align Optional alignment along that side: "start", "center" or "end". Defaults to "center".
+ * @param {number} sideOffset Optional gap in pixels between the tooltip and the trigger. Defaults to 8.
+ * @param {number} alignOffset Optional shift in pixels along the alignment axis. Defaults to 0.
  */
-export default function Tooltip(props: Readonly<TooltipProps>) {
-  const tooltip = useTooltip(props.placement);
+export default function Tooltip({
+  text,
+  children,
+  side = "top",
+  align = "center",
+  sideOffset = 8,
+  alignOffset = 0,
+}: Readonly<TooltipProps>) {
   const screenType: ScreenType = useScreenType();
-  const transition = useTransitionStyles(tooltip.context, {
-    duration: 200,
-    initial: {
-      opacity: 0,
-      transform: "scale(0.9)",
-    },
-  });
 
-  if (screenType !== ScreenTypeMap.DESKTOP) {
-    return props.children;
+  // Tooltips are desktop only, and there is nothing to show without text,
+  // so pass the child straight through in either case
+  if (screenType !== ScreenTypeMap.DESKTOP || !text) {
+    return children;
   }
 
   return (
-    <>
-      <div ref={tooltip.refs.setReference} {...tooltip.getReferenceProps()}>
-        {props.children}
-      </div>
-      {
-        // Render tooltip only if the text is provided and the tooltip is open
-        props.text && tooltip.isOpen && transition.isMounted && (
-          <FloatingPortal>
-            <div
-              ref={tooltip.refs.setFloating}
-              style={{
-                ...tooltip.floatingStyles,
-                zIndex: "var(--z-index-tooltip)",
-              }}
-              {...tooltip.getFloatingProps()}
-            >
-              <div
-                style={{
-                  ...transition.styles,
-                }}
-                className="box-border p-2 max-w-40 md:max-w-md wrap-break-word bg-muted text-sm border border-border text-foreground rounded-md shadow-sm"
-              >
-                {props.text}
-              </div>
-            </div>
-          </FloatingPortal>
-        )
-      }
-    </>
+
+    <TooltipPrimitive.Root>
+      <TooltipPrimitive.Trigger
+        delay={0}
+        closeOnClick={false}
+        render={children}
+      />
+      <TooltipPrimitive.Portal>
+        <TooltipPrimitive.Positioner
+          side={side}
+          align={align}
+          sideOffset={sideOffset}
+          alignOffset={alignOffset}
+          className="z-tooltip"
+        >
+          <TooltipPrimitive.Popup className={tooltipStyles}>{text}</TooltipPrimitive.Popup>
+        </TooltipPrimitive.Positioner>
+      </TooltipPrimitive.Portal>
+    </TooltipPrimitive.Root>
   );
 }

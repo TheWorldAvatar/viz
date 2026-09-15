@@ -59,7 +59,7 @@ export function NavBarItem(
         props.tooltip ??
         interpolate(dict.nav.tooltip.landingRedirect, props.title)
       }
-      placement={"left"}
+      side="right"
     >
       <div
         className={`${props.isMobile

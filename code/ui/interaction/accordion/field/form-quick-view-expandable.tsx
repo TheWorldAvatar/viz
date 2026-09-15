@@ -46,6 +46,7 @@ export default function FormQuickViewExpandable(
             <Button
               type="button"
               size="icon"
+              aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
               tooltipText={
                 isQuickViewOpen ? dict.action.hide : dict.action.show
               }
@@ -58,6 +59,7 @@ export default function FormQuickViewExpandable(
             <Button
               type="button"
               size="icon"
+              aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
               tooltipText={
                 isQuickViewOpen ? dict.action.hide : dict.action.show
               }

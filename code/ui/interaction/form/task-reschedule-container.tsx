@@ -131,7 +131,7 @@ function TaskFormContents() {
           <div className="mt-8">
             <label className="text-lg font-bold flex gap-2 mb-1">
               {dict.form.rescheduleDate}
-              <Tooltip text={dict.form.rescheduleDateDesc} placement="right">
+              <Tooltip text={dict.form.rescheduleDateDesc} side="right">
                 <Info className="size-5.5" aria-hidden />
               </Tooltip>
             </label>
