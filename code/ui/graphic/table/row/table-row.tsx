@@ -67,7 +67,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
-  const isHighPriority: boolean = props.row?.original?.[PRIORITY_KEY] === "true";
+  const isHighPriority: boolean = props.row?.original?.[PRIORITY_KEY] === "true" && (lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED);
 
   const rowBackgroundClass: string = isActive
     ? "bg-row-active-background hover:bg-row-active-background-hover"
