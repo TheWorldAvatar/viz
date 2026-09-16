@@ -20,7 +20,7 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
     };
 
     return (
-        <Tooltip text={props.description} side="bottom" align="start">
+        <Tooltip text={props.description} disabled={!props.description} side="bottom" align="start">
             <div
                 className={`w-full h-fit py-1 px-1 flex items-center gap-3 cursor-pointer hover:bg-ring ${props.className || ""}`}
                 onClick={handleClick}

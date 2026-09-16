@@ -58,7 +58,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <Tooltip text={props.disableSort ? "" : dict.message.sort} side="top" align="start">
+            <Tooltip text={dict.message.sort} disabled={props.disableSort} side="top" align="start">
               <div
                 className={`flex items-center gap-2 ${props.disableSort ? "select-none" : "cursor-pointer"}`}
                 onClick={!props.disableSort ? (event) => {

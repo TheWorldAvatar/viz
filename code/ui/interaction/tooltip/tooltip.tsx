@@ -5,8 +5,10 @@ import React from "react";
 import { useScreenType } from "@/hooks/screen/useScreenType";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 
-export interface TooltipProps extends Pick<TooltipPrimitive.Positioner.Props, "side" | "align" | "sideOffset" | "alignOffset"> {
-  text?: string;
+export interface TooltipProps extends
+  Pick<TooltipPrimitive.Positioner.Props, "side" | "align" | "sideOffset" | "alignOffset">,
+  Pick<TooltipPrimitive.Root.Props, "disabled"> {
+  text: string;
   children: React.ReactElement;
 }
 
@@ -22,12 +24,13 @@ const tooltipStyles: string = [
 /**
  * A floating component to render labels upon hovering or focus.
  *
- * @param {string} text Optional tooltip text. When empty the child is rendered as-is with no tooltip.
+ * @param {string} text Tooltip text content.
  * @param {React.ReactElement} children The child element to render the trigger for.
  * @param {string} side Optional side of the trigger to show the tooltip on: "top", "bottom", "left" or "right". Defaults to "top".
  * @param {string} align Optional alignment along that side: "start", "center" or "end". Defaults to "center".
  * @param {number} sideOffset Optional gap in pixels between the tooltip and the trigger. Defaults to 8.
  * @param {number} alignOffset Optional shift in pixels along the alignment axis. Defaults to 0.
+ * @param {boolean} disabled Optional flag to keep the tooltip from opening while still rendering the child. Defaults to false.
  */
 export default function Tooltip({
   text,
@@ -36,18 +39,18 @@ export default function Tooltip({
   align = "center",
   sideOffset = 8,
   alignOffset = 0,
+  disabled = false,
 }: Readonly<TooltipProps>) {
   const screenType: ScreenType = useScreenType();
 
-  // Tooltips are desktop only, and there is nothing to show without text,
-  // so pass the child straight through in either case
-  if (screenType !== ScreenTypeMap.DESKTOP || !text) {
+  // Tooltips are desktop only, so pass the child straight through
+  if (screenType !== ScreenTypeMap.DESKTOP) {
     return children;
   }
 
   return (
 
-    <TooltipPrimitive.Root>
+    <TooltipPrimitive.Root disabled={disabled}>
       <TooltipPrimitive.Trigger
         delay={0}
         closeOnClick={false}
