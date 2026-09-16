@@ -23,7 +23,7 @@ export type AgentResponseDataPayload = {
 
 export type ColumnDefinitionResponse = {
   value: string;
-  type: "literal" | "uri" | "array";
+  type: "literal" | "uri" | "array" | "virtual";
   datatype: string;
   stage?: string;
 };
