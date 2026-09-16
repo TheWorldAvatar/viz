@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.88.3
+
+### Changes
+
+- Disable virtual fields based on inputs from backend
+- Updated min version of `VisBackend Agent` from `v1.69.0` to `v1.69.2`
+
+
 ## 5.88.2
 
 ### Changes
