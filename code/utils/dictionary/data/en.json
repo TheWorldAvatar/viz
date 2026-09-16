@@ -32,6 +32,8 @@
     "filterBy": "Filter by {replace}",
     "flag": "Flag overdue",
     "flagResolution": "Resolve flag",
+    "highPriority": "Prioritise",
+    "highPriorityResolution": "Remove priority",
     "search": "Search",
     "showAll": "Show all",
     "show": "Show",
