@@ -88,7 +88,8 @@ export default class SettingsStore {
       const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
       const settings: TableColumnSettings = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
       for (const [group, columns] of Object.entries(settings)) {
-        const sortingColumns: TableColumnOption[] = columns.filter(col => col.sorting != null);
+        const sortingColumns: TableColumnOption[] = columns.filter(col =>
+          col.filterSort !== false && col.sorting != null);
         if (sortingColumns.length > MAX_SORT_COLUMNS) {
           throw new Error(
             `[ERROR] ${registrySettingsFile}: ` +

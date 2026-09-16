@@ -166,7 +166,8 @@ export function parseColumnsMetadata(
           125
         );
 
-    const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
+    const columnOption: TableColumnOption | undefined = columnOptions?.find((item) => item.name === col.value);
+    const configuredWidth: number | undefined = columnOption?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
 
     results.push({
@@ -213,7 +214,8 @@ export function parseColumnsMetadata(
       },
       filterFn: multiSelectFilter,
       size: effectiveWidth,
-      enableSorting: true,
+      enableColumnFilter: columnOption?.filterSort ?? true,
+      enableSorting: columnOption?.filterSort ?? true,
       sortDescFirst: false,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
     });
@@ -271,7 +273,7 @@ export function getInitialColumnVisibilityState(
 export function getInitialSortingState(columnOptions: TableColumnOption[]): SortingState {
   if (!columnOptions || columnOptions.length === 0) return [];
   return columnOptions
-    .filter(item => item.sorting != null)
+    .filter(item => item.filterSort !== false && item.sorting != null)
     .map(item => ({ id: item.name, desc: item.sorting === "desc" }));
 }
 
@@ -282,7 +284,8 @@ export function getInitialSortingState(columnOptions: TableColumnOption[]): Sort
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
  */
 export function getInitialSortParams(columnOptions: TableColumnOption[]): string {
-  const sortable: TableColumnOption[] = columnOptions?.filter(item => item.sorting != null);
+  const sortable: TableColumnOption[] = columnOptions?.filter(item =>
+    item.filterSort !== false && item.sorting != null);
   if (!sortable || sortable.length === 0) return "%2Bid";
   return sortable
     .map(item => (item.sorting === "desc" ? "-" : "%2B") + item.name)
