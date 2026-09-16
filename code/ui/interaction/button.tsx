@@ -1,6 +1,5 @@
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
-import Tooltip from "@/ui/interaction/tooltip/tooltip";
-import { Placement } from "@floating-ui/react";
+import Tooltip, { TooltipProps } from "@/ui/interaction/tooltip/tooltip";
 import type { LucideIcon } from "lucide-react";
 import React, { ButtonHTMLAttributes } from "react";
 
@@ -24,7 +23,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   label?: string;
   tooltipText?: string;
-  tooltipPosition?: Placement;
+  tooltipSide?: TooltipProps["side"];
+  tooltipAlign?: TooltipProps["align"];
   disabled?: boolean;
   hasMobileIcon?: boolean;
   ref?: React.Ref<HTMLButtonElement>;
@@ -109,7 +109,8 @@ const disabledAndLoadingStyles = "opacity-50 cursor-not-allowed";
  * @param {boolean} loading Optional loading state to show a spinner.
  * @param {string} label Optional label for the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
- * @param {Placement} tooltipPosition Optional tooltip position.
+ * @param {string} tooltipSide Optional side of the button to show the tooltip on: "top", "bottom", "left" or "right". Defaults to "top".
+ * @param {string} tooltipAlign Optional alignment along that side: "start", "center" or "end".
  * @param {boolean} disabled Optional disabled state for the button.
  * @param {boolean} hasMobileIcon if set to false, the button will not show icons on mobile devices.
  */
@@ -126,56 +127,71 @@ export default function Button({
   loading = false, // Default loading state to false
   label,
   tooltipText,
-  tooltipPosition = "top", // Default tooltip position
+  tooltipSide = "top", // Default tooltip side
+  tooltipAlign,
   hasMobileIcon = true,
   ref,
   ...props
 }: Readonly<ButtonProps>) {
+
+  const isInactive: boolean = disabled || loading;
 
   // Build the className string
   const buttonClasses = [
     baseStyles,
     variantStyles[variant],
     sizeStyles[size],
-    disabled || loading ? disabledAndLoadingStyles : "",
+    isInactive ? disabledAndLoadingStyles : "",
     className, // This allows for additional custom classes to be passed in
   ]
     .filter(Boolean) // Remove any empty strings (e.g., from the disabled conditional)
     .join(" "); // Join them into a single string
 
-  return (
-    <Tooltip text={tooltipText} placement={tooltipPosition}>
-      <button
-        ref={ref}
-        className={buttonClasses}
-        disabled={disabled || loading}
-        onClick={!disabled && !loading ? onClick : undefined}
-        {...props}
+  const button: React.ReactElement = (
+    <button
+      ref={ref}
+      className={buttonClasses}
+      disabled={isInactive}
+      onClick={!isInactive ? onClick : undefined}
+      {...props}
+    >
+      <div
+        className={`flex items-center ${iconSpacing[size]} ${loading ? "gap-2" : ""
+          }`}
       >
-        <div
-          className={`flex items-center ${iconSpacing[size]} ${loading ? "gap-2" : ""
-            }`}
-        >
-          {loading && <LoadingSpinner size="sm" />}
-          {!loading && LeftIcon && (
-            <span
-              className={`${hasMobileIcon ? "flex" : "hidden md:flex"
-                } items-center`}
-            >
-              <LeftIcon className={iconSizes[size]} aria-hidden />
-            </span>
-          )}
-          <span className="truncate">{children || label}</span>
-          {!loading && RightIcon && (
-            <span
-              className={`${hasMobileIcon ? "flex" : "hidden md:flex"
-                } items-center`}
-            >
-              <RightIcon className={iconSizes[size]} aria-hidden />
-            </span>
-          )}
-        </div>
-      </button>
+        {loading && <LoadingSpinner size="sm" />}
+        {!loading && LeftIcon && (
+          <span
+            className={`${hasMobileIcon ? "flex" : "hidden md:flex"
+              } items-center`}
+          >
+            <LeftIcon className={iconSizes[size]} aria-hidden />
+          </span>
+        )}
+        <span className="truncate">{children || label}</span>
+        {!loading && RightIcon && (
+          <span
+            className={`${hasMobileIcon ? "flex" : "hidden md:flex"
+              } items-center`}
+          >
+            <RightIcon className={iconSizes[size]} aria-hidden />
+          </span>
+        )}
+      </div>
+    </button>
+  );
+
+  if (!tooltipText) {
+    return button;
+  }
+
+  return (
+    // A disabled button emits no pointer events, so the tooltip is anchored to a wrapper
+    // instead so that it can still be displayed. Base UI binds its hover listeners to the
+    // trigger element once, so the tooltip must remount when the trigger swaps between
+    // the wrapper and the bare button
+    <Tooltip key={`${isInactive}`} text={tooltipText} side={tooltipSide} align={tooltipAlign}>
+      {isInactive ? <span className="inline-flex">{button}</span> : button}
     </Tooltip>
   );
 }

@@ -57,6 +57,7 @@ export default function FormQuickViewMap(
           <Button
             type="button"
             size="icon"
+            aria-label={isMapOpen ? dict.action.hide : dict.action.show}
             tooltipText={isMapOpen ? dict.action.hide : dict.action.show}
             leftIcon={MapPin}
             onClick={() => setIsMapOpen(!isMapOpen)}

@@ -2,6 +2,20 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.88.5
+
+### Changes
+
+- Installed Base UI component library
+- Replaced the old Tooltip component using Floating UI with Base UI primitives
+
+## 5.88.4
+
+### Changes
+
+- Disable virtual fields based on inputs from backend
+- Updated min version of `VisBackend Agent` from `v1.69.0` to `v1.69.2`
+
 ## 5.88.3
 
 ### Bug fixes

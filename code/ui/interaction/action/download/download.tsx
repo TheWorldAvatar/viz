@@ -51,6 +51,7 @@ export function DownloadButton({
       leftIcon={Download}
       size="icon"
       variant="outline"
+      aria-label={dict.action.export}
       tooltipText={dict.action.export}
       className={`${rest.className}`}
       onClick={exportToCSV}
