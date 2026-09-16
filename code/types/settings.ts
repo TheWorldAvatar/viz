@@ -43,6 +43,7 @@ export type TableColumnOption = {
   name: string;
   width?: number;
   visible?: boolean;
+  filterSort?: boolean;
   order?: number;
   sorting?: "asc" | "desc";
 };

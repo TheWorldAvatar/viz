@@ -2,6 +2,24 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.88.3
+
+### Bug fixes
+
+- Fixed stale values from an unselected branch persisting in the form state when a form is restored from a previous session.
+
+## 5.88.2
+
+### Changes
+
+- Made time inputs in the forms optional 
+
+## 5.88.1
+
+### Changes
+
+- Extend table column setting to allow control over filtering and sorting.
+
 ## 5.88.0
 
 ### Changes
