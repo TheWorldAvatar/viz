@@ -169,12 +169,11 @@ export function parseColumnsMetadata(
     const columnOption: TableColumnOption | undefined = columnOptions?.find((item) => item.name === col.value);
     const configuredWidth: number | undefined = columnOption?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
-
     results.push({
       id: col.value,
       accessorKey: col.value,
       header: title,
-      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
+      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" || col.type == "virtual" ? col.type : col.datatype,
       stage: col.stage,
       cell: ({ getValue }) => {
         if (col.value == FLAG_KEY) {
