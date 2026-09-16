@@ -190,7 +190,7 @@ export default function Button({
     // instead so that it can still be displayed. Base UI binds its hover listeners to the
     // trigger element once, so the tooltip must remount when the trigger swaps between
     // the wrapper and the bare button
-    <Tooltip key={isInactive ? "wrapped" : "unwrapped"} text={tooltipText} side={tooltipSide} align={tooltipAlign}>
+    <Tooltip key={`${isInactive}`} text={tooltipText} side={tooltipSide} align={tooltipAlign}>
       {isInactive ? <span className="inline-flex">{button}</span> : button}
     </Tooltip>
   );
