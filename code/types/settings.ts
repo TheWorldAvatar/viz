@@ -33,6 +33,7 @@ export type UISettings = {
       url?: string;
       data?: string;
       settings?: string;
+      priority?: boolean;
       paths?: ResourcesPathSettings[];
       exports?: RegistryExportSettings[];
     };

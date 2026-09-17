@@ -49,7 +49,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
-  const { addEntity, exportOptions } = useTableSession();
+  const { addEntity, allowTaskPrioritisation, exportOptions } = useTableSession();
 
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -345,7 +345,7 @@ export default function RegistryRowAction(
                   }}
                 />
               )}
-              {isActionAllowed("PRIORITISE_TASK") && <RowActionButton
+              {isActionAllowed("PRIORITISE_TASK") && allowTaskPrioritisation && <RowActionButton
                 icon={props.row[PRIORITY_KEY] === "true" ? StarOff : Star}
                 label={props.row[PRIORITY_KEY] === "true" ? dict.action.priorityResolution : dict.action.priority}
                 disabled={isLoading}
