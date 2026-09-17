@@ -347,7 +347,7 @@ export default function RegistryRowAction(
               )}
               {isActionAllowed("PRIORITISE_TASK") && <RowActionButton
                 icon={props.row[PRIORITY_KEY] === "true" ? StarOff : Star}
-                label={props.row[PRIORITY_KEY] === "true" ? dict.action.highPriorityResolution : dict.action.highPriority}
+                label={props.row[PRIORITY_KEY] === "true" ? dict.action.priorityResolution : dict.action.priority}
                 disabled={isLoading}
                 onClick={onUpdatePriority}
               />}
