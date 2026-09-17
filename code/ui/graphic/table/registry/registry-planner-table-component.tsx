@@ -112,7 +112,7 @@ export default function RegistryPlannerTableComponent(
           recordType={props.entityType}
           exports={[]}
           lifecycleStage={LifecycleStageMap.PLANNER}
-          disableRowAction={false}
+          disableRowAction={true}
           selectedDate={selectedDateRange}
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerRefresh}

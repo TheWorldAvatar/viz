@@ -18,6 +18,7 @@ import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { flexRender, Row } from "@tanstack/react-table";
+import { History } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import LoadingSpinner from "../../loader/spinner";
@@ -26,7 +27,6 @@ import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
-import { History } from "lucide-react";
 
 interface TableRowProps {
   id: string;
@@ -192,8 +192,8 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       >
         <TableCell className={`sticky left-0 z-sticky-cell cursor-default ${rowBackgroundClass}`}>
           <div className="flex items-center justify-evenly gap-0.5">
-            {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={props.row.id} />}
-            {!tableDescriptor.isBulkDispatchEdit && <RegistryRowAction
+            {!props.disableRowAction || lifecycleStage == LifecycleStageMap.PLANNER && <DragActionHandle disabled={isLoading} id={props.row.id} />}
+            {!tableDescriptor.isBulkDispatchEdit && lifecycleStage != LifecycleStageMap.PLANNER && <RegistryRowAction
               recordType={recordType}
               accountType={props.accountType}
               lifecycleStage={lifecycleStage}
