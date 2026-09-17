@@ -41,6 +41,7 @@ interface RegistryTableProps {
   selectedDate?: DateRange;
   tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
+  allowTaskPrioritisation?: boolean;
   exports: RegistryExportSettings[];
 }
 
@@ -57,6 +58,7 @@ interface RegistryTableProps {
  * @param triggerRefresh A function to refresh the table when required.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
+ * @param {boolean} allowTaskPrioritisation Optional flag to enable the task prioritisation row action.
  * @param {RegistryExportSettings[]} exports The export options available for this table.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
@@ -114,6 +116,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
         addEntity={props.addEntity}
+        allowTaskPrioritisation={props.allowTaskPrioritisation}
         pricingType={props.pricingType}
       >
         <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">

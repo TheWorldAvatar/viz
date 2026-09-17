@@ -15,7 +15,7 @@ import PopoverActionButton from "@/ui/interaction/action/popover/popover-button"
 import { toast } from "@/ui/interaction/action/toast/toast";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "@/utils/client-utils";
-import { FLAG_KEY } from "@/utils/constants";
+import { FLAG_KEY, PRIORITY_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
@@ -23,7 +23,7 @@ import AddEntityRowAction from "./registry/add-entity-row-action";
 import ReviewBillableRowAction from "./registry/review-billable-row-action";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
-import { Ban, BanknoteX, Check, CircleDollarSign, CircleX, ClipboardList, Clock, EllipsisVertical, ExternalLink, Flag, Pencil, Trash2, TriangleAlert, Undo2, CircleCheckBig, HandCoins } from "lucide-react";
+import { Ban, BanknoteX, Check, CircleDollarSign, CircleX, ClipboardList, Clock, EllipsisVertical, ExternalLink, Flag, Pencil, Trash2, TriangleAlert, Undo2, CircleCheckBig, HandCoins, Star, StarOff } from "lucide-react";
 
 
 interface RegistryRowActionProps {
@@ -49,7 +49,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
-  const { addEntity, exportOptions } = useTableSession();
+  const { addEntity, allowTaskPrioritisation, exportOptions } = useTableSession();
 
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -112,6 +112,18 @@ export default function RegistryRowAction(
     const url: string = makeInternalRegistryAPIwithParams(
       InternalApiIdentifierMap.ACCOUNT,
       FLAG_KEY,
+    );
+    submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
+  };
+
+  const onUpdatePriority: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const reqBody: JsonObject = {
+      id: recordId,
+    };
+    const url: string = makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.EVENT,
+      "service",
+      PRIORITY_KEY,
     );
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
@@ -333,6 +345,12 @@ export default function RegistryRowAction(
                   }}
                 />
               )}
+              {isActionAllowed("PRIORITISE_TASK") && allowTaskPrioritisation && <RowActionButton
+                icon={props.row[PRIORITY_KEY] === "true" ? StarOff : Star}
+                label={props.row[PRIORITY_KEY] === "true" ? dict.action.priorityResolution : dict.action.priority}
+                disabled={isLoading}
+                onClick={onUpdatePriority}
+              />}
             </>
           )}
           {isActionAllowed("VIEW_FILES") && <ViewAttachmentButton

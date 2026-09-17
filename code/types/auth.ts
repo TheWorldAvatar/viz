@@ -145,6 +145,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
     },
+    PRIORITISE_TASK: {
+        permission: "operation",
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
+        status: [],
+    },
 } as const;
 
 export type ButtonActionType = keyof typeof BUTTON_POLICIES;
