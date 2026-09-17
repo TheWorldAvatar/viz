@@ -3,11 +3,10 @@
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { TableDescriptor } from "@/hooks/table/useTable";
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
-import React from "react";
-import { DateRange } from "react-day-picker";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
@@ -16,11 +15,12 @@ import RedirectButton from "@/ui/interaction/action/redirect/redirect-button";
 import Button from "@/ui/interaction/button";
 import DateInput from "@/ui/interaction/input/date/date-input";
 import { buildUrl, interpolate } from "@/utils/client-utils";
+import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Wallet } from "lucide-react";
+import React from "react";
+import { DateRange } from "react-day-picker";
 import ClearAllFiltersButton from "../../action/clear-all-filters-button";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
-import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Wallet } from "lucide-react";
 
 interface TableRibbonProps {
   path: string;
@@ -269,6 +269,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
+          {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+            props.lifecycleStage == LifecycleStageMap.SCHEDULED) && (
+              <RedirectButton
+                url={`${Routes.REGISTRY_TASK_PLANNER}`}
+                leftIcon={CalendarCheck2}
+                size="icon"
+                aria-label={dict.nav.tooltip.dailyPlanner}
+                tooltipText={dict.nav.tooltip.dailyPlanner}
+                variant="outline"
+              />
+            )}
           {isPermitted("operation") && (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
             <Button

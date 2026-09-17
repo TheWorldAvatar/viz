@@ -1,8 +1,4 @@
-import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDictionary } from "@/hooks/useDictionary";
-import { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
-import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
@@ -10,6 +6,10 @@ import { TableColumnOption } from "@/types/settings";
 import { EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
+import { FieldValues } from "react-hook-form";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
@@ -64,13 +64,14 @@ export function useTableData(
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
-
       const buildApiUrl = (page: string, limit: string): string => {
-        if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
-          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(new Date()).getTime().toString(), page, limit, sortParams, filterParams);
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from <= new Date())) {
+          return makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, getUTCDate(new Date()).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
-        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || lifecycleStage == LifecycleStageMap.CLOSED) {
+        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from > new Date())) {
+          return makeInternalRegistryAPIwithParams(LifecycleStageMap.SCHEDULED, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.CLOSED) {
           return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.GENERAL || lifecycleStage == LifecycleStageMap.PRICING || lifecycleStage == LifecycleStageMap.INVOICE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, entityType, "true", null, null, page, limit, sortParams, filterParams);
