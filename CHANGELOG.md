@@ -2,11 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.89.1
+
+### Chores
+
+- Dependabot updates #898
+
 ## 5.89.0
 
 ### Changes
 
-- Added task prioritisation for the outstanding and scheduled task tables from the row actions menu .High-priority rows are highlighted in the task tables.
+- Added task prioritisation for the outstanding and scheduled task tables from the row actions menu. High-priority rows are highlighted in the task tables.
 - Added an optional `priority` setting under `resources.registry` in `ui-settings.json` to enable the prioritisation row action. Defaults to `false`.
 - Updated min version of `VisBackend Agent` from `v1.69.2` to `v1.71.0`
 
