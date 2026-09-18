@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.89.2
+
+### Changes
+
+- Added an optional `disableHoverablePopup` prop to the `Tooltip` component, so tooltips close when the pointer leaves the trigger instead of staying open over the popup
+
 ## 5.89.1
 
 ### Chores
