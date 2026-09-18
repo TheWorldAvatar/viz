@@ -120,7 +120,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                 setIsOpen={setIsActionMenuOpen}
                 aria-label={dict.title.bulkActions}
               >
-                <div className="flex flex-col space-y-3">
+                <div className="flex flex-col items-start space-y-3">
                   {
                     tableDescriptor.isBulkDispatchEdit && <Button
                       leftIcon={ClipboardPlus}
