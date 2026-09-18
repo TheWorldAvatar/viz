@@ -109,8 +109,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);
     } else if (lifecycleStage === LifecycleStageMap.ACTIVE || lifecycleStage === LifecycleStageMap.ARCHIVE) {
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);
-    }
-    else {
+    } else if (lifecycleStage != LifecycleStageMap.PLANNER) {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, recordType, recordId);
     }
