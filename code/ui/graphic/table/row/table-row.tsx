@@ -11,6 +11,7 @@ import Button from "@/ui/interaction/button";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import Checkbox from "@/ui/interaction/input/checkbox";
 import { getId } from "@/utils/client-utils";
+import { PRIORITY_KEY } from "@/utils/constants";
 import { useIsSyncing } from "@/utils/db/dexie-form-repository";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
@@ -66,12 +67,15 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
+  const isHighPriority: boolean = props.row?.original?.[PRIORITY_KEY] === "true" && (lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED);
 
   const rowBackgroundClass: string = isActive
     ? "bg-row-active-background hover:bg-row-active-background-hover"
     : isSelected
       ? "bg-row-selected-background hover:bg-row-selected-background-hover"
-      : "bg-muted hover:bg-background";
+      : isHighPriority
+        ? "bg-row-priority-background hover:bg-row-priority-background-hover"
+        : "bg-muted hover:bg-background";
 
   const onRowClick = async (row: FieldValues) => {
     if (isLoading) return;

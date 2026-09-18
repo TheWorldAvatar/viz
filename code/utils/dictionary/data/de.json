@@ -32,6 +32,8 @@
     "filterBy": "Filtern nach {replace}",
     "flag": "Flagge überfällig",
     "flagResolution": "Flag aufheben",
+    "priority": "Prioritäten setzen",
+    "priorityResolution": "Die Priorität herabsetzen",
     "search": "Suchen",
     "showAll": "Alles anzeigen",
     "show": "Zeigen",

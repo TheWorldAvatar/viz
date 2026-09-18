@@ -93,6 +93,8 @@
     --row-selected-background-hover: hsl(0, 0%, 78%);
     --row-active-background: hsl(156, 40%, 76%);
     --row-active-background-hover: hsl(156, 40%, 70%);
+    --row-priority-background: hsl(35, 100%, 92%);
+    --row-priority-background-hover: hsl(35, 100%, 86%);
   }
 }
 
@@ -173,9 +175,11 @@
     --void-border: hsl(270, 50%, 38%);
 
     --row-selected-background: hsl(0, 0%, 20%);
-    --row-selected-background-hover: hsl(0, 0%, 16%);
-    --row-active-background: hsl(156, 40%, 27%);
-    --row-active-background-hover: hsl(156, 40%, 23%);
+    --row-selected-background-hover: hsl(0, 0%, 24%);
+    --row-active-background: hsl(156, 40%, 20%);
+    --row-active-background-hover: hsl(156, 40%, 24%);
+    --row-priority-background: hsl(35, 82%, 21%);
+    --row-priority-background-hover: hsl(35, 82%, 25%);
   }
 }
 
@@ -253,6 +257,8 @@
   --color-row-selected-background-hover: var(--row-selected-background-hover);
   --color-row-active-background: var(--row-active-background);
   --color-row-active-background-hover: var(--row-active-background-hover);
+  --color-row-priority-background: var(--row-priority-background);
+  --color-row-priority-background-hover: var(--row-priority-background-hover);
 
   --z-index-sticky-cell: 10; /* Sticky table header rows and table columns */
   --z-index-loading: 100; /* Route loading overlay and pull-to-refresh, over content but not the header */

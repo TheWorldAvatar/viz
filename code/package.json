@@ -1,6 +1,6 @@
 {
   "name": "viz",
-  "version": "5.88.5",
+  "version": "5.89.0",
   "private": true,
   "type": "module",
   "engines": {
