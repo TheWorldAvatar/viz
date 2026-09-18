@@ -37,11 +37,9 @@
 }
 
 .dtpicker {
-  height: 1.8rem;
+  height: 2.72rem;
   width: 100%;
   max-width: none;
-  padding-top: 1.3rem;
-  padding-bottom: 1.3rem;
   padding-left: 0.5rem;
   padding-right: 0.7rem;
   border-radius: 0.5rem;

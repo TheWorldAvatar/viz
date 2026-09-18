@@ -264,7 +264,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               htmlFor="select-input"
             >
               {parseWordsForLabels(dict.title.scheduleType)}
-              <Tooltip text={serviceDescription} placement="right">
+              <Tooltip text={serviceDescription} side="right">
                 <Info className="size-5.5" aria-hidden />
               </Tooltip>
             </label>
@@ -291,7 +291,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               <div className="flex flex-col gap-2">
                 <label className="text-lg font-bold flex gap-2">
                   {dict.form.selectDates}
-                  <Tooltip text={dict.form.selectDatesDesc} placement="right">
+                  <Tooltip text={dict.form.selectDatesDesc} side="right">
                     <Info className="size-5.5" aria-hidden />
                   </Tooltip>
                 </label>

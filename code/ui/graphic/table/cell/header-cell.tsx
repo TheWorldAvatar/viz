@@ -5,7 +5,7 @@ import { ColumnFilter, flexRender, Header, Table } from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 
 import { LifecycleStage } from "@/types/form";
-import { TableCellTagMap } from "@/types/table";
+import { ColFilterValues, TableCellTagMap } from "@/types/table";
 import RegistryFilter from "@/ui/container/registry-filter";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
@@ -46,7 +46,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const { tableScrollDescriptor, tableDescriptor } = useTableSession();
   const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
-    (props.header.column.getFilterValue() as string[])?.length > 0;
+    (props.header.column.getFilterValue() as ColFilterValues)?.values?.length > 0;
 
   return (
     <TableCell
@@ -58,7 +58,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <Tooltip text={props.disableSort ? "" : dict.message.sort} placement="top-start">
+            <Tooltip text={dict.message.sort} disabled={props.disableSort} side="top" align="start">
               <div
                 className={`flex items-center gap-2 ${props.disableSort ? "select-none" : "cursor-pointer"}`}
                 onClick={!props.disableSort ? (event) => {
@@ -88,7 +88,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               leftIcon={ListFilter}
               variant={isActiveFilter ? "secondary" : "ghost"}
               tooltipText={dict.action.filter}
-              tooltipPosition="top-start"
+              tooltipSide="top"
+              tooltipAlign="center"
               size="icon"
               className="ml-2"
               aria-label={interpolate(dict.action.filterBy, props.header.column.columnDef.header as string)}
@@ -107,8 +108,11 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 lifecycleStage={props.lifecycleStage}
                 selectedDate={props.selectedDate}
                 filters={props.filters}
-                onSubmission={(selectedOptions: string[]) => {
-                  props.header.column.setFilterValue(selectedOptions);
+                onSubmission={(selectedOptions: string[], isIncluded: boolean = true) => {
+                  props.header.column.setFilterValue({
+                    isIncluded,
+                    values: selectedOptions,
+                  });
                   tableDescriptor.resetRowSelection();
                   props.table.resetPageIndex();
                   tableScrollDescriptor.scrollToTop();

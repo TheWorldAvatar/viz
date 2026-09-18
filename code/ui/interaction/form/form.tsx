@@ -151,7 +151,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       await dexieFormRepo.sync(isConnected, accountType, isContractForm);
       setFormTemplate(parsedTemplate);
       setBillingParams(billingParamsStore)
-      return loadPreviousSession(initialState, fieldIdMapping);
+      return loadPreviousSession(initialState, fieldIdMapping, parsedTemplate.node);
     },
   });
 

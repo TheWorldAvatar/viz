@@ -7,11 +7,11 @@ import {
   SparqlResponseField
 } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
-import { ComparisonOperatorMap } from "@/types/table";
+import { ColFilterValues, ComparisonOperatorMap } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
   ColumnDef,
   ColumnFilter,
@@ -36,23 +36,19 @@ export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string, titleDict: Record<string, string>): string {
-  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
+  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as ColFilterValues)?.values?.length > 0);
   return remainingFilters.length === 0 ? "" : filters.map(filter => {
-    if (filter.value === undefined || (filter.value as string[]).length === 0) {
+    if (filter.value === undefined || (filter.value as ColFilterValues).values?.length === 0) {
       return "";
     }
-    // For date filters
-    if (typeof filter.value == "string") {
-      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
-    }
-    const currentFilterValues: string[] = filter.value as string[];
+    const currentFilterValues: ColFilterValues = filter.value as ColFilterValues;
     let filterParams: string[];
-    if (currentFilterValues.includes(translatedBlankText)) {
-      filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
+    if (currentFilterValues.values.includes(translatedBlankText)) {
+      filterParams = [...currentFilterValues.values.filter(val => val != translatedBlankText), "null"];
     } else {
-      filterParams = currentFilterValues;
+      filterParams = currentFilterValues.values;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
+    return `%7E${currentFilterValues.isIncluded ? "" : "-"}${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
 }
 
@@ -157,6 +153,8 @@ export function parseColumnsMetadata(
   const results: EnhancedColumnDef<FieldValues>[] = [];
   // Create column definitions based on available columns
   for (const col of columns) {
+    // The high priority state is displayed through the row styling rather than as a column
+    if (col.value == PRIORITY_KEY) continue;
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
     const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
     const isDateColumn: boolean = col.datatype === XSD_DATE;
@@ -170,14 +168,14 @@ export function parseColumnsMetadata(
           125
         );
 
-    const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
+    const columnOption: TableColumnOption | undefined = columnOptions?.find((item) => item.name === col.value);
+    const configuredWidth: number | undefined = columnOption?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
-
     results.push({
       id: col.value,
       accessorKey: col.value,
       header: title,
-      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
+      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" || col.type == "virtual" ? col.type : col.datatype,
       stage: col.stage,
       cell: ({ getValue }) => {
         if (col.value == FLAG_KEY) {
@@ -217,7 +215,8 @@ export function parseColumnsMetadata(
       },
       filterFn: multiSelectFilter,
       size: effectiveWidth,
-      enableSorting: true,
+      enableColumnFilter: columnOption?.filterSort ?? true,
+      enableSorting: columnOption?.filterSort ?? true,
       sortDescFirst: false,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
     });
@@ -275,7 +274,7 @@ export function getInitialColumnVisibilityState(
 export function getInitialSortingState(columnOptions: TableColumnOption[]): SortingState {
   if (!columnOptions || columnOptions.length === 0) return [];
   return columnOptions
-    .filter(item => item.sorting != null)
+    .filter(item => item.filterSort !== false && item.sorting != null)
     .map(item => ({ id: item.name, desc: item.sorting === "desc" }));
 }
 
@@ -286,7 +285,8 @@ export function getInitialSortingState(columnOptions: TableColumnOption[]): Sort
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
  */
 export function getInitialSortParams(columnOptions: TableColumnOption[]): string {
-  const sortable: TableColumnOption[] = columnOptions?.filter(item => item.sorting != null);
+  const sortable: TableColumnOption[] = columnOptions?.filter(item =>
+    item.filterSort !== false && item.sorting != null);
   if (!sortable || sortable.length === 0) return "%2Bid";
   return sortable
     .map(item => (item.sorting === "desc" ? "-" : "%2B") + item.name)

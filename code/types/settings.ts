@@ -33,6 +33,7 @@ export type UISettings = {
       url?: string;
       data?: string;
       settings?: string;
+      priority?: boolean;
       paths?: ResourcesPathSettings[];
       exports?: RegistryExportSettings[];
     };
@@ -43,6 +44,7 @@ export type TableColumnOption = {
   name: string;
   width?: number;
   visible?: boolean;
+  filterSort?: boolean;
   order?: number;
   sorting?: "asc" | "desc";
 };

@@ -69,7 +69,7 @@ export default function RibbonComponentOptions(props: Readonly<RibbonComponentOp
 
     return (
         <div className={styles.ribbonComponent}>
-            <Tooltip text={props.tooltip} placement="top-start">
+            <Tooltip text={props.tooltip} side="top" align="start">
                 <div>
                     <div className={innerClass} onClick={props.action}>
                         <div className={styles.ribbonComponentIcon}>

@@ -2,9 +2,11 @@
 
 import { browserStorageManager } from '@/state/browser-storage-manager';
 import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFormCount, setFrozenFields, setInvoiceAccountFilter } from '@/state/form-session-slice';
-import { FORM_STATES } from '@/ui/interaction/form/form-utils';
+import { FormTypeMap, NodeShape, VALUE_KEY } from '@/types/form';
+import { FORM_STATES, getBranchFieldIds } from '@/ui/interaction/form/form-utils';
 import { PREV_SESSION_KEY } from '@/utils/constants';
 import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
+import { BRANCH_ADD, BRANCH_DELETE } from '@/utils/internal-api-services';
 import { ColumnFilter } from '@tanstack/react-table';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
@@ -19,7 +21,7 @@ interface useFormSessionReturn extends FormSessionState {
     handleFormClose: () => void;
     saveCurrentSession: (_initialState: FieldValues, _sessionId?: string, _alwaysStore?: boolean) => void;
     updatePreviousSession: (_formData: FieldValues) => void;
-    loadPreviousSession: (_initialState: FieldValues, _fieldIdNameMapping: Record<string, string>) => FieldValues;
+    loadPreviousSession: (_initialState: FieldValues, _fieldIdNameMapping: Record<string, string>, _nodeShapes?: NodeShape[]) => FieldValues;
 }
 
 /**
@@ -44,7 +46,7 @@ const useFormSession = (): useFormSessionReturn => {
     const updateInvoiceAccount = (account: string): void => {
         dispatch(setInvoiceAccountFilter({
             id: formSession.accountType,
-            value: [account],
+            value: { isIncluded: true, values: [account] },
         }));
     };
 
@@ -159,8 +161,10 @@ const useFormSession = (): useFormSessionReturn => {
      * 
      * @param {FieldValues} initialState  The initial state for the form.
      * @param {Record<string, string>} fieldIdNameMapping  Mappings between field id and name.
+     * @param {NodeShape[]} nodeShapes  Optionally provides the parsed branches to discard the fields of a branch
+     * seeded in the initial state when a different branch is restored from the session.
      */
-    const loadPreviousSession = (initialState: FieldValues, fieldIdNameMapping: Record<string, string>): FieldValues => {
+    const loadPreviousSession = (initialState: FieldValues, fieldIdNameMapping: Record<string, string>, nodeShapes: NodeShape[] = []): FieldValues => {
         formSession.setFieldIdNameMapping(fieldIdNameMapping);
         // Load the values stored in the form ID, usually for input fields, branch names
         const previousSessionData: string = browserStorageManager.get(formSession.id);
@@ -180,6 +184,18 @@ const useFormSession = (): useFormSessionReturn => {
 
                     // If they are not found in the mappings above, they are non-dropdown and should overwrite
                     updatedState[overrideKey] = overrideValue;
+                }
+                // The overrides only replace the keys saved in the session. When the saved branch differs from
+                // the branch seeded in the initial state, remove the seeded branch's fields that the saved branch
+                // does not share, as they would otherwise remain hidden in the form state and be submitted or propagated
+                const branchKey: string = formSession.formType === FormTypeMap.DELETE ? BRANCH_DELETE : BRANCH_ADD;
+                const seededBranch: NodeShape = nodeShapes.find((node) => node.label[VALUE_KEY] === initialState[branchKey]);
+                const restoredBranch: NodeShape = nodeShapes.find((node) => node.label[VALUE_KEY] === overrides[branchKey]);
+                if (seededBranch && restoredBranch && seededBranch !== restoredBranch) {
+                    const restoredFieldIds: string[] = getBranchFieldIds(restoredBranch);
+                    getBranchFieldIds(seededBranch)
+                        .filter((fieldId) => !restoredFieldIds.includes(fieldId))
+                        .forEach((fieldId) => delete updatedState[fieldId]);
                 }
                 initialState = updatedState;
             } catch (e) {

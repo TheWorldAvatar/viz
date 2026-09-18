@@ -73,6 +73,7 @@ Note that resources are optional and their configuration options can differ from
 - Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
   - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
+  - `priority`: OPTIONAL: Set to `true` to enable the prioritise/deprioritise row action on the outstanding and scheduled task tables. High-priority tasks are highlighted in the table. Defaults to `false`.
   - `exports`: OPTIONAL: An array of the export options available from the file export agent. See [Export options](#export-options).
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
@@ -139,6 +140,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     "registry": {
       "data": "type", // Specify only the type to reach the registry page of interest
       "settings": "table-column-settings.json", // Optional table column settings file in /config
+      "priority": true, // Optional; enables the task prioritisation row action
       "paths": [{
           "type": "resource_one", // resource name from backend
           "icon": "map-pin",
@@ -499,6 +501,7 @@ Each table key maps to an array of column configuration objects. The supported o
 - `name` (required): The backend column identifier.
 - `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
 - `visible` (optional): Hides or shows the column at the start. Default to `true` if not set explicitly. Set to `false` to hide the column.
+- `filterSort` (optional): Controls whether users can filter and sort the column. Defaults to `true`; setting it to `false` disables both.
 - `sorting` (optional): Pre-sorts the table by this column on load. Accepted values are `"asc"` (ascending) or `"desc"` (descending). A maximum of 3 columns per table can have sorting configured.
 
 Additional notes:
@@ -528,7 +531,7 @@ Example:
   ],
   "outstanding": [
     { "name": "client", "visible": false },
-    { "name": "status", "width": 160 }
+    { "name": "status", "width": 160, "filterSort": false }
   ],
   "scheduled": [
     { "name": "status" },

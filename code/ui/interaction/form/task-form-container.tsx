@@ -215,6 +215,12 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           } else {
             action = "complete";
           }
+
+          const isMobileCompletionPage: string = browserStorageManager.get(RegistryStatusMap.COMPLETED)
+          if (!!isMobileCompletionPage) {
+            formData["conflict"] = true;
+          }
+
           formData[FORM_STATES.ORDER] = 1;
         } else if (props.formType === FormTypeMap.CANCEL) {
           action = "cancel";
