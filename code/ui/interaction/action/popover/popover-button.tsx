@@ -39,6 +39,7 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {string} tooltipSide Optional side of the button to show the tooltip on: "top", "bottom", "left" or "right".
  * @param {string} tooltipAlign Optional alignment along that side: "start", "center" or "end".
+ * @param {boolean} tooltipDisableHoverablePopup Optional flag for whether the tooltip contents can be hovered without closing the tooltip.
  * @param {string} leftIcon Optional left icon, can be a string or React node.
  * @param {string} rightIcon Optional right icon, can be a string or React node.
  * @param {string} size Optional button size, e.g., "sm", "md", "lg", "default", or "icon".
@@ -61,6 +62,7 @@ export default function PopoverActionButton({
   tooltipSide,
   tooltipAlign,
   variant,
+  tooltipDisableHoverablePopup,
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
@@ -112,6 +114,7 @@ export default function PopoverActionButton({
           tooltipText={tooltipText}
           tooltipSide={tooltipSide}
           tooltipAlign={tooltipAlign}
+          tooltipDisableHoverablePopup={tooltipDisableHoverablePopup}
           onClick={rest.onClick}
           size={size}
           variant={variant}
