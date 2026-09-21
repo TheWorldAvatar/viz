@@ -1,3 +1,5 @@
+import { SupportedLanguage } from "@/types/dictionary";
+
 const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
 
 export const Modules: {
@@ -19,60 +21,61 @@ export const Apis: {
 const REGISTRY_GENERAL: string = "registry";
 const REGISTRY_TASK: string = `${REGISTRY_GENERAL}/task`;
 
-// Default available path names
-export const Paths: {
-  [key: string]: string;
-} = {
-  HOME: "",
-  MAP: "map",
-  DASHBOARD: "analytics",
-  REGISTRY: "view",
-  BILLING_ACCOUNTS: "billing/account",
-  BILLING_PRICING_MODELS: "billing/pricing",
-  BILLING_ACTIVITY_PRICE: "billing/activity/price",
-  BILLING_ACTIVITY_TRANSACTION: "billing/activity/transaction",
-  BILLING_INVOICE: "billing/invoice",
-  REGISTRY_TASK_OUTSTANDING: `${REGISTRY_TASK}/outstanding`,
-  REGISTRY_TASK_OUTSTANDING_MOBILE: REGISTRY_TASK,
-  REGISTRY_TASK_SCHEDULED: `${REGISTRY_TASK}/scheduled`,
-  REGISTRY_TASK_CLOSED: `${REGISTRY_TASK}/closed`,
-  REGISTRY_REPORT: `${REGISTRY_GENERAL}/report`,
-  REGISTRY_ADD: "add",
-  REGISTRY_ADJUST_PRICING: "pricing",
-  REGISTRY_EDIT: "edit",
-  REGISTRY_DELETE: "delete",
-  REGISTRY_TERMINATE: "terminate",
-  REGISTRY_TASK_RESCHEDULE: `${REGISTRY_TASK}/reschedule`,
-  HELP: "help",
+// These routes should be used as the keys for the getRoute method to prepend asset prefix and lang
+export const Routes = {
+  // Home route should be used directly over the getRoute method
+  HOME: `${ASSET_PREFIX}/`,
+  MAP: "MAP",
+  DASHBOARD: "DASHBOARD",
+  REGISTRY: "REGISTRY",
+  BILLING_ACCOUNTS: "BILLING_ACCOUNTS",
+  BILLING_PRICING_MODELS: "BILLING_PRICING_MODELS",
+  BILLING_ACTIVITY_PRICE: "BILLING_ACTIVITY_PRICE",
+  BILLING_ACTIVITY_TRANSACTION: "BILLING_ACTIVITY_TRANSACTION",
+  BILLING_INVOICE: "BILLING_INVOICE",
+  REGISTRY_TASK: "REGISTRY_TASK",
+  REGISTRY_GENERAL: "REGISTRY_GENERAL",
+  REGISTRY_TASK_OUTSTANDING: "REGISTRY_TASK_OUTSTANDING",
+  REGISTRY_TASK_OUTSTANDING_MOBILE: "REGISTRY_TASK_OUTSTANDING_MOBILE",
+  REGISTRY_TASK_SCHEDULED: "REGISTRY_TASK_SCHEDULED",
+  REGISTRY_TASK_CLOSED: "REGISTRY_TASK_CLOSED",
+  REGISTRY_REPORT: "REGISTRY_REPORT",
+  REGISTRY_ADD: "REGISTRY_ADD",
+  REGISTRY_ADJUST_PRICING: "REGISTRY_ADJUST_PRICING",
+  REGISTRY_EDIT: "REGISTRY_EDIT",
+  REGISTRY_DELETE: "REGISTRY_DELETE",
+  REGISTRY_TERMINATE: "REGISTRY_TERMINATE",
+  REGISTRY_TASK_RESCHEDULE: "REGISTRY_TASK_RESCHEDULE",
+  HELP: "HELP",
 };
 
-// Routes with ASSET_PREFIX appended to the path names
-export const Routes: {
-  [key: string]: string;
-} = {
-  HOME: `${ASSET_PREFIX}/${Paths.HOME}`,
-  MAP: `${ASSET_PREFIX}/${Paths.MAP}`,
-  DASHBOARD: `${ASSET_PREFIX}/${Paths.DASHBOARD}`,
-  REGISTRY: `${ASSET_PREFIX}/${Paths.REGISTRY}`,
-  BILLING_ACCOUNTS: `${ASSET_PREFIX}/${Paths.BILLING_ACCOUNTS}`,
-  BILLING_PRICING_MODELS: `${ASSET_PREFIX}/${Paths.BILLING_PRICING_MODELS}`,
-  BILLING_ACTIVITY_PRICE: `${ASSET_PREFIX}/${Paths.BILLING_ACTIVITY_PRICE}`,
-  BILLING_ACTIVITY_TRANSACTION: `${ASSET_PREFIX}/${Paths.BILLING_ACTIVITY_TRANSACTION}`,
-  BILLING_INVOICE: `${ASSET_PREFIX}/${Paths.BILLING_INVOICE}`,
-  REGISTRY_TASK: `${ASSET_PREFIX}/${REGISTRY_TASK}`,
-  REGISTRY_GENERAL: `${ASSET_PREFIX}/${REGISTRY_GENERAL}`,
-  REGISTRY_TASK_OUTSTANDING: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_OUTSTANDING}`,
-  REGISTRY_TASK_OUTSTANDING_MOBILE: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_OUTSTANDING_MOBILE}`,
-  REGISTRY_TASK_SCHEDULED: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_SCHEDULED}`,
-  REGISTRY_TASK_CLOSED: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_CLOSED}`,
-  REGISTRY_REPORT: `${ASSET_PREFIX}/${Paths.REGISTRY_REPORT}`,
-  REGISTRY_ADD: `${ASSET_PREFIX}/${Paths.REGISTRY_ADD}`,
-  REGISTRY_ADJUST_PRICING: `${ASSET_PREFIX}/${REGISTRY_GENERAL}/${Paths.REGISTRY_ADJUST_PRICING}`,
-  REGISTRY_EDIT: `${ASSET_PREFIX}/${Paths.REGISTRY_EDIT}`,
-  REGISTRY_DELETE: `${ASSET_PREFIX}/${Paths.REGISTRY_DELETE}`,
-  REGISTRY_TERMINATE: `${ASSET_PREFIX}/${Paths.REGISTRY_TERMINATE}`,
-  REGISTRY_TASK_RESCHEDULE: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_RESCHEDULE}`,
-  HELP: `${ASSET_PREFIX}/${Paths.HELP}`,
+export type RouteKey = (typeof Routes)[keyof typeof Routes];
+
+// Default available path names
+export const Paths: Record<RouteKey, string> = {
+  [Routes.HOME]: ASSET_PREFIX,
+  [Routes.MAP]: "map",
+  [Routes.DASHBOARD]: "analytics",
+  [Routes.REGISTRY]: "view",
+  [Routes.BILLING_ACCOUNTS]: "billing/account",
+  [Routes.BILLING_PRICING_MODELS]: "billing/pricing",
+  [Routes.BILLING_ACTIVITY_PRICE]: "billing/activity/price",
+  [Routes.BILLING_ACTIVITY_TRANSACTION]: "billing/activity/transaction",
+  [Routes.BILLING_INVOICE]: "billing/invoice",
+  [Routes.REGISTRY_TASK_OUTSTANDING]: `${REGISTRY_TASK}/outstanding`,
+  [Routes.REGISTRY_TASK_OUTSTANDING_MOBILE]: REGISTRY_TASK,
+  [Routes.REGISTRY_TASK_SCHEDULED]: `${REGISTRY_TASK}/scheduled`,
+  [Routes.REGISTRY_TASK_CLOSED]: `${REGISTRY_TASK}/closed`,
+  [Routes.REGISTRY_GENERAL]: REGISTRY_GENERAL,
+  [Routes.REGISTRY_TASK]: REGISTRY_TASK,
+  [Routes.REGISTRY_REPORT]: `${REGISTRY_GENERAL}/report`,
+  [Routes.REGISTRY_ADD]: "add",
+  [Routes.REGISTRY_ADJUST_PRICING]: `${REGISTRY_GENERAL}/pricing`,
+  [Routes.REGISTRY_EDIT]: "edit",
+  [Routes.REGISTRY_DELETE]: "delete",
+  [Routes.REGISTRY_TERMINATE]: "terminate",
+  [Routes.REGISTRY_TASK_RESCHEDULE]: `${REGISTRY_TASK}/reschedule`,
+  [Routes.HELP]: "help",
 };
 
 export const PageTitles: {
@@ -83,4 +86,14 @@ export const PageTitles: {
   REGISTRY: "Registry",
   BILLING: "Billing",
   HELP: "Help",
+};
+
+/**
+ * Constructs the route format compatible with next.js syntax.
+ *
+ * @param lang The language tag associated with the paths.
+ * @param route A key to retrieve the corresponding paths.
+ */
+export function getRoute(lang: SupportedLanguage, route: RouteKey): string {
+  return `${ASSET_PREFIX}/${lang}/${Paths[route]}`;
 };
