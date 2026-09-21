@@ -272,7 +272,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) && (
               <RedirectButton
-                url={`${Routes.REGISTRY_TASK_PLANNER}`}
+                url={getRoute(dict.lang, Routes.REGISTRY_TASK_PLANNER)}
                 leftIcon={CalendarCheck2}
                 size="icon"
                 aria-label={dict.nav.tooltip.dailyPlanner}
