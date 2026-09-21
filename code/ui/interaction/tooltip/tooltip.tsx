@@ -7,7 +7,7 @@ import { ScreenType, ScreenTypeMap } from "@/types/settings";
 
 export interface TooltipProps extends
   Pick<TooltipPrimitive.Positioner.Props, "side" | "align" | "sideOffset" | "alignOffset">,
-  Pick<TooltipPrimitive.Root.Props, "disabled"> {
+  Pick<TooltipPrimitive.Root.Props, "disabled" | "disableHoverablePopup"> {
   text: string;
   children: React.ReactElement;
 }
@@ -31,6 +31,7 @@ const tooltipStyles: string = [
  * @param {number} sideOffset Optional gap in pixels between the tooltip and the trigger. Defaults to 8.
  * @param {number} alignOffset Optional shift in pixels along the alignment axis. Defaults to 0.
  * @param {boolean} disabled Optional flag to keep the tooltip from opening while still rendering the child. Defaults to false.
+ * @param {boolean} disableHoverablePopup Optional flag for whether the tooltip contents can be hovered without closing the tooltip. Default is false.
  */
 export default function Tooltip({
   text,
@@ -40,6 +41,7 @@ export default function Tooltip({
   sideOffset = 8,
   alignOffset = 0,
   disabled = false,
+  disableHoverablePopup = false
 }: Readonly<TooltipProps>) {
   const screenType: ScreenType = useScreenType();
 
@@ -50,7 +52,7 @@ export default function Tooltip({
 
   return (
 
-    <TooltipPrimitive.Root disabled={disabled}>
+    <TooltipPrimitive.Root disabled={disabled} disableHoverablePopup={disableHoverablePopup}>
       <TooltipPrimitive.Trigger
         delay={0}
         closeOnClick={false}

@@ -205,6 +205,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               size="icon"
               variant="ghost"
               tooltipText={dict.title.history}
+              tooltipDisableHoverablePopup
               aria-label={`${dict.title.history}, ${props.row.original.id}`}
               onClick={() => {
                 setHistoryId(props.id);

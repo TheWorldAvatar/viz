@@ -210,6 +210,7 @@ export default function RegistryRowAction(
         leftIcon={EllipsisVertical}
         variant="ghost"
         tooltipText={dict.title.actions}
+        tooltipDisableHoverablePopup
         size="icon"
         className="ml-2"
         isOpen={isActionMenuOpen}

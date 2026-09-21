@@ -25,6 +25,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tooltipText?: string;
   tooltipSide?: TooltipProps["side"];
   tooltipAlign?: TooltipProps["align"];
+  tooltipDisableHoverablePopup?: TooltipProps["disableHoverablePopup"];
   disabled?: boolean;
   hasMobileIcon?: boolean;
   ref?: React.Ref<HTMLButtonElement>;
@@ -111,6 +112,7 @@ const disabledAndLoadingStyles = "opacity-50 cursor-not-allowed";
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {string} tooltipSide Optional side of the button to show the tooltip on: "top", "bottom", "left" or "right". Defaults to "top".
  * @param {string} tooltipAlign Optional alignment along that side: "start", "center" or "end".
+ * @param {boolean} tooltipDisableHoverablePopup Optional flag for whether the tooltip contents can be hovered without closing the tooltip.
  * @param {boolean} disabled Optional disabled state for the button.
  * @param {boolean} hasMobileIcon if set to false, the button will not show icons on mobile devices.
  */
@@ -131,6 +133,7 @@ export default function Button({
   tooltipAlign,
   hasMobileIcon = true,
   ref,
+  tooltipDisableHoverablePopup,
   ...props
 }: Readonly<ButtonProps>) {
 
@@ -190,7 +193,7 @@ export default function Button({
     // instead so that it can still be displayed. Base UI binds its hover listeners to the
     // trigger element once, so the tooltip must remount when the trigger swaps between
     // the wrapper and the bare button
-    <Tooltip key={`${isInactive}`} text={tooltipText} side={tooltipSide} align={tooltipAlign}>
+    <Tooltip key={`${isInactive}`} text={tooltipText} side={tooltipSide} align={tooltipAlign} disableHoverablePopup={tooltipDisableHoverablePopup}>
       {isInactive ? <span className="inline-flex">{button}</span> : button}
     </Tooltip>
   );
