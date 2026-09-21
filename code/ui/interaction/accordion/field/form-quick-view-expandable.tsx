@@ -1,13 +1,13 @@
 "use client";
 
+import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useFormQuickView } from "@/hooks/form/useFormQuickView";
 import { useDictionary } from "@/hooks/useDictionary";
+import { Routes } from "@/io/config/routes";
 import { Dictionary } from "@/types/dictionary";
+import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import Button from "../../button";
 import FormQuickViewFields from "./form-quick-view-fields";
-import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
-import { ChevronDown, ChevronUp, ExternalLink, Route } from "lucide-react";
-import { Routes } from "@/io/config/routes";
 
 interface FormQuickViewExpandableProps {
   entity: string;
