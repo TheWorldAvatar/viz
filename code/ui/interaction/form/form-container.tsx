@@ -185,7 +185,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="secondary"
                 leftIcon={Ban}
                 className="mr-2"
-                tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 disabled={isLoading}
                 label={dict.action.terminate}
                 onClick={() => {
@@ -201,7 +200,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label={dict.action.approve}
                 disabled={isLoading}
                 loading={isLoading}
-                tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
             )}
@@ -214,7 +212,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 leftIcon={Pencil}
                 label={dict.action.edit}
                 disabled={isLoading}
-                tooltipText={dict.action.edit}
                 onClick={() => navigateToDrawer(`../../edit/${props.entityType}/${id}`)}
                 variant="secondary"
               />
@@ -228,7 +225,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 leftIcon={Trash2}
                 label={dict.action.delete}
                 disabled={isLoading}
-                tooltipText={dict.action.delete}
                 onClick={() => navigateToDrawer(`../../delete/${props.entityType}/${id}`)}
                 variant="secondary"
               />
