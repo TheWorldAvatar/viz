@@ -6,7 +6,8 @@ import { Dictionary } from "@/types/dictionary";
 import Button from "../../button";
 import FormQuickViewFields from "./form-quick-view-fields";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
-import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink, Route } from "lucide-react";
+import { Routes } from "@/io/config/routes";
 
 interface FormQuickViewExpandableProps {
   entity: string;
@@ -51,7 +52,7 @@ export default function FormQuickViewExpandable(
                 isQuickViewOpen ? dict.action.hide : dict.action.show
               }
               leftIcon={ExternalLink}
-              onClick={() => navigateToDrawer(`../../view/${props.entityType}/${selectedEntityId}`)}
+              onClick={() => navigateToDrawer(Routes.REGISTRY, `${props.entityType}/${selectedEntityId}`)}
               variant="outline"
               loading={isQuickViewLoading}
             />

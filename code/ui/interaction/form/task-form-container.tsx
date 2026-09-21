@@ -10,7 +10,7 @@ import { useTaskData } from "@/hooks/form/api/useTaskData";
 import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { Routes } from "@/io/config/routes";
+import { getRoute, Routes } from "@/io/config/routes";
 import { browserStorageManager, localStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
@@ -333,7 +333,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    navigateToDrawer(Routes.REGISTRY_TASK, action, task?.id);
+    navigateToDrawer(getRoute(dict.lang, Routes.REGISTRY_TASK), action, task?.id);
   };
 
   return (
