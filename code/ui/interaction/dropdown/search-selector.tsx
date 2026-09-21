@@ -60,7 +60,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <input
             autoFocus
             type="text"
-            className="border border-border rounded pl-3 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
+            className="h-10 border border-border rounded pl-3 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
