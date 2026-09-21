@@ -16,7 +16,7 @@ interface ExternalRedirectButtonProps extends
  * rendering a Button, as Base UI recommends.
  *
  * @param {string} url The target url.
- * @param {string} variant Optional button variant, e.g., "primary", "secondary", etc. Defaults to "primary".
+ * @param {string} variant Optional button variant, e.g., "primary", "secondary", "outline", etc. Defaults to "primary".
  * @param {string} size Optional button size, e.g., "xs", "sm", "default" or "lg". Defaults to "default".
  * @param {string} label Optional label for the link, used when no children are given.
  */

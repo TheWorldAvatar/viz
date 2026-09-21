@@ -35,7 +35,7 @@ export const buttonVariants = cva(
         "icon-xs": "size-7 [&_svg:not([class*='size-'])]:size-4",
         "icon-sm": "size-8 [&_svg:not([class*='size-'])]:size-4.5",
         icon: "size-9 [&_svg:not([class*='size-'])]:size-5",
-        "icon-lg": "size-11 [&_svg:not([class*='size-'])]:size-5",
+        "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
     },
     defaultVariants: {
@@ -70,7 +70,7 @@ export interface ButtonProps extends Omit<ButtonPrimitive.Props, "className" | "
  * A generic button template class built on the Base UI Button, which supplies the
  * button semantics, `type="button"` default, disabled handling and the `render` prop.
  *
- * @param {string} variant The button variant, e.g., "primary", "secondary", etc. This controls the button's appearance. Defaults to "primary".
+ * @param {string} variant The button variant, e.g., "primary", "secondary", "outline", etc. This controls the button's appearance. Defaults to "primary".
  * @param {string} size The button size, e.g., "xs", "sm", "default", "lg" or "icon". This controls the button's dimensions and padding. Defaults to "default".
  * @param {LucideIcon} leftIcon Optional lucide icon component rendered before the label.
  * @param {LucideIcon} rightIcon Optional lucide icon component rendered after the label.

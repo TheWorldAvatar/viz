@@ -75,15 +75,14 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
           <Button
             leftIcon={Filter}
-            size="icon"
+            size="icon-lg"
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
               props.onSubmission(selectedOptions, isIncluded);
             }}
             tooltipText={dict.action.applyFilter}
-            variant="primary"
-            className="p-5 border border-border ml-2"
+            className="ml-2"
             disabled={props.disabled || !isConnected}
             aria-label={"Submit for " + props.label}
           />
