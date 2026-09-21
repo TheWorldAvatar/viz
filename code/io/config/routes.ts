@@ -24,7 +24,7 @@ const REGISTRY_TASK: string = `${REGISTRY_GENERAL}/task`;
 // These routes should be used as the keys for the getRoute method to prepend asset prefix and lang
 export const Routes = {
   // Home route should be used directly over the getRoute method
-  HOME: ASSET_PREFIX,
+  HOME: `${ASSET_PREFIX}/`,
   MAP: "MAP",
   DASHBOARD: "DASHBOARD",
   REGISTRY: "REGISTRY",
