@@ -60,7 +60,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <input
             autoFocus
             type="text"
-            className="border border-border rounded pl-3 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
+            className="h-10 border border-border rounded pl-3 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
@@ -75,15 +75,14 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
           <Button
             leftIcon={Filter}
-            size="icon"
+            size="icon-lg"
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
               props.onSubmission(selectedOptions, isIncluded);
             }}
             tooltipText={dict.action.applyFilter}
-            variant="primary"
-            className="p-5 border border-border ml-2"
+            className="ml-2"
             disabled={props.disabled || !isConnected}
             aria-label={"Submit for " + props.label}
           />

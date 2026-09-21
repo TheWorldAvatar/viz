@@ -42,7 +42,7 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param {boolean} tooltipDisableHoverablePopup Optional flag for whether the tooltip contents can be hovered without closing the tooltip.
  * @param {string} leftIcon Optional left icon, can be a string or React node.
  * @param {string} rightIcon Optional right icon, can be a string or React node.
- * @param {string} size Optional button size, e.g., "sm", "md", "lg", "default", or "icon".
+ * @param {string} size Optional button size, e.g., "xs", "sm", "default", "lg" or "icon".
  * @param {string} variant Optional button variant, e.g., "primary", "secondary", "destructive", etc.
  * @param {ButtonProps} rest Additional button properties that are passed to the button component.
  */

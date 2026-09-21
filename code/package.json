@@ -40,6 +40,7 @@
     "@types/react-dom": "19.3.0",
     "chart.js": "^4.5.1",
     "chartjs-adapter-moment": "^1.0.1",
+    "class-variance-authority": "^0.7.1",
     "connect-redis": "^10.0.0",
     "dexie": "^4.4.6",
     "dexie-react-hooks": "^4.4.0",

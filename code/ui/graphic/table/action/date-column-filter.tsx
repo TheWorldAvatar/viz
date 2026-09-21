@@ -41,21 +41,19 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
       <div className="flex gap-2 ml-2">
         <Button
           leftIcon={Filter}
-          size="icon"
+          size="icon-lg"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
             props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
           }}
           tooltipText={dict.action.applyFilter}
-          variant="primary"
-          className="p-5 border border-border"
           disabled={props.disabled || !selectedDate}
           aria-label={interpolate(dict.action.filterBy, props.label)}
         />
         <Button
           leftIcon={FunnelX}
-          size="icon"
+          size="icon-lg"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -64,7 +62,6 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
           tooltipText={dict.action.clearFilter}
           variant="secondary"
           disabled={!selectedDate || props.disabled}
-          className="p-5 border border-border"
           aria-label={interpolate(dict.action.clearFilterFor, props.label)}
         />
       </div>

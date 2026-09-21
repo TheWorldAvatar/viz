@@ -45,7 +45,7 @@ export default function ClearAllFiltersButton(props: Readonly<ClearAllFiltersBut
         props.tableScrollDescriptor.scrollToTop();
       }}
       tooltipText={dict.action.clearAllFilters}
-      variant={props.variant || "destructive"}
+      variant={props.variant ?? "destructive"}
     />
   );
 }

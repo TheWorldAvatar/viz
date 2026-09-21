@@ -118,9 +118,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         </div>
         <Button
           leftIcon={Filter}
-          size="icon"
-          variant="primary"
-          className="p-5"
+          size="icon-lg"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -132,9 +130,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         />
         <Button
           leftIcon={FunnelX}
-          size="icon"
+          size="icon-lg"
           variant="secondary"
-          className="p-5 border border-border"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();

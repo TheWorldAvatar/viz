@@ -448,7 +448,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon={Check}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.complete}
                       onClick={() => navigateToTaskAction("complete")}
@@ -462,7 +461,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon={ClipboardList}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.dispatch}
                       onClick={() => navigateToTaskAction("dispatch")}
@@ -477,7 +475,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     <Button
                       variant="secondary"
                       leftIcon={CircleX}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.cancel}
                       onClick={() => navigateToTaskAction("cancel")}
@@ -492,7 +489,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     <Button
                       variant="secondary"
                       leftIcon={TriangleAlert}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.report}
                       onClick={() => navigateToTaskAction("report")}
