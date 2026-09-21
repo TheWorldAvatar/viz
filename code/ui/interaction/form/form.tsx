@@ -8,7 +8,7 @@ import useFormSession from "@/hooks/form/useFormSession";
 import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { Routes } from "@/io/config/routes";
+import { getRoute, Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { setFilterFeatureIris, setFilterTimes } from "@/state/map-feature-slice";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
@@ -444,7 +444,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             });
           } else {
             router.replace(
-              buildUrl(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(browserStorageManager.get(EVENT_KEY))}`)
+              buildUrl(getRoute(dict.lang, Routes.REGISTRY_TASK), `${FormTypeMap.ACCRUAL}?id=${getId(browserStorageManager.get(EVENT_KEY))}`)
             );
           }
           // Close search modal on success
@@ -453,7 +453,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         } else if (formType === FormTypeMap.INVOICE) {
           // Redirect to invoice page on success
           // Need window.location.href to ensure the page is fully reloaded to fetch the new invoice data from the table
-          window.location.href = buildUrl(Routes.BILLING_INVOICE);
+          window.location.href = buildUrl(getRoute(dict.lang, Routes.BILLING_INVOICE));
         }
         else {
           // Redirect back for other types (add and edit) as users will want to see their changes

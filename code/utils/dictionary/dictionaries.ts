@@ -1,5 +1,5 @@
 import "server-only";
-import { Dictionary } from "@/types/dictionary";
+import { Dictionary, SupportedLanguage } from "@/types/dictionary";
 
 const dictionaries: Record<string, () => Promise<Dictionary>> = {
   de: () =>
@@ -9,7 +9,9 @@ const dictionaries: Record<string, () => Promise<Dictionary>> = {
 };
 
 export const getDictionary = async (locale: string): Promise<Dictionary> =>
-  dictionaries[locale]().catch((error) => {
-    console.error(`Failed to load dictionary for locale: ${locale}`, error);
-    throw error;
-  });
+  dictionaries[locale]()
+    .then((dict) => ({ ...dict, lang: (locale as SupportedLanguage) }))
+    .catch((error) => {
+      console.error(`Failed to load dictionary for locale: ${locale}`, error);
+      throw error;
+    });

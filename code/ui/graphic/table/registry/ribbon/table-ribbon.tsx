@@ -6,7 +6,7 @@ import { TableDescriptor } from "@/hooks/table/useTable";
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { Routes } from "@/io/config/routes";
+import { Routes, getRoute } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
@@ -80,7 +80,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.jobs}
                 leftIcon={Truck}
                 hasMobileIcon={false}
-                url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/${props.entityType}`}
                 variant={
                   props.lifecycleStage == LifecycleStageMap.PENDING ||
                     props.lifecycleStage == LifecycleStageMap.ACTIVE ||
@@ -96,7 +96,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.tasks}
                 leftIcon={ClipboardList}
                 hasMobileIcon={false}
-                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                url={getRoute(dict.lang, Routes.REGISTRY_TASK_OUTSTANDING)}
                 variant={
                   props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
                     props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
@@ -112,7 +112,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.accounts}
                 leftIcon={Wallet}
                 hasMobileIcon={false}
-                url={Routes.BILLING_ACCOUNTS}
+                url={getRoute(dict.lang, Routes.BILLING_ACCOUNTS)}
                 variant={
                   props.lifecycleStage === LifecycleStageMap.ACCOUNT ? "active" : "ghost"
                 }
@@ -122,7 +122,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.pricing}
                 leftIcon={CircleDollarSign}
                 hasMobileIcon={false}
-                url={Routes.BILLING_PRICING_MODELS}
+                url={getRoute(dict.lang, Routes.BILLING_PRICING_MODELS)}
                 variant={
                   props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
                 }
@@ -132,7 +132,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.invoice}
                 leftIcon={Receipt}
                 hasMobileIcon={false}
-                url={Routes.BILLING_INVOICE}
+                url={getRoute(dict.lang, Routes.BILLING_INVOICE)}
                 variant={
                   props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
                 }
@@ -152,7 +152,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.pending}
               leftIcon={CalendarCheck2}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/${props.entityType}`}
               variant={
                 props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
               }
@@ -162,7 +162,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.active}
               leftIcon={CircleCheck}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/active/${props.entityType}`}
               variant={
                 props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
               }
@@ -172,7 +172,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.archive}
               leftIcon={Archive}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/archive/${props.entityType}`}
               variant={
                 props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
               }
@@ -182,7 +182,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.outstanding}
               leftIcon={CircleEllipsis}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+              url={getRoute(dict.lang, Routes.REGISTRY_TASK_OUTSTANDING)}
               variant={
                 props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
               }
@@ -192,7 +192,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.scheduled}
               leftIcon={Clock}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+              url={getRoute(dict.lang, Routes.REGISTRY_TASK_SCHEDULED)}
               variant={
                 props.lifecycleStage == LifecycleStageMap.SCHEDULED ? "active" : "ghost"
               }
@@ -202,7 +202,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.closed}
               leftIcon={CalendarX}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_TASK_CLOSED}`}
+              url={getRoute(dict.lang, Routes.REGISTRY_TASK_CLOSED)}
               variant={
                 props.lifecycleStage == LifecycleStageMap.CLOSED ? "active" : "ghost"
               }
@@ -238,7 +238,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   browserStorageManager.clear();
                   resetFormSession();
                   if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
-                    window.location.href = buildUrl(Routes.REGISTRY_ADD, LifecycleStageMap.INVOICE);
+                    window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), LifecycleStageMap.INVOICE);
                   } else {
                     navigateToDrawer(Routes.REGISTRY_ADD,
                       ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||

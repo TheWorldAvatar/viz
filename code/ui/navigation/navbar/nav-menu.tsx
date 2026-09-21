@@ -3,21 +3,21 @@
 import React, { useRef, useState } from "react";
 
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
+import { useSession } from "@/hooks/auth/useSession";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 import { useDictionary } from "@/hooks/useDictionary";
 import { OptionalPage } from "@/io/config/optional-pages";
-import { Modules, Routes } from "@/io/config/routes";
+import { getRoute, Modules, Routes } from "@/io/config/routes";
 import { Dictionary } from "@/types/dictionary";
 import { NavBarItemSettings, ScreenType, ScreenTypeMap, UISettings } from "@/types/settings";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
-import FileModal from "@/ui/interaction/modal/file/file-modal";
-import { parseStringsForUrls, parseWordsForLabels, interpolate } from "@/utils/client-utils";
-import { SIDE_MENU_EXPANDED_COOKIE } from "@/utils/constants";
-import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
-import { useScreenType } from "@/hooks/screen/useScreenType";
-import { useSession } from "@/hooks/auth/useSession";
+import FileModal from "@/ui/interaction/modal/file/file-modal";
+import { interpolate, parseStringsForUrls, parseWordsForLabels } from "@/utils/client-utils";
+import { SIDE_MENU_EXPANDED_COOKIE } from "@/utils/constants";
 import { ArrowLeftToLine, ArrowRightToLine, CircleHelp, House, Info, LayoutDashboard, Map as MapIcon, Menu, ReceiptText, Sheet } from "lucide-react";
+import { NavBarItem } from "./navbar-item";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -213,7 +213,7 @@ function NavMenuContents(
         <NavBarItem
           title={mapLinkProps?.title ?? dict.nav.title.map}
           icon={mapLinkProps?.icon ?? MapIcon}
-          url={Routes.MAP}
+          url={getRoute(dict.lang, Routes.MAP)}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
@@ -228,7 +228,7 @@ function NavMenuContents(
         <NavBarItem
           title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
           icon={dashboardLinkProps?.icon ?? LayoutDashboard}
-          url={Routes.DASHBOARD}
+          url={getRoute(dict.lang, Routes.DASHBOARD)}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
@@ -243,7 +243,7 @@ function NavMenuContents(
         <NavBarItem
           title={billingLinkProps?.title ?? dict.nav.title.billing}
           icon={ReceiptText}
-          url={Routes.BILLING_ACCOUNTS}
+          url={getRoute(dict.lang, Routes.BILLING_ACCOUNTS)}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
@@ -258,7 +258,7 @@ function NavMenuContents(
         <NavBarItem
           title={helpLinkProps?.title ?? dict.nav.title.help}
           icon={helpLinkProps?.icon ?? CircleHelp}
-          url={Routes.HELP}
+          url={getRoute(dict.lang, Routes.HELP)}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
@@ -277,8 +277,8 @@ function NavMenuContents(
             icon={registryLinkProps?.icon ?? Sheet}
             url={
               isPermitted("registryFullAccess")
-                ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
-                : screenType === ScreenTypeMap.MOBILE ? Routes.REGISTRY_TASK_OUTSTANDING_MOBILE : Routes.REGISTRY_TASK_OUTSTANDING
+                ? `${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/${props.settings.resources?.registry?.data}`
+                : screenType === ScreenTypeMap.MOBILE ? getRoute(dict.lang, Routes.REGISTRY_TASK_OUTSTANDING_MOBILE) : getRoute(dict.lang, Routes.REGISTRY_TASK_OUTSTANDING)
             }
             isMobile={props.isMobile}
             caption={
@@ -301,7 +301,7 @@ function NavMenuContents(
               key={path.type + index}
               title={parseWordsForLabels(path.type)}
               icon={path.icon ?? registryLinkProps?.icon ?? Sheet}
-              url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/${parseStringsForUrls(path.type)}`}
               isMobile={props.isMobile}
               caption={
                 props.isMenuExpanded
