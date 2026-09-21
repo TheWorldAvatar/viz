@@ -70,7 +70,7 @@ export const Paths: Record<RouteKey, string> = {
   [Routes.REGISTRY_TASK]: REGISTRY_TASK,
   [Routes.REGISTRY_REPORT]: `${REGISTRY_GENERAL}/report`,
   [Routes.REGISTRY_ADD]: "add",
-  [Routes.REGISTRY_ADJUST_PRICING]: "pricing",
+  [Routes.REGISTRY_ADJUST_PRICING]: `${REGISTRY_GENERAL}/pricing`,
   [Routes.REGISTRY_EDIT]: "edit",
   [Routes.REGISTRY_DELETE]: "delete",
   [Routes.REGISTRY_TERMINATE]: "terminate",
