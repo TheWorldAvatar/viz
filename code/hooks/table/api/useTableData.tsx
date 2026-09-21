@@ -96,7 +96,8 @@ export function useTableData(
         const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
         const parsedData: FieldValues[] = parseDataForTable(instances, sorting, res.data?.columns);
         setSelectedCount(res.data?.currentItemCount);
-        setTotalCount(res.data?.totalItems);
+        // Planner page should only show current item count as total
+        setTotalCount(lifecycleStage == LifecycleStageMap.PLANNER ? res.data?.currentItemCount : res.data?.totalItems);
         setInitialInstances(instances);
         setData(parsedData);
         // Parse and set the column metadata only once, then retain it for subsequent
