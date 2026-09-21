@@ -13,13 +13,13 @@ import React from "react";
  * the Button component, as Base UI recommends.
  */
 export const buttonVariants = cva(
-  "cursor-pointer inline-flex shrink-0 items-center justify-center rounded-lg font-medium whitespace-nowrap outline-none select-none transition-all duration-100 ease-linear focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-zinc-400 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "cursor-pointer inline-flex shrink-0 items-center justify-center font-medium whitespace-nowrap outline-none select-none transition-all duration-100 ease-linear focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-zinc-400 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary: "bg-primary border border-transparent text-primary-foreground hover:bg-primary/80",
         secondary: "bg-gray-200 border border-transparent text-gray-800 hover:bg-gray-300",
-        outline: "bg-transparent border border-border text-foreground hover:bg-gray-200 dark:hover:text-background",
+        outline: "bg-background border border-border text-foreground hover:bg-gray-200 dark:hover:text-background",
         ghost: "border border-transparent text-foreground hover:bg-gray-300 dark:hover:bg-zinc-700",
         link: "text-blue-500 underline-offset-4 hover:underline",
         destructive: "bg-destructive/10 border border-transparent text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40 ",
@@ -37,10 +37,15 @@ export const buttonVariants = cva(
         icon: "size-9 [&_svg:not([class*='size-'])]:size-5",
         "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
+      shape: {
+        default: "rounded-lg",
+        pill: "rounded-full",
+      },
     },
     defaultVariants: {
       variant: "primary",
       size: "default",
+      shape: "default",
     },
   }
 );
@@ -49,10 +54,12 @@ export const buttonVariants = cva(
 // are exposed so callers get a real value back
 export type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
 type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
+type ButtonShape = NonNullable<VariantProps<typeof buttonVariants>["shape"]>;
 
 export interface ButtonProps extends Omit<ButtonPrimitive.Props, "className" | "ref"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  shape?: ButtonShape;
   className?: string;
   leftIcon?: LucideIcon;
   rightIcon?: LucideIcon;
@@ -72,6 +79,7 @@ export interface ButtonProps extends Omit<ButtonPrimitive.Props, "className" | "
  *
  * @param {string} variant The button variant, e.g., "primary", "secondary", "outline", etc. This controls the button's appearance. Defaults to "primary".
  * @param {string} size The button size, e.g., "xs", "sm", "default", "lg" or "icon". This controls the button's dimensions and padding. Defaults to "default".
+ * @param {string} shape The button corner shape: "default" (rounded) or "pill" (fully round). Defaults to "default".
  * @param {LucideIcon} leftIcon Optional lucide icon component rendered before the label.
  * @param {LucideIcon} rightIcon Optional lucide icon component rendered after the label.
  * @param {boolean} loading Optional loading state to show a spinner.
@@ -87,6 +95,7 @@ export default function Button({
   className, // Allow custom classes to be passed in
   variant, // Defaults are owned by buttonVariants
   size, // Defaults are owned by buttonVariants
+  shape, // Defaults are owned by buttonVariants
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
   children,
@@ -110,7 +119,7 @@ export default function Button({
     // focusableWhenDisabled keeps focus on the button while it is loading
     <ButtonPrimitive
       ref={ref}
-      className={buttonVariants({ variant, size, className })}
+      className={buttonVariants({ variant, size, shape, className })}
       disabled={isInactive}
       focusableWhenDisabled={loading}
       aria-busy={loading || undefined}

@@ -184,12 +184,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           <div className="absolute bottom-16 right-6">
             <Button
               size="icon"
-              variant="secondary"
+              variant="outline"
+              shape="pill"
               leftIcon={ArrowUp}
               tooltipText={dict.action.backToTop}
               aria-label={dict.action.backToTop}
               onClick={() => scrollToTop(true)}
-              className="rounded-full! shadow-xs border border-border p-5.5"
+              className="shadow-xs p-5.5"
             />
           </div>
           <TablePagination />
