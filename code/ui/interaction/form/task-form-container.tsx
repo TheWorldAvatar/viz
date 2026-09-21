@@ -333,7 +333,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    navigateToDrawer(getRoute(dict.lang, Routes.REGISTRY_TASK), action, task?.id);
+    navigateToDrawer(Routes.REGISTRY_TASK, action, task?.id);
   };
 
   return (
