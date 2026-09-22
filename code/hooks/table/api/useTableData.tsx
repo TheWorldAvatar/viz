@@ -63,13 +63,14 @@ export function useTableData(
 
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
+      const currentDate: Date = new Date();
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       const buildApiUrl = (page: string, limit: string): string => {
-        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from <= new Date())) {
-          return makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, getUTCDate(new Date()).getTime().toString(), page, limit, sortParams, filterParams);
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from <= currentDate)) {
+          return makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, getUTCDate(currentDate).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
-        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from > new Date())) {
+        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from > currentDate)) {
           return makeInternalRegistryAPIwithParams(LifecycleStageMap.SCHEDULED, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.CLOSED) {
           return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
