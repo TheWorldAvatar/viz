@@ -1,9 +1,10 @@
+import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
+import { getAfterDelimiter } from "@/utils/client-utils";
+import { rankBetween } from "@/utils/table/lexorank-utils";
 import { DragEndEvent, KeyboardSensor, MouseSensor, SensorDescriptor, SensorOptions, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { FieldValues } from "react-hook-form";
-import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
 import { TableDescriptor } from "./useTable";
-import { rankBetween } from "@/utils/table/lexorank-utils";
 
 export interface DragAndDropDescriptor {
   dataIds: UniqueIdentifier[];
@@ -48,9 +49,10 @@ export function useTableDnd(
         const nextRank: string = reordered[newIndex + 1]?.lexorank || null;
         const newRank: string = rankBetween(prevRank, nextRank);
         reordered[newIndex] = {
-          ...reordered[newIndex], 
+          ...reordered[newIndex],
           lexorank: newRank,
         };
+        tableDescriptor.syncTasks(getAfterDelimiter(reordered[newIndex].event_id, "/"), newRank);
       }
       tableDescriptor.saveOrder(reordered);
       tableDescriptor.setData(reordered);

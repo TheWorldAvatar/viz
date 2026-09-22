@@ -36,6 +36,7 @@ export interface TableDescriptor {
   setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
+  dirtyTasks: Record<string, FieldValues>;
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   hasCustomOrder: boolean;
@@ -50,6 +51,7 @@ export interface TableDescriptor {
   selectedRowIds: Set<string>;
   setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
   resetRowSelection: () => void;
+  syncTasks: (_id: string, _lexorank: string) => void;
 }
 
 /**
@@ -79,9 +81,9 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
+  const { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
-  
+
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
@@ -198,6 +200,7 @@ export function useTable(
     setIsBulkDispatchEdit,
     table,
     data: currentDataView,
+    dirtyTasks,
     setData: setCurrentDataView,
     hasCustomOrder,
     saveOrder,
@@ -212,5 +215,6 @@ export function useTable(
     selectedRowIds,
     setSelectedRows,
     resetRowSelection,
+    syncTasks,
   };
 }

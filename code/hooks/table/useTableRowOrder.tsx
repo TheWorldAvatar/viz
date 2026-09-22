@@ -4,8 +4,10 @@ import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils
 
 interface TableRowOrderDescriptor {
     hasCustomOrder: boolean;
+    dirtyTasks: Record<string, FieldValues>;
     applyOrder: (_rows: FieldValues[]) => FieldValues[];
     saveOrder: (_rows: FieldValues[]) => void;
+    syncTasks: (_id: string, _lexorank: string) => void;
     resetOrder: () => void;
 }
 
@@ -20,10 +22,19 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
     // A null ref means no custom order is in effect, and rows are left in the server's order
     const orderRef = useRef<string[] | null>(null);
     const [hasCustomOrder, setHasCustomOrder] = useState<boolean>(false);
+    const [dirtyTasks, setDirtyTasks] = useState<Record<string, FieldValues>>({});
 
     const saveOrder = (rows: FieldValues[]): void => {
         orderRef.current = rows.map(row => getRowRecordId(row));
         setHasCustomOrder(true);
+    };
+
+    // Sync the dirty task for registry planner to update their lexorank in the end
+    const syncTasks = (id: string, lexorank: string): void => {
+        setDirtyTasks((prev) => ({
+            ...prev,
+            [id]: { id, lexorank }, // Overwrites if already dirty, adds if new
+        }));
     };
 
     const resetOrder = (): void => {
@@ -54,5 +65,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { hasCustomOrder, applyOrder, saveOrder, resetOrder };
+    return { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder };
 }
