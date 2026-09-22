@@ -5,6 +5,53 @@ const MIN_CHAR: string = BASE[0];
 const MAX_CHAR: string = BASE[BASE.length - 1];
 
 /**
+ * Generates a new LexoRank string lexicographically between two ranks.
+ *
+ * @param prev - Rank of the item above (null/undefined if dropped at top)
+ * @param next - Rank of the item below (null/undefined if dropped at bottom)
+ */
+export function rankBetween(prev: string | null, next: string | null): string {
+  if (prev && next && prev >= next) {
+    throw new Error(`Invalid rank order: prev ("${prev}") must be strictly less than next ("${next}")`);
+  }
+
+  // Empty list baseline at midpoint of 2-character Base-36 space
+  if (!prev && !next) {
+    return MIN_CHAR;
+  }
+
+  const prevRank: string = prev || "";
+  const nextRank: string = next || "";
+
+  let result: string = "";
+  const length: number = !prev && !next
+    ? 1
+    : prev && !next
+      ? prev.length + 2
+      : Math.max(prev?.length ?? 0, next?.length ?? 0);
+
+  for (let i = 0; i <= length; i++) {
+    const currentCharForPrevRank: string = i < prevRank.length ? prevRank[i] : MIN_CHAR;
+    const currentCharForNextRank: string = i < nextRank.length ? nextRank[i] : MAX_CHAR;
+    const currentCharIndexForPrevRank: number = BASE.indexOf(currentCharForPrevRank);
+    const currentCharIndexForNextRank: number = BASE.indexOf(currentCharForNextRank);
+    if (currentCharIndexForPrevRank === -1 || currentCharIndexForNextRank === -1) {
+      throw new Error(`Invalid character in rank string: "${prev}" or "${next}"`);
+    }
+
+    // Characters match or gap of one, continue to next index
+    if (currentCharIndexForNextRank - currentCharIndexForPrevRank <= 1) {
+      result += currentCharForPrevRank;
+      continue;
+    }
+
+    // For a large gap, simply use the current midpoint
+    const midIndex: number = Math.floor((currentCharIndexForPrevRank + currentCharIndexForNextRank) / 2);
+    return result + BASE[midIndex];
+  }
+}
+
+/**
  * Generates LexoRanks for missing instances.
  * 
  * @param instances Presorted data according to lexorank and other criteria.

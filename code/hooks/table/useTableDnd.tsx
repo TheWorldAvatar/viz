@@ -3,6 +3,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { FieldValues } from "react-hook-form";
 import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
 import { TableDescriptor } from "./useTable";
+import { rankBetween } from "@/utils/table/lexorank-utils";
 
 export interface DragAndDropDescriptor {
   dataIds: UniqueIdentifier[];
@@ -42,6 +43,15 @@ export function useTableDnd(
         return;
       }
       const reordered: FieldValues[] = arrayMove(tableDescriptor.data, oldIndex, newIndex);
+      if ("lexorank" in tableDescriptor.data[0]) {
+        const prevRank: string = reordered[newIndex - 1]?.lexorank || null;
+        const nextRank: string = reordered[newIndex + 1]?.lexorank || null;
+        const newRank: string = rankBetween(prevRank, nextRank);
+        reordered[newIndex] = {
+          ...reordered[newIndex], 
+          lexorank: newRank,
+        };
+      }
       tableDescriptor.saveOrder(reordered);
       tableDescriptor.setData(reordered);
       // Hacky solution to reset pagination after reordering
