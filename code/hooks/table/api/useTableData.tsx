@@ -6,6 +6,7 @@ import { TableColumnOption } from "@/types/settings";
 import { EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { genLexoRanks } from "@/utils/table/lexorank-utils";
 import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -63,14 +64,15 @@ export function useTableData(
 
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
+      const isPlanner: boolean = lifecycleStage == LifecycleStageMap.PLANNER;
       const currentDate: Date = new Date();
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       const buildApiUrl = (page: string, limit: string): string => {
-        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from <= currentDate)) {
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || (isPlanner && selectedDate.from <= currentDate)) {
           return makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, getUTCDate(currentDate).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
-        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || (lifecycleStage == LifecycleStageMap.PLANNER && selectedDate.from > currentDate)) {
+        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || (isPlanner && selectedDate.from > currentDate)) {
           return makeInternalRegistryAPIwithParams(LifecycleStageMap.SCHEDULED, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.CLOSED) {
           return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
@@ -95,10 +97,13 @@ export function useTableData(
         }
         const res: AgentResponseBody = await queryInternalApi(apiUrl, undefined, undefined, controller.signal);
         const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
-        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, res.data?.columns);
+        let parsedData: FieldValues[] = parseDataForTable(instances, sorting, res.data?.columns, isPlanner);
+        if (isPlanner) {
+          parsedData = genLexoRanks(parsedData);
+        }
         setSelectedCount(res.data?.currentItemCount);
         // Planner page should only show current item count as total
-        setTotalCount(lifecycleStage == LifecycleStageMap.PLANNER ? res.data?.currentItemCount : res.data?.totalItems);
+        setTotalCount(isPlanner ? res.data?.currentItemCount : res.data?.totalItems);
         setInitialInstances(instances);
         setData(parsedData);
         // Parse and set the column metadata only once, then retain it for subsequent
@@ -111,7 +116,8 @@ export function useTableData(
           // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
           const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
           const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
-          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, cappedRemainderRes.data?.columns);
+          // Planner stage should always skip this due to having 100 page size
+          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, cappedRemainderRes.data?.columns, false);
           setInitialInstances(cappedRemainderInstances);
           setData(cappedRemainderParsedData);
           setIsBackgroundLoading(false);
