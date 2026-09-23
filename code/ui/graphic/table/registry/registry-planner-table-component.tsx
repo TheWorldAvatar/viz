@@ -74,9 +74,9 @@ export default function RegistryPlannerTableComponent(
           setSelectedDate={setSelectedDate}
         />
         <div className="flex justify-end items-end gap-1 flex-wrap">
-          <ColumnToggle
+          {tableDescriptor.initialInstances.length > 0  && <ColumnToggle
             columns={tableDescriptor.table.getAllLeafColumns()}
-          />
+          />}
           <Button
             leftIcon={Save}
             aria-label={dict.action.save}
