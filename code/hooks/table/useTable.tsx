@@ -95,6 +95,7 @@ export function useTable(
     columnFilters,
     tableColumnOptions,
     pagination.pageSize,
+    syncTasks,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {

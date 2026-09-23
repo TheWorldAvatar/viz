@@ -35,6 +35,7 @@ export interface TableDataDescriptor {
 * @param { ColumnFilter[]} filters The current filters set.
 * @param {TableColumnOption[]} columnOptions Configuration for table columns options.
 * @param {number} firstVisiblePageSize Number of records to fetch immediately for the first visible page.
+* @param {Function} syncTasks Function to sync tasks with changes to lexorank on first initialisation.
 */
 export function useTableData(
   entityType: string,
@@ -47,6 +48,7 @@ export function useTableData(
   filters: ColumnFilter[],
   columnOptions: TableColumnOption[],
   firstVisiblePageSize: number,
+  syncTasks: (_id: string, _lexorank: string) => void,
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -99,7 +101,7 @@ export function useTableData(
         const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
         let parsedData: FieldValues[] = parseDataForTable(instances, sorting, res.data?.columns, isPlanner);
         if (isPlanner) {
-          parsedData = genLexoRanks(parsedData);
+          parsedData = genLexoRanks(parsedData, syncTasks);
         }
         setSelectedCount(res.data?.currentItemCount);
         // Planner page should only show current item count as total

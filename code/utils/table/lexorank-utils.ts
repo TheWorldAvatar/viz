@@ -56,7 +56,7 @@ export function rankBetween(prev: string | null, next: string | null): string {
  * 
  * @param instances Presorted data according to lexorank and other criteria.
  */
-export function genLexoRanks(instances: FieldValues[]): FieldValues[] {
+export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, _lexorank: string) => void): FieldValues[] {
   if (instances.length <= 0) return instances;
   const ranked: FieldValues[] = [];
   const unranked: FieldValues[] = [];
@@ -76,6 +76,7 @@ export function genLexoRanks(instances: FieldValues[]): FieldValues[] {
 
   const newRanks: string[] = genRanksAfter(lastRank, unranked.length);
   const newlyRanked: FieldValues[] = unranked.map((task, index) => {
+    syncTasks(task.event_id, newRanks[index]);
     return {
       ...task,
       lexorank: newRanks[index],
