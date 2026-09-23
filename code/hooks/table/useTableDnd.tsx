@@ -1,5 +1,4 @@
 import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
-import { getAfterDelimiter } from "@/utils/client-utils";
 import { rankBetween } from "@/utils/table/lexorank-utils";
 import { DragEndEvent, KeyboardSensor, MouseSensor, SensorDescriptor, SensorOptions, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -52,7 +51,7 @@ export function useTableDnd(
           ...reordered[newIndex],
           lexorank: newRank,
         };
-        tableDescriptor.syncTasks(getAfterDelimiter(reordered[newIndex].event_id, "/"), newRank);
+        tableDescriptor.syncTasks(reordered[newIndex].event_id, newRank);
       }
       tableDescriptor.saveOrder(reordered);
       tableDescriptor.setData(reordered);

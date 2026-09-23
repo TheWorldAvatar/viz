@@ -1,6 +1,7 @@
+import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
+import { getAfterDelimiter } from "@/utils/client-utils";
 import { useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
-import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
 
 interface TableRowOrderDescriptor {
     hasCustomOrder: boolean;
@@ -31,9 +32,10 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
 
     // Sync the dirty task for registry planner to update their lexorank in the end
     const syncTasks = (id: string, lexorank: string): void => {
+        const idOnly: string = getAfterDelimiter(id, "/");
         setDirtyTasks((prev) => ({
             ...prev,
-            [id]: { id, lexorank }, // Overwrites if already dirty, adds if new
+            [idOnly]: { id: idOnly, lexorank }, // Overwrites if already dirty, adds if new
         }));
     };
 
