@@ -52,6 +52,7 @@ export interface TableDescriptor {
   setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
   resetRowSelection: () => void;
   syncTasks: (_id: string, _lexorank: string) => void;
+  onSyncTasks: () => Promise<void>;
 }
 
 /**
@@ -81,7 +82,7 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder } = useTableRowOrder();
+  const { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
@@ -217,5 +218,6 @@ export function useTable(
     setSelectedRows,
     resetRowSelection,
     syncTasks,
+    onSyncTasks,
   };
 }

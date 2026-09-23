@@ -447,7 +447,9 @@ function makeExternalEndpoint(
     case InternalApiIdentifierMap.TASKS: {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      if (contractType == "task") {
+      if (contractType == "lexorank") {
+        return `${agentBaseApi}/contracts/service/rank`;
+      } else if (contractType == "task") {
         return `${agentBaseApi}/contracts/task/${idOrTimestamp}`;
       }
       const filters: string = encodeFilters(searchParams.get("filters"));

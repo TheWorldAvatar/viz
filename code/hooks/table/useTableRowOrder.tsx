@@ -1,5 +1,8 @@
+import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
+import { toast } from "@/ui/interaction/action/toast/toast";
 import { getAfterDelimiter } from "@/utils/client-utils";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
@@ -10,6 +13,7 @@ interface TableRowOrderDescriptor {
     saveOrder: (_rows: FieldValues[]) => void;
     syncTasks: (_id: string, _lexorank: string) => void;
     resetOrder: () => void;
+    onSyncTasks: () => Promise<void>;
 }
 
 /**
@@ -37,6 +41,16 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
             ...prev,
             [idOnly]: { id: idOnly, lexorank }, // Overwrites if already dirty, adds if new
         }));
+    };
+    const onSyncTasks = async (): Promise<void> => {
+        console.warn(Object.values(dirtyTasks))
+        const response: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "lexorank"),
+            "PUT", JSON.stringify(Object.values(dirtyTasks)));
+        toast(
+            response?.data?.message || response?.error?.message,
+            response?.error ? "error" : "success"
+        );
     };
 
     const resetOrder = (): void => {
@@ -67,5 +81,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder };
+    return { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks };
 }

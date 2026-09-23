@@ -82,7 +82,7 @@ export default function RegistryPlannerTableComponent(
             aria-label={dict.action.save}
             size="icon"
             onClick={() => {
-
+              tableDescriptor.onSyncTasks();
             }}
             tooltipText={dict.action.save}
             variant="primary"
