@@ -34,6 +34,7 @@ interface TableRibbonProps {
   tableDescriptor: TableDescriptor;
   tableScrollDescriptor: TableScrollDescriptor
   message?: string;
+  dragSync?: boolean;
 }
 
 /**
@@ -49,6 +50,7 @@ interface TableRibbonProps {
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
+ * @param {boolean} dragSync Optional flag to enable the drag sync UI.
  * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
@@ -270,7 +272,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="destructive"
           />
           {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-            props.lifecycleStage == LifecycleStageMap.SCHEDULED) && (
+            props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (
               <RedirectButton
                 url={getRoute(dict.lang, Routes.REGISTRY_TASK_PLANNER)}
                 leftIcon={CalendarCheck2}

@@ -37,6 +37,7 @@ export default function RegistryTaskByDatePage() {
         lifecycleStage={LifecycleStageMap.SCHEDULED}
         tableColumnOptions={tableColumnSettings}
         allowTaskPrioritisation={uiSettings.resources?.registry?.priority}
+        dragSync={uiSettings.resources?.registry?.dragSync}
         exports={uiSettings.resources?.registry?.exports ?? []}
       />
     );
