@@ -472,6 +472,15 @@ function makeExternalEndpoint(
       }
       return `${agentBaseApi}/report/account/tasks?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
+    case InternalApiIdentifierMap.PLANNER: {
+      const contractType: string = searchParams.get("type");
+      const startDate: string = searchParams.get("start_date");
+      const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      const sortBy: string = searchParams.get("sort_by");
+      return `${agentBaseApi}/contracts/service/rank?type=${contractType}&startTimestamp=${unixTimestampStartDate}&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+    }
     case InternalApiIdentifierMap.SCHEDULED:
     case InternalApiIdentifierMap.CLOSED: {
       const contractType: string = searchParams.get("type");
