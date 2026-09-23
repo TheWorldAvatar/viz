@@ -62,11 +62,15 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
   const unranked: FieldValues[] = [];
 
   for (const instance of instances) {
-    if (instance.rank && instance.rank.trim() !== "") {
+    if (instance.lexorank && instance.lexorank.trim() !== "") {
       ranked.push(instance);
     } else {
       unranked.push(instance);
     }
+  }
+
+  if (unranked.length==0){
+    return ranked;
   }
 
   // Append missing lexoranks
