@@ -1,7 +1,7 @@
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
-import { FLAG_KEY, SYNC_KEY } from "@/utils/constants";
+import { FLAG_KEY, LEXORANK_KEY, SYNC_KEY } from "@/utils/constants";
 import { getBackendApi } from "@/utils/backend-api-services";
 import { logColours } from "@/utils/logColours";
 import { NextRequest, NextResponse } from "next/server";
@@ -447,7 +447,7 @@ function makeExternalEndpoint(
     case InternalApiIdentifierMap.TASKS: {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      if (contractType == "lexorank") {
+      if (contractType == LEXORANK_KEY) {
         return `${agentBaseApi}/contracts/service/rank`;
       } else if (contractType == "task") {
         return `${agentBaseApi}/contracts/task/${idOrTimestamp}`;

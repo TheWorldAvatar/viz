@@ -10,6 +10,7 @@ export const DATE_KEY: string = "date";
 export const EVENT_KEY: string = "event";
 export const TASK_STATUS_KEY: string = "task_status";
 export const FLAG_KEY: string = "flag";
+export const LEXORANK_KEY: string = "lexorank";
 export const PRIORITY_KEY: string = "priority";
 export const PREV_SESSION_KEY: string = "previous_session";
 export const ADD_LINKED_FORM_KEY: string = "add_linked_form";

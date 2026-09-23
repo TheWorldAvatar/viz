@@ -2,6 +2,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { getAfterDelimiter } from "@/utils/client-utils";
+import { LEXORANK_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
@@ -45,7 +46,7 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
     const onSyncTasks = async (): Promise<void> => {
         console.warn(Object.values(dirtyTasks))
         const response: AgentResponseBody = await queryInternalApi(
-            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "lexorank"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, LEXORANK_KEY),
             "PUT", JSON.stringify(Object.values(dirtyTasks)));
         toast(
             response?.data?.message || response?.error?.message,

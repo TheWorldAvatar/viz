@@ -11,7 +11,7 @@ import { ColFilterValues, ComparisonOperatorMap } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, LEXORANK_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
   ColumnDef,
   ColumnFilter,
@@ -75,7 +75,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
   if (isPlanner) {
     // Lexorank sorting will not have active sorting that affects it
     // We should sort any existing lexorank if they exist
-    defaultSorting.push({ id: "lexorank", desc: true });
+    defaultSorting.push({ id: LEXORANK_KEY, desc: true });
   }
   defaultSorting.push({ id: "id", desc: false });
   // If there is event_id
