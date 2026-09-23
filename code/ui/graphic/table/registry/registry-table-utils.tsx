@@ -165,7 +165,7 @@ export function parseColumnsMetadata(
   // Create column definitions based on available columns
   for (const col of columns) {
     // The high priority state is displayed through the row styling rather than as a column
-    if (col.value == PRIORITY_KEY) continue;
+    if (col.value == PRIORITY_KEY || col.value == LEXORANK_KEY) continue;
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
     const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
     const isDateColumn: boolean = col.datatype === XSD_DATE;
