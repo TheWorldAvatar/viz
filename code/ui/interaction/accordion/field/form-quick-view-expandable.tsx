@@ -13,6 +13,7 @@ interface FormQuickViewExpandableProps {
   entity: string;
   entityType: string;
   nestedLevel: number;
+  isOntologyConcept: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ interface FormQuickViewExpandableProps {
  * @param {string} entity - The target entity instance.
  * @param {string} entityType - The type of the entity.
  * @param {number} nestedLevel - The current level of nesting/recursion.
+ * @param {boolean} isOntologyConcept - Indicates that the entity is an ontology concept.
  **/
 export default function FormQuickViewExpandable(
   props: Readonly<FormQuickViewExpandableProps>
@@ -34,7 +36,7 @@ export default function FormQuickViewExpandable(
     isQuickViewOpen,
     setIsQuickViewOpen,
     selectedEntityId,
-  } = useFormQuickView(props.entity, props.entityType);
+  } = useFormQuickView(props.entity, props.entityType, props.isOntologyConcept);
 
   return (
     <div className="flex flex-col py-2 w-full ">
@@ -43,7 +45,7 @@ export default function FormQuickViewExpandable(
           {props.entityType}
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
-          {props.nestedLevel === 3 ? (
+          {props.nestedLevel === 3 && !props.isOntologyConcept ? (
             <Button
               type="button"
               size="icon"
