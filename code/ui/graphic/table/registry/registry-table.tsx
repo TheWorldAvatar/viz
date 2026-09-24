@@ -115,6 +115,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableDescriptor={props.tableDescriptor}
         tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
+        triggerRefresh={props.triggerRefresh}
         addEntity={props.addEntity}
         allowTaskPrioritisation={props.allowTaskPrioritisation}
         pricingType={props.pricingType}

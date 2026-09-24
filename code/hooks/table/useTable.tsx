@@ -40,6 +40,7 @@ export interface TableDescriptor {
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   hasCustomOrder: boolean;
+  triggerBulkEdit: boolean;
   saveOrder: (_rows: FieldValues[]) => void;
   resetOrder: () => void;
   pagination: PaginationState,
@@ -76,13 +77,13 @@ export function useTable(
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
-  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
+  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(lifecycleStage == LifecycleStageMap.PLANNER);
   const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks } = useTableRowOrder();
+  const { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
@@ -205,6 +206,7 @@ export function useTable(
     dirtyTasks,
     setData: setCurrentDataView,
     hasCustomOrder,
+    triggerBulkEdit,
     saveOrder,
     resetOrder,
     initialInstances,

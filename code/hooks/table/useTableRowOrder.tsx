@@ -9,6 +9,7 @@ import { FieldValues } from "react-hook-form";
 
 interface TableRowOrderDescriptor {
     hasCustomOrder: boolean;
+    triggerBulkEdit: boolean;
     dirtyTasks: Record<string, FieldValues>;
     applyOrder: (_rows: FieldValues[]) => FieldValues[];
     saveOrder: (_rows: FieldValues[]) => void;
@@ -28,6 +29,7 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
     // A null ref means no custom order is in effect, and rows are left in the server's order
     const orderRef = useRef<string[] | null>(null);
     const [hasCustomOrder, setHasCustomOrder] = useState<boolean>(false);
+    const [triggerBulkEdit, setTriggerBulkEdit] = useState<boolean>(false);
     const [dirtyTasks, setDirtyTasks] = useState<Record<string, FieldValues>>({});
 
     const saveOrder = (rows: FieldValues[]): void => {
@@ -44,14 +46,14 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         }));
     };
     const onSyncTasks = async (): Promise<void> => {
-        console.warn(Object.values(dirtyTasks))
         const response: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, LEXORANK_KEY),
             "PUT", JSON.stringify(Object.values(dirtyTasks)));
-        toast(
-            response?.data?.message || response?.error?.message,
-            response?.error ? "error" : "success"
-        );
+        setTriggerBulkEdit(true);
+        setTimeout(() => { setTriggerBulkEdit(false); }, 1000)
+        if (response?.error) {
+            toast(response?.error?.message, "error");
+        }
     };
 
     const resetOrder = (): void => {
@@ -82,5 +84,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { hasCustomOrder, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks };
+    return { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks };
 }

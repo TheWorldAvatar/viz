@@ -109,7 +109,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
       {tableDescriptor.table.getRowModel().rows.length > 0 && (
         <TableCell className="w-1/10 sticky left-0 z-sticky-cell bg-background">
           <div className="flex justify-end items-center rounded-md gap-2">
-            {numberOfSelectedRows > 0 && (
+            {(numberOfSelectedRows > 0 && lifecycleStage != LifecycleStageMap.PLANNER) && (
               <PopoverActionButton
                 placement="bottom-start"
                 leftIcon={isActionMenuOpen ? ChevronUp : ChevronDown}
