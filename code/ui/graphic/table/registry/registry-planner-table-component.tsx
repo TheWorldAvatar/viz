@@ -65,34 +65,37 @@ export default function RegistryPlannerTableComponent(
 
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">
-      <div className="flex justify-end md:justify-between gap-1 py-1 md:py-2">
-        <DateInput
-          mode="single"
-          variant="info_banner"
-          ariaLabel={dict.nav.title.tasks}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
-        <div className="flex justify-end items-end gap-1 flex-wrap">
-          {tableDescriptor.initialInstances.length > 0  && <ColumnToggle
-            columns={tableDescriptor.table.getAllLeafColumns()}
-          />}
-          <Button
-            leftIcon={Save}
-            aria-label={dict.action.save}
-            size="icon"
-            onClick={() => {
-              tableDescriptor.onSyncTasks();
-            }}
-            tooltipText={dict.action.save}
-            variant="primary"
-          />
+      <div className="flex flex-wrap items-center gap-1 py-2">
+        <div className="flex items-center gap-1 mr-auto">
           <ReturnButton
             leftIcon={ArrowLeft}
             size="icon"
             aria-label={dict.action.return}
             tooltipText={dict.action.return}
             variant="outline"
+          />
+          <DateInput
+            mode="single"
+            variant="info_banner"
+            ariaLabel={dict.nav.title.tasks}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+        </div>
+        <div className="contents sm:flex justify-end items-end gap-1">
+          {tableDescriptor.initialInstances.length > 0 && <div className="order-last w-full sm:order-0 sm:w-auto">
+            <ColumnToggle
+              columns={tableDescriptor.table.getAllLeafColumns()}
+            />
+          </div>}
+          <Button
+            leftIcon={Save}
+            label={dict.action.save}
+            onClick={() => {
+              tableDescriptor.onSyncTasks();
+            }}
+            tooltipText={dict.action.save}
+            variant="primary"
           />
           <Button
             size="icon"

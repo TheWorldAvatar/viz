@@ -252,9 +252,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {props.instances.length > 0 && (
-            <ColumnToggle
-              columns={props.tableDescriptor.table.getAllLeafColumns()}
-            />
+            <div className="order-last w-full sm:order-0 sm:w-auto">
+              <ColumnToggle
+                columns={props.tableDescriptor.table.getAllLeafColumns()}
+              />
+            </div>
           )}
           <ClearAllFiltersButton
             tableDescriptor={props.tableDescriptor}
