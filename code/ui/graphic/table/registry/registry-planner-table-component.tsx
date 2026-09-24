@@ -66,7 +66,7 @@ export default function RegistryPlannerTableComponent(
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">
       <div className="flex flex-wrap items-center gap-1 py-2">
-        <div className="flex items-center gap-1 mr-auto">
+        <div className="flex items-center gap-2 mr-auto">
           <ReturnButton
             leftIcon={ArrowLeft}
             size="icon"
