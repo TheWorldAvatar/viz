@@ -104,7 +104,11 @@ export default function RegistryPlannerTableComponent(
             variant="outline"
             tooltipText={dict.action.refresh}
             aria-label={dict.action.refresh}
-            onClick={triggerRefresh}
+            onClick={() => {
+              triggerRefresh();
+              tableDescriptor.resetOrder();
+              tableDescriptor.resetDirtyTasks();
+            }}
           />
         </div>
       </div>
