@@ -62,10 +62,11 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
   const unranked: FieldValues[] = [];
 
   for (const instance of instances) {
+    // Put them at the start of array as they are already sorted in the right order
     if (instance.lexorank && instance.lexorank.trim() !== "") {
-      ranked.push(instance);
+      ranked.unshift(instance);
     } else {
-      unranked.push(instance);
+      unranked.unshift(instance);
     }
   }
 
@@ -75,7 +76,7 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
 
   // Append missing lexoranks
   const lastRank: string | null = ranked.length > 0
-    ? ranked[ranked.length - 1].rank!
+    ? ranked[ranked.length - 1]?.lexorank
     : null;
 
   const newRanks: string[] = genRanksAfter(lastRank, unranked.length);
