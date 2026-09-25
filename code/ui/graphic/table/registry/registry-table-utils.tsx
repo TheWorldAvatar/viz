@@ -11,7 +11,7 @@ import { ColFilterValues, ComparisonOperatorMap } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, LEXORANK_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
   ColumnDef,
   ColumnFilter,
@@ -59,7 +59,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
  * @param {SortingState} sorting Current sorting state.
  * @param {ColumnDefinitionResponse[]} columns The list of columns.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState, columns: ColumnDefinitionResponse[]): FieldValues[] {
+export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState, columns: ColumnDefinitionResponse[], isPlanner: boolean): FieldValues[] {
   const data: FieldValues[] = [];
   if (instances?.length > 0) {
     instances.forEach(instance => {
@@ -67,10 +67,21 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       data.push(flatInstance);
     });
   }
-  const hasEventId: boolean = columns?.some(col => col?.value === "event_id");
-  const defaultSorting: SortingState = hasEventId
-    ? [{ id: "id", desc: false }, { id: "event_id", desc: false }]
-    : [{ id: "id", desc: false }];
+  // If this is the planner stage and every instance has a lexorank, sort by lexorank directly
+  if (isPlanner && data.every(instance => instance.lexorank !== undefined && instance.lexorank !== null)) {
+    return data.sort((a, b) => a.lexorank.localeCompare(b.lexorank));
+  }
+  const defaultSorting: SortingState = [];
+  if (isPlanner) {
+    // Lexorank sorting will not have active sorting that affects it
+    // We should sort any existing lexorank if they exist
+    defaultSorting.push({ id: LEXORANK_KEY, desc: true });
+  }
+  defaultSorting.push({ id: "id", desc: false });
+  // If there is event_id
+  if (columns?.some(col => col?.value === "event_id")) {
+    defaultSorting.push({ id: "event_id", desc: false });
+  }
   // Always apply the default sorting to ensure stable sorting, even if the user has not specified any sorting
   // If sorting is specified, the default sorting is applied after the user-specified sorting
   const activeSorting: SortingState = [
@@ -154,7 +165,7 @@ export function parseColumnsMetadata(
   // Create column definitions based on available columns
   for (const col of columns) {
     // The high priority state is displayed through the row styling rather than as a column
-    if (col.value == PRIORITY_KEY) continue;
+    if (col.value == PRIORITY_KEY || col.value == LEXORANK_KEY) continue;
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
     const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
     const isDateColumn: boolean = col.datatype === XSD_DATE;

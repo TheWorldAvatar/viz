@@ -34,6 +34,7 @@ export type UISettings = {
       data?: string;
       settings?: string;
       priority?: boolean;
+      dragSync?: boolean;
       paths?: ResourcesPathSettings[];
       exports?: RegistryExportSettings[];
     };

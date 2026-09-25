@@ -1,12 +1,24 @@
+import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
+import { Dictionary } from "@/types/dictionary";
+import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
+import { toast } from "@/ui/interaction/action/toast/toast";
+import { getAfterDelimiter } from "@/utils/client-utils";
+import { LEXORANK_KEY } from "@/utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
-import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
+import { useDictionary } from "../useDictionary";
 
 interface TableRowOrderDescriptor {
     hasCustomOrder: boolean;
+    triggerBulkEdit: boolean;
+    dirtyTasks: Record<string, FieldValues>;
     applyOrder: (_rows: FieldValues[]) => FieldValues[];
     saveOrder: (_rows: FieldValues[]) => void;
+    syncTasks: (_id: string, _lexorank: string) => void;
     resetOrder: () => void;
+    resetDirtyTasks: () => void;
+    onSyncTasks: () => Promise<void>;
 }
 
 /**
@@ -20,10 +32,40 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
     // A null ref means no custom order is in effect, and rows are left in the server's order
     const orderRef = useRef<string[] | null>(null);
     const [hasCustomOrder, setHasCustomOrder] = useState<boolean>(false);
+    const [triggerBulkEdit, setTriggerBulkEdit] = useState<boolean>(false);
+    const [dirtyTasks, setDirtyTasks] = useState<Record<string, FieldValues>>({});
+
+    const dict: Dictionary = useDictionary();
 
     const saveOrder = (rows: FieldValues[]): void => {
         orderRef.current = rows.map(row => getRowRecordId(row));
         setHasCustomOrder(true);
+    };
+
+    const resetDirtyTasks = (): void => {
+        setDirtyTasks({});
+    };
+
+    // Sync the dirty task for registry planner to update their lexorank in the end
+    const syncTasks = (id: string, lexorank: string): void => {
+        const idOnly: string = getAfterDelimiter(id, "/");
+        setDirtyTasks((prev) => ({
+            ...prev,
+            [idOnly]: { id: idOnly, lexorank }, // Overwrites if already dirty, adds if new
+        }));
+    };
+    const onSyncTasks = async (): Promise<void> => {
+        const response: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, LEXORANK_KEY),
+            "PUT", JSON.stringify(Object.values(dirtyTasks)));
+        resetDirtyTasks();
+        if (response?.error) {
+            toast(response?.error?.message, "error");
+        } else {
+            setTriggerBulkEdit(true);
+            setTimeout(() => { setTriggerBulkEdit(false); }, 1000)
+            toast(dict.message.syncSuccess, "success");
+        }
     };
 
     const resetOrder = (): void => {
@@ -54,5 +96,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { hasCustomOrder, applyOrder, saveOrder, resetOrder };
+    return { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks };
 }

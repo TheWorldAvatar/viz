@@ -109,7 +109,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
       {tableDescriptor.table.getRowModel().rows.length > 0 && (
         <TableCell className="w-1/10 sticky left-0 z-sticky-cell bg-background">
           <div className="flex justify-end items-center rounded-md gap-2">
-            {numberOfSelectedRows > 0 && (
+            {(numberOfSelectedRows > 0 && lifecycleStage != LifecycleStageMap.PLANNER) && (
               <PopoverActionButton
                 placement="bottom-start"
                 leftIcon={isActionMenuOpen ? ChevronUp : ChevronDown}
@@ -232,9 +232,9 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             selectedDate={props.selectedDate}
             filters={tableDescriptor.filters}
             isEditable={tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
-            disableSort={!header.column.getCanSort() || colDef.dataType == "array" || colDef.dataType == "virtual" || colDef.dataType == FLAG_KEY}
+            disableSort={!header.column.getCanSort() || colDef.dataType == "array" || colDef.dataType == "virtual" || colDef.dataType == FLAG_KEY || lifecycleStage == LifecycleStageMap.PLANNER}
             disableFilter={!header.column.getCanFilter() || colDef.dataType == "array" || colDef.dataType == "virtual" || colDef.dataType == FLAG_KEY ||
-              (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
+              (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType) || lifecycleStage == LifecycleStageMap.PLANNER}
           />
         );
       })}

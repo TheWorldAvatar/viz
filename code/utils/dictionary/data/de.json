@@ -178,6 +178,7 @@
     "rescheduleInstruction": "Änderung einer bereits geplanten Dienstleistung am {replace} beantragen",
     "offlineMode": "Offline-Modus",
     "offlineQueued": "Offline gespeichert. Ihre Änderungen werden automatisch synchronisiert, sobald Sie wieder eine Verbindung herstellen.",
+    "syncSuccess": "Deine Änderungen wurden erfolgreich synchronisiert!",
     "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
@@ -267,7 +268,8 @@
       "registry": "Register öffnen",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
-      "fileUpload": "Klicken Sie zum Hochladen einer Datei"
+      "fileUpload": "Klicken Sie zum Hochladen einer Datei",
+      "dailyPlanner": "Tagesplaner"
     }
   },
   "title": {

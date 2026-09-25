@@ -34,6 +34,7 @@ interface TableRibbonProps {
   tableDescriptor: TableDescriptor;
   tableScrollDescriptor: TableScrollDescriptor
   message?: string;
+  dragSync?: boolean;
 }
 
 /**
@@ -49,6 +50,7 @@ interface TableRibbonProps {
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
+ * @param {boolean} dragSync Optional flag to enable the drag sync UI.
  * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
@@ -250,9 +252,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {props.instances.length > 0 && (
-            <ColumnToggle
-              columns={props.tableDescriptor.table.getAllLeafColumns()}
-            />
+            <div className="order-last w-full sm:order-0 sm:w-auto">
+              <ColumnToggle
+                columns={props.tableDescriptor.table.getAllLeafColumns()}
+              />
+            </div>
           )}
           <ClearAllFiltersButton
             tableDescriptor={props.tableDescriptor}
@@ -269,6 +273,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
+          {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+            props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (
+              <RedirectButton
+                url={getRoute(dict.lang, Routes.REGISTRY_TASK_PLANNER)}
+                leftIcon={CalendarCheck2}
+                size="icon"
+                aria-label={dict.nav.tooltip.dailyPlanner}
+                tooltipText={dict.nav.tooltip.dailyPlanner}
+                variant="outline"
+              />
+            )}
           {isPermitted("operation") && (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
             <Button
