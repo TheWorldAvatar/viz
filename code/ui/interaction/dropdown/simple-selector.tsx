@@ -13,6 +13,7 @@ import Select, {
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { selectorStyles } from "@/ui/css/selector-style";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 
 export type SelectOptionType = {
   label: string;
@@ -38,6 +39,7 @@ interface SimpleSelectorProps {
   noOptionMessage?: string;
   hasLimits?: boolean;
   isDisabled?: boolean;
+  isLoading?: boolean;
   reqNotApplicableOption?: boolean;
   onInputChange?: (_newValue: string, _actionMeta: InputActionMeta) => void
 }
@@ -53,6 +55,7 @@ interface SimpleSelectorProps {
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {boolean} hasLimits Optional parameter to trigger additional menu messages when over the 20 limit. Defaults to false.
  * @param {boolean} isDisabled Optional parameter to disable the selector. Defaults to false.
+ * @param {boolean} isLoading Optional parameter to display a loading spinner in the menu instead of the options. Defaults to false.
  * @param {boolean} reqNotApplicableOption Optional parameter to enable the not applicable option. Defaults to false.
  * @param onInputChange Optional function to handle the event when typing in the search input.
  */
@@ -125,13 +128,19 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     menuProps: MenuListProps<SelectOptionType, false>
   ) => (
     <components.MenuList {...menuProps}>
-      {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
+      {props.isLoading && (
+        <div role="status" aria-live="polite" className="p-2.5 mt-2">
+          <LoadingSpinner size="md" />
+          <span className="sr-only">{dict.message.loading}</span>
+        </div>
+      )}
+      {!props.isLoading && Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
         <p className="text-sm text-foreground/80 italic px-2 my-1">
           {dict.message.typeMore}
         </p>
       )}
-      {menuProps.children}
-      {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
+      {!props.isLoading && menuProps.children}
+      {!props.isLoading && Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
         <p className="text-2xl text-foreground/80 italic px-2 ">...</p>
       )}
     </components.MenuList>
@@ -145,7 +154,7 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
       value={getDefaultValue()}
       onInputChange={props.onInputChange}
       onChange={props.onChange}
-      components={props.hasLimits ? { MenuList } : null}
+      components={props.hasLimits || props.isLoading ? { MenuList } : null}
       isLoading={false}
       isMulti={false}
       isSearchable={true}

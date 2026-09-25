@@ -76,6 +76,7 @@ export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatu
 
 export interface useLiveFormOptionReturn  {
     options: SelectOptionType[];
+    isLoading?: boolean;
 }
 
 export interface SparqlResponseField {

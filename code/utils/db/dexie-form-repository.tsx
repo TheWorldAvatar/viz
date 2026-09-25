@@ -382,8 +382,11 @@ export function useLiveFormOptions(field: string, current: string, parentField: 
         [field, current, parent, search, isSyncing]
     );
 
+    // Options are undefined until the first live query resolves
+    const isLoading: boolean = isSyncing || options === undefined;
+
     return useMemo(() => {
-        if (!options || options.length == 0) return { options: [] };
+        if (!options || options.length == 0) return { options: [], isLoading };
         const copyOptions: SelectOptionType[] = [...options];
         // Add the default search option only if this is the search form
         if (formType === FormTypeMap.SEARCH) {
@@ -394,6 +397,6 @@ export function useLiveFormOptions(field: string, current: string, parentField: 
                 disabled: false,
             });
         }
-        return { options: copyOptions };
-    }, [options, parent, search, formType, defaultSearchOption]);
+        return { options: copyOptions, isLoading };
+    }, [options, isLoading, parent, search, formType, defaultSearchOption]);
 }
