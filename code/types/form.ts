@@ -75,8 +75,9 @@ export const RegistryStatusMap = {
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
 
-export interface useLiveFormOptionReturn  {
-    options: SelectOptionType[];
+export interface useLiveFormOptionReturn {
+  options: SelectOptionType[];
+  isLoading?: boolean;
 }
 
 export interface SparqlResponseField {
