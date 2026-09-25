@@ -84,7 +84,9 @@ export const TableSessionContextProvider = ({
             await onBulkEditSubmit();
         }
 
-        if (tableDescriptor.triggerBulkEdit) {
+        if (tableDescriptor.triggerBulkEdit && rowRefs.current
+            .filter(row => !!row && Object.keys(row.getRowData()).length > 0)
+            .length > 0) {
             startBulkEditSubmit();
             triggerRefresh();
             tableDescriptor.table.resetRowSelection();
