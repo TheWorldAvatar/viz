@@ -71,7 +71,7 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
   }
 
   if (unranked.length==0){
-    return ranked;
+    return instances;
   }
 
   // Append missing lexoranks
