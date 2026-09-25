@@ -43,6 +43,7 @@ export interface TableDescriptor {
   triggerBulkEdit: boolean;
   saveOrder: (_rows: FieldValues[]) => void;
   resetOrder: () => void;
+  resetDirtyTasks: () => void;
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
@@ -83,7 +84,7 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks } = useTableRowOrder();
+  const { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
@@ -209,6 +210,7 @@ export function useTable(
     triggerBulkEdit,
     saveOrder,
     resetOrder,
+    resetDirtyTasks,
     initialInstances,
     pagination,
     apiPagination,

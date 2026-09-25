@@ -15,6 +15,7 @@ interface TableRowOrderDescriptor {
     saveOrder: (_rows: FieldValues[]) => void;
     syncTasks: (_id: string, _lexorank: string) => void;
     resetOrder: () => void;
+    resetDirtyTasks: () => void;
     onSyncTasks: () => Promise<void>;
 }
 
@@ -37,6 +38,10 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         setHasCustomOrder(true);
     };
 
+    const resetDirtyTasks = (): void => {
+        setDirtyTasks({});
+    };
+
     // Sync the dirty task for registry planner to update their lexorank in the end
     const syncTasks = (id: string, lexorank: string): void => {
         const idOnly: string = getAfterDelimiter(id, "/");
@@ -49,6 +54,8 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         const response: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, LEXORANK_KEY),
             "PUT", JSON.stringify(Object.values(dirtyTasks)));
+        setTriggerBulkEdit(true);
+        resetDirtyTasks();
         setTriggerBulkEdit(true);
         setTimeout(() => { setTriggerBulkEdit(false); }, 1000)
         if (response?.error) {
@@ -84,5 +91,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, onSyncTasks };
+    return { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks };
 }
