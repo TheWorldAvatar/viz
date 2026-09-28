@@ -38,14 +38,14 @@ export const buttonVariants = cva(
         "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
       shape: {
-        default: "rounded-lg",
+        rounded: "rounded-lg",
         pill: "rounded-full",
       },
     },
     defaultVariants: {
       variant: "primary",
       size: "default",
-      shape: "default",
+      shape: "rounded",
     },
   }
 );
@@ -79,7 +79,7 @@ export interface ButtonProps extends Omit<ButtonPrimitive.Props, "className" | "
  *
  * @param {string} variant The button variant, e.g., "primary", "secondary", "outline", etc. This controls the button's appearance. Defaults to "primary".
  * @param {string} size The button size, e.g., "xs", "sm", "default", "lg" or "icon". This controls the button's dimensions and padding. Defaults to "default".
- * @param {string} shape The button corner shape: "default" (rounded) or "pill" (fully round). Defaults to "default".
+ * @param {string} shape The button corner shape: "rounded" or "pill" (fully round). Defaults to "rounded".
  * @param {LucideIcon} leftIcon Optional lucide icon component rendered before the label.
  * @param {LucideIcon} rightIcon Optional lucide icon component rendered after the label.
  * @param {boolean} loading Optional loading state to show a spinner.

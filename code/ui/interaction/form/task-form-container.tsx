@@ -93,7 +93,7 @@ export function TaskFormContainerComponent(
             type="button"
             tooltipText={dict.action.close}
             aria-label={dict.action.close}
-            className="rounded-full!"
+            shape="pill"
             onClick={() => router.back()}
           />
         </div>

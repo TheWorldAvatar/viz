@@ -59,7 +59,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="h-12"
+          className="h-12 p-6"
           aria-expanded={isMenuOpen}
           aria-label={isMenuOpen ? dict.message.closeMenu : dict.message.openMenu}
         >
@@ -169,11 +169,8 @@ function NavMenuContents(
           variant="ghost"
           size="icon"
           leftIcon={props.isMenuExpanded ? ArrowLeftToLine : ArrowRightToLine}
-          className={`flex! mt-4 p-7 
-            ${props.isMenuExpanded
-              ? "ml-auto rounded-md"
-              : "items-center rounded-full!"
-            }`}
+          shape={props.isMenuExpanded ? "rounded" : "pill"}
+          className={`flex! mt-4 p-7 ${props.isMenuExpanded ? "ml-auto" : "items-center"}`}
           aria-label={
             props.isMenuExpanded
               ? dict.message.collapseNavigation

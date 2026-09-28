@@ -89,7 +89,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                       size="icon"
                       variant="ghost"
                       type="button"
-                      className="rounded-full!"
+                      shape="pill"
                       tooltipText={dict.action.close}
                       tooltipSide="left"
                       aria-label={dict.action.close}

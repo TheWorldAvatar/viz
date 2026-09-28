@@ -75,7 +75,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                       leftIcon={X}
                       size="icon"
                       variant="ghost"
-                      className="rounded-full!"
+                      shape="pill"
                       aria-label={dict.action.close}
                       tooltipText={dict.action.close}
                       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
