@@ -3,7 +3,7 @@
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import useFormSession from "@/hooks/form/useFormSession";
 import { useDictionary } from "@/hooks/useDictionary";
-import { Routes } from "@/io/config/routes";
+import { getRoute, Routes } from "@/io/config/routes";
 import type React from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import { Dictionary } from "@/types/dictionary";
@@ -73,12 +73,12 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     entityId?: string
   ): string => {
     if (action == "add" && props.accountType == props.entityType) {
-      return buildUrl(Routes.REGISTRY_ADD, "account", props.entityType);
+      return buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), "account", props.entityType);
     } else if (action == "add" && props.pricingType == props.entityType) {
-      return buildUrl(Routes.REGISTRY_ADD, "pricing", props.entityType);
+      return buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), "pricing", props.entityType);
     }
-    return buildUrl(action == "add" ? Routes.REGISTRY_ADD :
-      action == "edit" ? Routes.REGISTRY_EDIT : Routes.REGISTRY_DELETE,
+    return buildUrl(getRoute(dict.lang, action == "add" ? Routes.REGISTRY_ADD :
+      action == "edit" ? Routes.REGISTRY_EDIT : Routes.REGISTRY_DELETE),
       `${entityType}${entityId ? `/${entityId}` : ""}`);
   };
 

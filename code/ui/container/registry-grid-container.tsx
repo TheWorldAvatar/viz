@@ -2,6 +2,7 @@
 
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useRegistryGrid } from "@/hooks/grid/useRegistryGrid";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
@@ -18,12 +19,11 @@ import {
   interpolate,
   parseWordsForLabels
 } from "@/utils/client-utils";
+import { CalendarDays, Check, ExternalLink } from "lucide-react";
 import { useEffect } from "react";
+import LoadingSpinner from "../graphic/loader/spinner";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
 import DescriptionList from "../text/field/description-list";
-import LoadingSpinner from "../graphic/loader/spinner";
-import { useConnected } from "@/hooks/useConnected";
-import { CalendarDays, Check, ExternalLink } from "lucide-react";
 
 interface RegistryGridComponentProps {
   entityType: string;

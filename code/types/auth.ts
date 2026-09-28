@@ -16,7 +16,6 @@ export type SessionInfo = {
  *
  */
 export type PermissionScheme = {
-    registryPageLink: string;
     hasPermissions: HasPermissions;
 }
 
