@@ -1,4 +1,5 @@
 import { FieldValues } from "react-hook-form";
+import { LEXORANK_KEY } from "../constants";
 
 const BASE: string = "0123456789abcdefghijklmnopqrstuvwxyz";
 const MIN_CHAR: string = BASE[0];
@@ -63,7 +64,7 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
 
   for (const instance of instances) {
     // Put them at the start of array as they are already sorted in the right order
-    if (instance.lexorank && instance.lexorank.trim() !== "") {
+    if (instance[LEXORANK_KEY] && instance[LEXORANK_KEY].trim() !== "") {
       ranked.unshift(instance);
     } else {
       unranked.unshift(instance);
@@ -84,7 +85,7 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
     syncTasks(task.event_id, newRanks[index]);
     return {
       ...task,
-      lexorank: newRanks[index],
+      [LEXORANK_KEY]: newRanks[index],
     };
   });
 

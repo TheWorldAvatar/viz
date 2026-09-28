@@ -45,12 +45,12 @@ export function useTableDnd(
       }
       const reordered: FieldValues[] = arrayMove(tableDescriptor.data, oldIndex, newIndex);
       if (LEXORANK_KEY in tableDescriptor.data[0]) {
-        const prevRank: string = reordered[newIndex - 1]?.lexorank || null;
-        const nextRank: string = reordered[newIndex + 1]?.lexorank || null;
+        const prevRank: string = reordered[newIndex - 1]?.[LEXORANK_KEY] || null;
+        const nextRank: string = reordered[newIndex + 1]?.[LEXORANK_KEY] || null;
         const newRank: string = rankBetween(prevRank, nextRank);
         reordered[newIndex] = {
           ...reordered[newIndex],
-          lexorank: newRank,
+          [LEXORANK_KEY]: newRank,
         };
         tableDescriptor.syncTasks(reordered[newIndex].event_id, newRank);
       }

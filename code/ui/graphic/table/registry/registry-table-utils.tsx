@@ -68,8 +68,8 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
     });
   }
   // If this is the planner stage and every instance has a lexorank, sort by lexorank directly
-  if (isPlanner && data.every(instance => instance.lexorank !== undefined && instance.lexorank !== null)) {
-    return data.sort((a, b) => a.lexorank.localeCompare(b.lexorank));
+  if (isPlanner && data.every(instance => instance[LEXORANK_KEY] !== undefined && instance[LEXORANK_KEY] !== null)) {
+    return data.sort((a, b) => a[LEXORANK_KEY].localeCompare(b[LEXORANK_KEY]));
   }
   const defaultSorting: SortingState = [];
   if (isPlanner) {
