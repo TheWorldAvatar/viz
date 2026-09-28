@@ -65,14 +65,14 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
   for (const instance of instances) {
     // Put them at the start of array as they are already sorted in the right order
     if (instance[LEXORANK_KEY] && instance[LEXORANK_KEY].trim() !== "") {
-      ranked.unshift(instance);
+      ranked.push(instance);
     } else {
-      unranked.unshift(instance);
+      unranked.push(instance);
     }
   }
 
   if (unranked.length == 0) {
-    return instances;
+    return ranked;
   }
 
   // Append missing lexoranks
@@ -105,7 +105,7 @@ export function genRanksAfter(
   if (count <= 0) return [];
 
   // Determine target character length (min 2 characters)
-  let length: number = Math.max(startRank ? startRank.length : 0, 2);
+  let length: number = startRank ? Math.max(startRank.length, 2) : 2;
   let startValAndHeadroom: number[] = computeStartValAndHeadroom(startRank, length);
 
   // Expand length if there isn't enough numerical space

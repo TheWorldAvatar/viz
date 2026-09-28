@@ -75,7 +75,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
   if (isPlanner) {
     // Lexorank sorting will not have active sorting that affects it
     // We should sort any existing lexorank if they exist
-    defaultSorting.push({ id: LEXORANK_KEY, desc: true });
+    defaultSorting.push({ id: LEXORANK_KEY, desc: false });
   }
   defaultSorting.push({ id: "id", desc: false });
   // If there is event_id
