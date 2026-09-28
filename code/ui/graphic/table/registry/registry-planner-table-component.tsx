@@ -106,6 +106,7 @@ export default function RegistryPlannerTableComponent(
             aria-label={dict.action.refresh}
             onClick={() => {
               triggerRefresh();
+              tableDescriptor.resetRowSelection();
               tableDescriptor.resetOrder();
               tableDescriptor.resetDirtyTasks();
             }}
