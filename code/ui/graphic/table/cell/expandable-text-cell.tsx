@@ -54,7 +54,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                         leftIcon={isExpanded ? ListChevronsDownUpIcon : ListChevronsUpDown}
                         tooltipText={isExpanded ? dict.action.showLess : dict.action.showMore}
                         aria-label={isExpanded ? dict.action.showLess : dict.action.showMore}
-                        className="text-info-foreground!"
+                        className="text-info-foreground"
                     />
                 </div>
             )}

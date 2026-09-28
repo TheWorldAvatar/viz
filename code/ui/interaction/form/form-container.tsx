@@ -184,7 +184,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button
                 variant="secondary"
                 leftIcon={Ban}
-                className="mr-2"
                 disabled={isLoading}
                 label={dict.action.terminate}
                 onClick={() => {

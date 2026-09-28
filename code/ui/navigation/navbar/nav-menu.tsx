@@ -170,7 +170,7 @@ function NavMenuContents(
           size="icon"
           leftIcon={props.isMenuExpanded ? ArrowLeftToLine : ArrowRightToLine}
           shape={props.isMenuExpanded ? "rounded" : "pill"}
-          className={`flex! mt-4 p-7 ${props.isMenuExpanded ? "ml-auto" : "items-center"}`}
+          className={`mt-4 p-7 ${props.isMenuExpanded ? "ml-auto" : "items-center"}`}
           aria-label={
             props.isMenuExpanded
               ? dict.message.collapseNavigation

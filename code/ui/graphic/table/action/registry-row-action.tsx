@@ -212,7 +212,6 @@ export default function RegistryRowAction(
         tooltipText={dict.title.actions}
         tooltipDisableHoverablePopup
         size="icon"
-        className="ml-2"
         isOpen={isActionMenuOpen}
         setIsOpen={setIsActionMenuOpen}
         aria-label={`${dict.title.actions}, ${props.row.id}`}

@@ -31,7 +31,6 @@ export default function ClearAllFiltersButton(props: Readonly<ClearAllFiltersBut
     <Button
       leftIcon={FunnelX}
       aria-label={dict.action.clearAllFilters}
-      className="mt-1"
       disabled={props.disabled}
       size="icon"
       onClick={() => {

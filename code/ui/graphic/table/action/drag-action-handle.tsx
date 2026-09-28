@@ -33,7 +33,7 @@ export default function DragActionHandle(
       tooltipText={dict.message.dragToReorder}
       tooltipDisableHoverablePopup
       aria-label={`${dict.message.dragToReorder}, ${props.id}`}
-      className="hover:cursor-grab active:cursor-grabbing hover:bg-transparent border-r-2 border-border/80 border-t"
+      className="hover:cursor-grab active:cursor-grabbing hover:bg-transparent"
     />
   );
 }

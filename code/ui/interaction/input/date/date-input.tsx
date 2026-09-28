@@ -67,12 +67,12 @@ export default function DateInput(props: Readonly<DateInputProps>) {
 
   if (props.inline) {
     return <section className="flex flex-col">
-      <div className="flex">
+      <div className="flex items-stretch">
         <Button
           id={id}
           leftIcon={CalendarDays}
-          size={showMobileView ? "icon" : "sm"}
-          className={"flex-4 justify-start"}
+          size={showMobileView ? "icon-lg" : "default"}
+          className="flex-4 justify-start"
           // Defaults variant to outline if not provided and in mobile view mode
           variant={!showMobileView && !!props.variant ? props.variant : "outline"}
           label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
@@ -94,7 +94,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     leftIcon={CalendarDays}
     placement={props.placement ?? "bottom"}
     size={showMobileView ? "icon" : "sm"}
-    className={"h-full w-full p-2 justify-start"}
+    className="h-full w-full p-2 justify-start"
     // Defaults variant to outline if not provided and in mobile view mode
     variant={!showMobileView && !!props.variant ? props.variant : "outline"}
     label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}

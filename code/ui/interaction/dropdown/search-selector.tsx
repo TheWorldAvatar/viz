@@ -89,7 +89,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         </div>
         {selectedOptions.length > 0 && <Button
           leftIcon={SquareMinus}
-          size="icon"
+          size="icon-lg"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -101,7 +101,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }
           }}
           variant="secondary"
-          className="p-5 border border-border"
           disabled={props.disabled}
           tooltipText={dict.action.clear}
           aria-label={dict.action.clear}
@@ -116,7 +115,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <Button
             label={dict.action.include}
             leftIcon={Check}
-            size="sm"
             variant={isIncluded ? "info_banner" : "ghost"}
             aria-pressed={isIncluded}
             disabled={props.disabled}
@@ -128,7 +126,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <Button
             label={dict.action.exclude}
             leftIcon={Ban}
-            size="sm"
             variant={!isIncluded ? "info_banner" : "ghost"}
             aria-pressed={!isIncluded}
             disabled={props.disabled}
