@@ -1,5 +1,4 @@
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
-import { Dictionary } from "@/types/dictionary";
 import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { getAfterDelimiter } from "@/utils/client-utils";
@@ -7,7 +6,6 @@ import { LEXORANK_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
-import { useDictionary } from "../useDictionary";
 
 interface TableRowOrderDescriptor {
     hasCustomOrder: boolean;
@@ -19,6 +17,7 @@ interface TableRowOrderDescriptor {
     resetOrder: () => void;
     resetDirtyTasks: () => void;
     onSyncTasks: () => Promise<void>;
+    setTriggerBulkEdit: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 /**
@@ -34,8 +33,6 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
     const [hasCustomOrder, setHasCustomOrder] = useState<boolean>(false);
     const [triggerBulkEdit, setTriggerBulkEdit] = useState<boolean>(false);
     const [dirtyTasks, setDirtyTasks] = useState<Record<string, FieldValues>>({});
-
-    const dict: Dictionary = useDictionary();
 
     const saveOrder = (rows: FieldValues[]): void => {
         orderRef.current = rows.map(row => getRowRecordId(row));
@@ -64,7 +61,6 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         } else {
             setTriggerBulkEdit(true);
             setTimeout(() => { setTriggerBulkEdit(false); }, 1000)
-            toast(dict.message.syncSuccess, "success");
         }
     };
 
@@ -96,5 +92,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks };
+    return { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks, setTriggerBulkEdit };
 }

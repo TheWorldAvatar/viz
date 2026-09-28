@@ -55,6 +55,7 @@ export interface TableDescriptor {
   resetRowSelection: () => void;
   syncTasks: (_id: string, _lexorank: string) => void;
   onSyncTasks: () => Promise<void>;
+  setTriggerBulkEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -84,7 +85,7 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks } = useTableRowOrder();
+  const { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
@@ -223,5 +224,6 @@ export function useTable(
     resetRowSelection,
     syncTasks,
     onSyncTasks,
+    setTriggerBulkEdit,
   };
 }

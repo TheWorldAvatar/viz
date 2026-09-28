@@ -2,8 +2,10 @@
 
 import { TableDescriptor } from '@/hooks/table/useTable';
 import { TableScrollDescriptor } from '@/hooks/table/useTableScroll';
+import { useDictionary } from '@/hooks/useDictionary';
 import useOperationStatus from '@/hooks/useOperationStatus';
 import { AgentResponseBody, InternalApiIdentifierMap } from '@/types/backend-agent';
+import { Dictionary } from '@/types/dictionary';
 import { FormTypeMap, LifecycleStage } from '@/types/form';
 import { RegistryExportSettings } from '@/types/settings';
 import { TableRowHandle } from '@/ui/graphic/table/row/table-row';
@@ -61,6 +63,7 @@ export const TableSessionContextProvider = ({
     const [historyId, setHistoryId] = useState<string>("");
     const [activeRowId, setActiveRowId] = useState<string>("");
 
+    const dict: Dictionary = useDictionary();
     const { startLoading, stopLoading } = useOperationStatus();
     const onBulkEditSubmit = async () => {
         startLoading();
@@ -90,7 +93,11 @@ export const TableSessionContextProvider = ({
             startBulkEditSubmit();
             triggerRefresh();
             tableDescriptor.table.resetRowSelection();
+        } else if (tableDescriptor.triggerBulkEdit) {
+            triggerRefresh();
+            toast(dict.message.syncSuccess, "success");
         }
+        tableDescriptor.setTriggerBulkEdit(false);
     }, [tableDescriptor.triggerBulkEdit])
 
     return (
