@@ -13,7 +13,7 @@ import React from "react";
  * the Button component, as Base UI recommends.
  */
 export const buttonVariants = cva(
-  "cursor-pointer inline-flex shrink-0 items-center justify-center font-medium whitespace-nowrap outline-none select-none transition-all duration-100 ease-linear focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-zinc-400 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "cursor-pointer inline-flex shrink-0 items-center justify-center font-medium whitespace-nowrap outline-none select-none transition-all duration-100 ease-linear active:not-aria-[haspopup]:scale-98 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-zinc-400 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
