@@ -77,7 +77,7 @@ export function genLexoRanks(instances: FieldValues[], syncTasks: (_id: string, 
 
   // Append missing lexoranks
   const lastRank: string | null = ranked.length > 0
-    ? ranked[ranked.length - 1]?.lexorank
+    ? ranked[ranked.length - 1]?.[LEXORANK_KEY]
     : null;
 
   const newRanks: string[] = genRanksAfter(lastRank, unranked.length);
