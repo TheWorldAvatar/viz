@@ -55,12 +55,11 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         const response: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, LEXORANK_KEY),
             "PUT", JSON.stringify(Object.values(dirtyTasks)));
-        resetDirtyTasks();
         if (response?.error) {
             toast(response?.error?.message, "error");
         } else {
+            resetDirtyTasks();
             setTriggerBulkEdit(true);
-            setTimeout(() => { setTriggerBulkEdit(false); }, 1000)
         }
     };
 
