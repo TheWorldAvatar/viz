@@ -129,7 +129,7 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
   ) => (
     <components.MenuList {...menuProps}>
       {props.isLoading && (
-        <div role="status" aria-live="polite" className="p-2.5 mt-2">
+        <div role="status" aria-live="polite" className="p-4">
           <LoadingSpinner size="md" />
           <span className="sr-only">{dict.message.loading}</span>
         </div>
