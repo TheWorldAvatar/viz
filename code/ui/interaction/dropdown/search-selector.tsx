@@ -55,12 +55,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
-      <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
-        <div className="flex flex-1 items-stretch">
+      <div className="flex flex-row items-center justify-between gap-1.5 mb-1">
+        <div className="flex flex-1 items-center">
           <input
             autoFocus
             type="text"
-            className="h-10 border border-border rounded pl-3 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
+            className="h-11 border border-border rounded-lg pl-3 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}

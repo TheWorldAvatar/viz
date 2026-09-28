@@ -38,7 +38,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
       disableMobileView={true}
       inline={true}
     >
-      <div className="flex gap-2 ml-2">
+      <div className="flex items-center gap-2 ml-2">
         <Button
           leftIcon={Filter}
           size="icon-lg"
