@@ -78,9 +78,7 @@ export function useTableData(
           return makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, getUTCDate(currentDate).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
-        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED) {
-          return makeInternalRegistryAPIwithParams(LifecycleStageMap.SCHEDULED, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
-        } else if (lifecycleStage == LifecycleStageMap.CLOSED) {
+        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || lifecycleStage == LifecycleStageMap.CLOSED) {
           return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.GENERAL || lifecycleStage == LifecycleStageMap.PRICING || lifecycleStage == LifecycleStageMap.INVOICE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, entityType, "true", null, null, page, limit, sortParams, filterParams);
