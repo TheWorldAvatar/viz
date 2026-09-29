@@ -54,6 +54,7 @@ export default function RegistryPlannerTableComponent(
 
   useEffect(() => {
     setSelectedDateRange({ from: selectedDate, to: selectedDate, });
+    tableDescriptor.resetOrder();
     tableDescriptor.table.setColumnFilters([{
       id: DATE_KEY,
       value: {
