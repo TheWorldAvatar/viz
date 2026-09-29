@@ -269,7 +269,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             className="mt-1"
             disabled={props.tableDescriptor.hasUpdatedOrder}
             size="icon"
-            onClick={props.tableDescriptor.resetOrder}
+            onClick={() => {
+              props.tableDescriptor.resetOrder();
+              props.triggerRefresh();
+            }}
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
