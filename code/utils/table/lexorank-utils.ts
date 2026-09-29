@@ -16,11 +16,6 @@ export function rankBetween(prev: string | null, next: string | null): string {
     throw new Error(`Invalid rank order: prev ("${prev}") must be strictly less than next ("${next}")`);
   }
 
-  // Empty list baseline at midpoint of 2-character Base-36 space
-  if (!prev && !next) {
-    return MIN_CHAR;
-  }
-
   const prevRank: string = prev || "";
   const nextRank: string = next || "";
 
