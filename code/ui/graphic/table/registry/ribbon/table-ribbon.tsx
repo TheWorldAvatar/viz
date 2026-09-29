@@ -267,7 +267,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             leftIcon={ArrowUpDown}
             aria-label={dict.action.resetOrder}
             className="mt-1"
-            disabled={!props.tableDescriptor.hasCustomOrder}
+            disabled={props.tableDescriptor.hasUpdatedOrder}
             size="icon"
             onClick={props.tableDescriptor.resetOrder}
             tooltipText={dict.action.resetOrder}

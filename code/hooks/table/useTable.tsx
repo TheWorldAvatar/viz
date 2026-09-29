@@ -39,11 +39,10 @@ export interface TableDescriptor {
   dirtyTasks: Record<string, FieldValues>;
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
-  hasCustomOrder: boolean;
+  hasUpdatedOrder: boolean;
   triggerBulkEdit: boolean;
-  saveOrder: (_rows: FieldValues[]) => void;
+  syncOrder: (_rows: FieldValues[], _newIndex: number) => void;
   resetOrder: () => void;
-  resetDirtyTasks: () => void;
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
@@ -85,7 +84,7 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { hasCustomOrder, triggerBulkEdit, dirtyTasks, applyOrder, saveOrder, syncTasks, resetOrder, resetDirtyTasks, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
+  const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
@@ -111,8 +110,8 @@ export function useTable(
 
   useEffect(() => {
     const pageRows: FieldValues[] = data?.slice(startIndex, startIndex + pagination.pageSize);
-    setCurrentDataView(hasCustomOrder ? applyOrder(pageRows) : pageRows);
-  }, [data, pagination.pageIndex, hasCustomOrder]);
+    setCurrentDataView(applyOrder(pageRows));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -207,11 +206,10 @@ export function useTable(
     data: currentDataView,
     dirtyTasks,
     setData: setCurrentDataView,
-    hasCustomOrder,
+    hasUpdatedOrder,
     triggerBulkEdit,
-    saveOrder,
+    syncOrder,
     resetOrder,
-    resetDirtyTasks,
     initialInstances,
     pagination,
     apiPagination,
