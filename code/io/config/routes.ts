@@ -68,7 +68,6 @@ export const Paths: Record<RouteKey, string> = {
   [Routes.REGISTRY_TASK_SCHEDULED]: `${REGISTRY_TASK}/scheduled`,
   [Routes.REGISTRY_TASK_CLOSED]: `${REGISTRY_TASK}/closed`,
   [Routes.REGISTRY_TASK_PLANNER]: `${REGISTRY_TASK}/planner`,
-  [Routes.REGISTRY_TASK_CLOSED]: `${REGISTRY_TASK}/closed`,
   [Routes.REGISTRY_GENERAL]: REGISTRY_GENERAL,
   [Routes.REGISTRY_TASK]: REGISTRY_TASK,
   [Routes.REGISTRY_REPORT]: `${REGISTRY_GENERAL}/report`,
