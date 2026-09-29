@@ -79,7 +79,7 @@ export function useTable(
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
-  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(lifecycleStage == LifecycleStageMap.PLANNER);
+  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
   const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);

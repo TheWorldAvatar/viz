@@ -14,12 +14,12 @@ import {
   getNormalizedDate
 } from "@/utils/client-utils";
 import { DATE_KEY } from "@/utils/constants";
-import { ArrowLeft, RefreshCw, Save } from "lucide-react";
+import { ArrowLeft, Pencil, PencilOff, RefreshCw, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
+import ColumnToggle from "../action/column-toggle";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
-import ColumnToggle from "../action/column-toggle";
 
 interface RegistryPlannerTableComponentProps {
   entityType: string;
@@ -97,6 +97,20 @@ export default function RegistryPlannerTableComponent(
             }}
             tooltipText={dict.action.save}
             variant="primary"
+          />
+          <Button
+            size="icon"
+            leftIcon={tableDescriptor.isBulkDispatchEdit ? PencilOff : Pencil}
+            onClick={() => {
+              tableDescriptor.table.resetRowSelection();
+              tableDescriptor.setIsBulkDispatchEdit(!tableDescriptor.isBulkDispatchEdit);
+              if (tableDescriptor.isBulkDispatchEdit) {
+                triggerRefresh();
+              }
+            }}
+            tooltipText={dict.action.bulkAssign}
+            aria-label={dict.action.bulkAssign}
+            variant="outline"
           />
           <Button
             size="icon"
