@@ -192,7 +192,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         <TableCell className={`sticky left-0 z-sticky-cell cursor-default ${rowBackgroundClass}`}>
           <div className="flex items-center justify-evenly gap-0.5">
             {(!props.disableRowAction || lifecycleStage == LifecycleStageMap.PLANNER) && <DragActionHandle
-              disabled={isLoading || (tableDescriptor.table.getIsSomePageRowsSelected() && lifecycleStage == LifecycleStageMap.PLANNER)}
+              disabled={isLoading || ((tableDescriptor.table.getIsSomePageRowsSelected() || tableDescriptor.table.getIsAllRowsSelected()) && lifecycleStage == LifecycleStageMap.PLANNER)}
               id={props.row.id} />}
             {!tableDescriptor.isBulkDispatchEdit && lifecycleStage != LifecycleStageMap.PLANNER && <RegistryRowAction
               recordType={recordType}
