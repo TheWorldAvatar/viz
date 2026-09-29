@@ -96,7 +96,7 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
     };
 
     return {
-        hasUpdatedOrder: !!orderRef.current,
+        hasUpdatedOrder: !orderRef.current,
         triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, onSyncTasks, setTriggerBulkEdit
     };
 }
