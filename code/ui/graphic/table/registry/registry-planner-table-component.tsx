@@ -119,9 +119,9 @@ export default function RegistryPlannerTableComponent(
             tooltipText={dict.action.refresh}
             aria-label={dict.action.refresh}
             onClick={() => {
-              triggerRefresh();
               tableDescriptor.resetRowSelection();
               tableDescriptor.resetOrder();
+              triggerRefresh();
             }}
           />
         </div>
