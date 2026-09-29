@@ -26,6 +26,16 @@ class DexieFormRepository {
     }
 
     /**
+     * Get if the field is pending, ie its first batch has not been stored yet
+     *
+     * @param {string} field The name of the field.
+     */
+    async getIsFieldPending(field: string): Promise<boolean> {
+        const meta: IndexedDbMetadata = await db.metadata.get(field);
+        return meta?.state === IndexedDbStateMap.PENDING;
+    }
+
+    /**
      * Registers a field as pending.
      *
      * @param field The name of the field.
@@ -316,6 +326,21 @@ export function useIsSyncing(): boolean {
 }
 
 /**
+ * Check if the field is still waiting for its first batch. Undefined until the status is known.
+ *
+ * @param {string} field The name of the target field.
+ */
+export function useIsFieldPending(field: string): boolean {
+    const isPending: boolean = useLiveQuery(
+        async () => {
+            return await dexieFormRepo.getIsFieldPending(field);
+        },
+        [field]
+    );
+    return isPending;
+}
+
+/**
  * Get the account filter from IndexedDb in real time.
  *
  * @param {string} field The name of the target field.
@@ -359,12 +384,8 @@ export function useLiveAccountFilter(field: string, current: string): useLiveFor
  */
 export function useLiveFormOptions(field: string, current: string, parentField: string, parent: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
-    const isSyncing: boolean = useIsSyncing();
     const options: SelectOptionType[] = useLiveQuery(
         async () => {
-            if (isSyncing) {
-                return [];
-            }
             const parentLabel: string = !!parentField ? (await dexieFormRepo.getOption(parentField, parent))?.label : "";
             const availableOptions: SelectOptionType[] = await dexieFormRepo.getOptions(field, parentLabel, search);
             // If there is an existing value, ensure it is in the options list
@@ -379,8 +400,9 @@ export function useLiveFormOptions(field: string, current: string, parentField: 
             }
             return availableOptions;
         },
-        [field, current, parent, search, isSyncing]
+        [field, current, parent, search]
     );
+
 
     return useMemo(() => {
         if (!options || options.length == 0) return { options: [] };
