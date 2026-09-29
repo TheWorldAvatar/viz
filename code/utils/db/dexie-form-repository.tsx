@@ -32,7 +32,7 @@ class DexieFormRepository {
      */
     async getIsFieldPending(field: string): Promise<boolean> {
         const meta: IndexedDbMetadata = await db.metadata.get(field);
-        return meta?.state !== IndexedDbStateMap.SYNC && meta?.state !== IndexedDbStateMap.COMPLETE;
+        return meta?.state === IndexedDbStateMap.PENDING;
     }
 
     /**
