@@ -276,8 +276,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
-          {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-            props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (
+          {isPermitted("operation") &&
+            (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+              props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (
               <RedirectButton
                 url={getRoute(dict.lang, Routes.REGISTRY_TASK_PLANNER)}
                 leftIcon={CalendarCheck2}
