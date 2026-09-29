@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.89.4
+
+### Changes
+
+- Added a loading indicator to dependent form dropdowns while their options are being synced. Options are shown once their first batch is stored, instead of waiting for the full sync to complete
+
 ## 5.89.3
 
 ### Bug fixes
