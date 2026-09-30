@@ -23,14 +23,15 @@ const API_PAGE_SIZE_MULTIPLIER_MAP: Record<number, number> = {
 /**
 * A custom hook to handle the table pagination states.
 */
-export function useTablePagination(): PaginationDescriptor {
+export function useTablePagination(isPlanner: boolean): PaginationDescriptor {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0, // initial page index
-    pageSize: 10, // default page size
+    pageSize: isPlanner ? 100 : 10, // default page size
   });
   const [apiPagination, setApiPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10 * API_PAGE_SIZE_MULTIPLIER_MAP[10], // Pre-fetch ten times the default page size
+    pageSize: isPlanner ? 100 * API_PAGE_SIZE_MULTIPLIER_MAP[100]
+      : 10 * API_PAGE_SIZE_MULTIPLIER_MAP[10], // Pre-fetch ten times the default page size
   });
 
   const onPaginationChange: OnChangeFn<PaginationState> = (updater) => {

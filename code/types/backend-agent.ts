@@ -58,6 +58,7 @@ export const InternalApiIdentifierMap = {
   INSTANCES: "instances",
   SCHEDULE: "schedule",
   TASKS: "tasks",
+  PLANNER: "planner",
   OUTSTANDING: "outstanding",
   SCHEDULED: "scheduled",
   CLOSED: "closed",

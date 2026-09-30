@@ -18,6 +18,7 @@ import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { flexRender, Row } from "@tanstack/react-table";
+import { History } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import LoadingSpinner from "../../loader/spinner";
@@ -26,7 +27,6 @@ import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
-import { History } from "lucide-react";
 
 interface TableRowProps {
   id: string;
@@ -67,7 +67,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
-  const isHighPriority: boolean = props.row?.original?.[PRIORITY_KEY] === "true" && (lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED);
+  const isHighPriority: boolean = props.row?.original?.[PRIORITY_KEY] === "true" && (lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED || lifecycleStage === LifecycleStageMap.PLANNER);
 
   const rowBackgroundClass: string = isActive
     ? "bg-row-active-background hover:bg-row-active-background-hover"
@@ -109,8 +109,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);
     } else if (lifecycleStage === LifecycleStageMap.ACTIVE || lifecycleStage === LifecycleStageMap.ARCHIVE) {
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);
-    }
-    else {
+    } else if (lifecycleStage != LifecycleStageMap.PLANNER) {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, recordType, recordId);
     }
@@ -192,8 +191,10 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       >
         <TableCell className={`sticky left-0 z-sticky-cell cursor-default ${rowBackgroundClass}`}>
           <div className="flex items-center justify-evenly gap-0.5">
-            {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={props.row.id} />}
-            {!tableDescriptor.isBulkDispatchEdit && <RegistryRowAction
+            {(!props.disableRowAction || lifecycleStage == LifecycleStageMap.PLANNER) && <DragActionHandle
+              disabled={isLoading || ((tableDescriptor.table.getIsSomePageRowsSelected() || tableDescriptor.table.getIsAllRowsSelected()) && lifecycleStage == LifecycleStageMap.PLANNER)}
+              id={props.row.id} />}
+            {!tableDescriptor.isBulkDispatchEdit && lifecycleStage != LifecycleStageMap.PLANNER && <RegistryRowAction
               recordType={recordType}
               accountType={props.accountType}
               lifecycleStage={lifecycleStage}

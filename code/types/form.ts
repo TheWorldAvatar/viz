@@ -20,6 +20,7 @@ export const LifecycleStageMap = {
   OUTSTANDING: "outstanding",
   SCHEDULED: "scheduled",
   CLOSED: "closed",
+  PLANNER: "planner",
   ACCOUNT: "account",
   PRICING: "pricing",
   BILLABLE: "billable",

@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.90.0
+
+### Changes
+
+- Added new registry planner page with lexorank functionalities to save and reorder positions when assigning tasks
+- Bump min version of `VisBackend Agent` from `v1.71.0` to `v1.72.0`
+
 ## 5.89.4
 
 ### Changes
