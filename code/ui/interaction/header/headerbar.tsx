@@ -6,14 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useDictionary } from "@/hooks/useDictionary";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { Routes } from "@/io/config/routes";
-import { useEffect, useMemo } from "react";
 import { addItem, selectItem } from "@/state/context-menu-slice";
-import { UISettings, ContextItemMap } from "@/types/settings";
+import { ContextItemMap, UISettings } from "@/types/settings";
 import IconComponent from "@/ui/graphic/icon/icon";
 import KeycloakUserButton from "@/ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "@/ui/interaction/context-menu/context-item";
 import { NavMenu } from "@/ui/navigation/navbar/nav-menu";
 import { usePathname } from "next/navigation";
+import { useEffect, useMemo } from "react";
 
 
 interface HeaderBarProps {

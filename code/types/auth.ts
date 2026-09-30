@@ -16,7 +16,6 @@ export type SessionInfo = {
  *
  */
 export type PermissionScheme = {
-    registryPageLink: string;
     hasPermissions: HasPermissions;
 }
 
@@ -144,6 +143,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         permission: "rescheduleTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
+    },
+    PRIORITISE_TASK: {
+        permission: "operation",
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
+        status: [],
     },
 } as const;
 

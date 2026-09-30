@@ -2,6 +2,71 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.90.2
+
+### Bug fix
+
+- Suppress hydration for aria-label of locale dates
+
+## 5.90.1
+
+### Bug fix
+
+- Fix to prevent route replacement if its the same url to prevent unexpected behavior
+
+## 5.90.0
+
+### Changes
+
+- Added new registry planner page with lexorank functionalities to save and reorder positions when assigning tasks
+- Bump min version of `VisBackend Agent` from `v1.71.0` to `v1.72.0`
+
+## 5.89.4
+
+### Changes
+
+- Added a loading indicator to dependent form dropdowns while their options are being synced. Options are shown once their first batch is stored, instead of waiting for the full sync to complete
+
+## 5.89.3
+
+### Bug fixes
+
+- Updated navigation urls to include locales for redirects as intercept routes do not work well with the latest nextjs changes
+
+## 5.89.2
+
+### Changes
+
+- Added an optional `disableHoverablePopup` prop to the `Tooltip` component, so tooltips close when the pointer leaves the trigger instead of staying open over the popup
+
+## 5.89.1
+
+### Chores
+
+- Dependabot updates #898
+
+## 5.89.0
+
+### Changes
+
+- Added task prioritisation for the outstanding and scheduled task tables from the row actions menu. High-priority rows are highlighted in the task tables.
+- Added an optional `priority` setting under `resources.registry` in `ui-settings.json` to enable the prioritisation row action. Defaults to `false`.
+- Updated min version of `VisBackend Agent` from `v1.69.2` to `v1.71.0`
+
+## 5.88.5
+
+### Changes
+
+- Installed Base UI component library
+- Replaced the old Tooltip component using Floating UI with Base UI primitives
+
+## 5.88.4
+
+### Changes
+
+- Disable virtual fields based on inputs from backend
+- Updated min version of `VisBackend Agent` from `v1.69.0` to `v1.69.2`
+
 ## 5.88.3
 
 ### Bug fixes

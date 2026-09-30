@@ -23,7 +23,7 @@ export type AgentResponseDataPayload = {
 
 export type ColumnDefinitionResponse = {
   value: string;
-  type: "literal" | "uri" | "array";
+  type: "literal" | "uri" | "array" | "virtual";
   datatype: string;
   stage?: string;
 };
@@ -58,6 +58,7 @@ export const InternalApiIdentifierMap = {
   INSTANCES: "instances",
   SCHEDULE: "schedule",
   TASKS: "tasks",
+  PLANNER: "planner",
   OUTSTANDING: "outstanding",
   SCHEDULED: "scheduled",
   CLOSED: "closed",

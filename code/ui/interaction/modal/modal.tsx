@@ -49,7 +49,7 @@ export default function Modal(props: Readonly<ModalProps>) {
             className="flex justify-center items-center z-overlay bg-inverse-primary"
             lockScroll
           >
-            <FloatingFocusManager context={dialog.context}>
+            <FloatingFocusManager context={dialog.context} initialFocus={-1}>
               <div
                 ref={dialog.refs.setFloating}
                 style={dialog.floatingStyles}

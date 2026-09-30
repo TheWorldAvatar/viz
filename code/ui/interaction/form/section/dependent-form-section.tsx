@@ -27,7 +27,7 @@ import { browserStorageManager } from "@/state/browser-storage-manager";
 import FormQuickViewBody from "@/ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "@/ui/interaction/accordion/form-quick-view-header";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
-import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
+import { useIsFieldPending, useIsSyncing, useLiveFormOptions } from "@/utils/db/dexie-form-repository";
 import React, { useEffect, useState } from "react";
 import FormInputContainer from "../field/form-input-container";
 
@@ -88,6 +88,9 @@ export function DependentFormSection(
   const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], currentOption,
     props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "", currentParentOption, search, formType, dict);
 
+  const isFieldPending: boolean = useIsFieldPending(props.dependentProp.name[VALUE_KEY])
+  const isSyncing: boolean = useIsSyncing()
+
   const {
     id,
     selectedEntityId,
@@ -138,6 +141,7 @@ export function DependentFormSection(
                   }}
                   ariaLabel={interpolate(dict.action.selectItem, label)}
                   hasLimits={true}
+                  isLoading={isFieldPending && isSyncing}
                   isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && !currentParentOption)}

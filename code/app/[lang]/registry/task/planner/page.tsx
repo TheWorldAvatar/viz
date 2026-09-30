@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from '@/io/config/routes';
 import SettingsStore from '@/io/config/settings';
-import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
-import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { LifecycleStageMap } from '@/types/form';
+import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
+import RegistryPlannerTableComponent from '@/ui/graphic/table/registry/registry-planner-table-component';
 
 /**
  * Set page metadata.
@@ -25,18 +25,14 @@ export async function generateMetadata(): Promise<Metadata> {
  * 
  * @returns React component for display. 
  */
-export default function RegistryTaskByDatePage() {
+export default function RegistryTaskPlannerPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.OUTSTANDING);
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
-      <RegistryTableComponent
+      <RegistryPlannerTableComponent
         entityType={uiSettings.resources?.registry?.data}
-        lifecycleStage={LifecycleStageMap.OUTSTANDING}
         tableColumnOptions={tableColumnSettings}
-        allowTaskPrioritisation={uiSettings.resources?.registry?.priority}
-        dragSync={uiSettings.resources?.registry?.dragSync}
-        exports={uiSettings.resources?.registry?.exports ?? []}
       />
     );
   } else {

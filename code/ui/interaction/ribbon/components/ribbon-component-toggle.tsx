@@ -39,7 +39,7 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
     }
 
     return (
-        <Tooltip text={props.tooltip} placement="bottom-start">
+        <Tooltip text={props.tooltip} side="bottom" align="start">
             <div className={classNames.join(" ")} onClick={handleClick}>
                 <div>
                     <div className={styles.ribbonComponentInner}>

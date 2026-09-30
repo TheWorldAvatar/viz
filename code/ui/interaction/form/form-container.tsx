@@ -5,24 +5,24 @@ import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
-import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { FormType, FormTypeMap } from "@/types/form";
 import { JsonObject } from "@/types/json";
 import { FormComponent } from "@/ui/interaction/form/form";
-import { browserStorageManager } from "@/state/browser-storage-manager";
 import { getAfterDelimiter, parseWordsForLabels } from "@/utils/client-utils";
 import { ADD_LINKED_FORM_KEY } from "@/utils/constants";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { Ban, Check, Pencil, RefreshCw, SendHorizonal, Trash2 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
 import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { Ban, Check, Pencil, RefreshCw, SendHorizonal, Trash2 } from "lucide-react";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -215,7 +215,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label={dict.action.edit}
                 disabled={isLoading}
                 tooltipText={dict.action.edit}
-                onClick={() => navigateToDrawer(`../../edit/${props.entityType}/${id}`)}
+                onClick={() => navigateToDrawer(Routes.REGISTRY_EDIT, `${props.entityType}/${id}`)}
                 variant="secondary"
               />
             )}
@@ -229,7 +229,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label={dict.action.delete}
                 disabled={isLoading}
                 tooltipText={dict.action.delete}
-                onClick={() => navigateToDrawer(`../../delete/${props.entityType}/${id}`)}
+                onClick={() => navigateToDrawer(Routes.REGISTRY_DELETE, `${props.entityType}/${id}`)}
                 variant="secondary"
               />
             )}

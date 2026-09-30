@@ -1,8 +1,11 @@
-import { useRouter } from "next/navigation";
+import { getRoute, RouteKey } from "@/io/config/routes";
+import { selectIsAnyDrawerOpen, setIsAnyDrawerOpen } from "@/state/drawer-signal-slice";
+import { Dictionary } from "@/types/dictionary";
+import { buildUrl } from "@/utils/client-utils";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { selectIsAnyDrawerOpen, setIsAnyDrawerOpen } from "@/state/drawer-signal-slice";
-import { buildUrl } from "@/utils/client-utils";
+import { useDictionary } from "../useDictionary";
 
 /**
  * A custom hook to manage drawer navigation functionality.
@@ -11,14 +14,21 @@ export function useDrawerNavigation() {
     const router = useRouter();
     const isAnyDrawerOpen: boolean = useSelector(selectIsAnyDrawerOpen);
     const dispatch: Dispatch = useDispatch();
+    const dict: Dictionary = useDictionary();
+    const path: string = usePathname();
 
     /**
      * Function to navigate to a Intercept route that opens a drawer.
      *
      * @param urlParts The parts of the URL to concatenate.
      */
-    const navigateToDrawer = (...urlParts: string[]) => {
-        const url: string = buildUrl(...urlParts);
+    const navigateToDrawer = (route: RouteKey, ...urlParts: string[]) => {
+        const routePrefix: string = getRoute(dict.lang, route);
+        const url: string = buildUrl(routePrefix, ...urlParts);
+        // early termination of same route to prevent removal of non-intercepted route
+        if (path == url) {
+            return;
+        }
         // If any drawers are opened, replace current drawer
         if (isAnyDrawerOpen) {
             router.replace(url, { scroll: false });

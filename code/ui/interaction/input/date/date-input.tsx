@@ -76,10 +76,11 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           // Defaults variant to outline if not provided and in mobile view mode
           variant={!showMobileView && !!props.variant ? props.variant : "outline"}
           label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
-          tooltipText={dict.action.date}
           aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
           aria-describedby={arialDescriptionId}
           disabled={true}
+          // Suppressed due to different date locales between server and client side
+          suppressHydrationWarning
         />
         {props.children}
       </div>
@@ -99,7 +100,6 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     // Defaults variant to outline if not provided and in mobile view mode
     variant={!showMobileView && !!props.variant ? props.variant : "outline"}
     label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
-    tooltipText={dict.action.date}
     onClick={(e) => {
       // Prevent click effects when disabled
       e.preventDefault();
@@ -107,6 +107,8 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
     aria-describedby={arialDescriptionId}
     disabled={props.disabled}
+    // Suppressed due to different date locales between server and client side
+    suppressHydrationWarning
   >
     <DateSelectionInput
       {...props}

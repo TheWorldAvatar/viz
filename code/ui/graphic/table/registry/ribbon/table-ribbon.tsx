@@ -3,11 +3,10 @@
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { TableDescriptor } from "@/hooks/table/useTable";
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { Routes } from "@/io/config/routes";
-import React from "react";
-import { DateRange } from "react-day-picker";
+import { Routes, getRoute } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
@@ -16,11 +15,12 @@ import RedirectButton from "@/ui/interaction/action/redirect/redirect-button";
 import Button from "@/ui/interaction/button";
 import DateInput from "@/ui/interaction/input/date/date-input";
 import { buildUrl, interpolate } from "@/utils/client-utils";
+import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Wallet } from "lucide-react";
+import React from "react";
+import { DateRange } from "react-day-picker";
 import ClearAllFiltersButton from "../../action/clear-all-filters-button";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
-import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDollarSign, CircleEllipsis, ClipboardList, Clock, Pencil, PencilOff, Plus, Receipt, RefreshCw, Truck, Wallet } from "lucide-react";
 
 interface TableRibbonProps {
   path: string;
@@ -34,6 +34,7 @@ interface TableRibbonProps {
   tableDescriptor: TableDescriptor;
   tableScrollDescriptor: TableScrollDescriptor
   message?: string;
+  dragSync?: boolean;
 }
 
 /**
@@ -49,6 +50,7 @@ interface TableRibbonProps {
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
+ * @param {boolean} dragSync Optional flag to enable the drag sync UI.
  * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
@@ -80,7 +82,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.jobs}
                 leftIcon={Truck}
                 hasMobileIcon={false}
-                url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/${props.entityType}`}
                 variant={
                   props.lifecycleStage == LifecycleStageMap.PENDING ||
                     props.lifecycleStage == LifecycleStageMap.ACTIVE ||
@@ -96,7 +98,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.tasks}
                 leftIcon={ClipboardList}
                 hasMobileIcon={false}
-                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                url={getRoute(dict.lang, Routes.REGISTRY_TASK_OUTSTANDING)}
                 variant={
                   props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
                     props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
@@ -112,7 +114,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.accounts}
                 leftIcon={Wallet}
                 hasMobileIcon={false}
-                url={Routes.BILLING_ACCOUNTS}
+                url={getRoute(dict.lang, Routes.BILLING_ACCOUNTS)}
                 variant={
                   props.lifecycleStage === LifecycleStageMap.ACCOUNT ? "active" : "ghost"
                 }
@@ -122,7 +124,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.pricing}
                 leftIcon={CircleDollarSign}
                 hasMobileIcon={false}
-                url={Routes.BILLING_PRICING_MODELS}
+                url={getRoute(dict.lang, Routes.BILLING_PRICING_MODELS)}
                 variant={
                   props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
                 }
@@ -132,7 +134,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={dict.nav.title.invoice}
                 leftIcon={Receipt}
                 hasMobileIcon={false}
-                url={Routes.BILLING_INVOICE}
+                url={getRoute(dict.lang, Routes.BILLING_INVOICE)}
                 variant={
                   props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
                 }
@@ -152,7 +154,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.pending}
               leftIcon={CalendarCheck2}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/${props.entityType}`}
               variant={
                 props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
               }
@@ -162,7 +164,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.active}
               leftIcon={CircleCheck}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/active/${props.entityType}`}
               variant={
                 props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
               }
@@ -172,7 +174,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.archive}
               leftIcon={Archive}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+              url={`${getRoute(dict.lang, Routes.REGISTRY_GENERAL)}/archive/${props.entityType}`}
               variant={
                 props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
               }
@@ -182,7 +184,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.outstanding}
               leftIcon={CircleEllipsis}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+              url={getRoute(dict.lang, Routes.REGISTRY_TASK_OUTSTANDING)}
               variant={
                 props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
               }
@@ -192,7 +194,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.scheduled}
               leftIcon={Clock}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+              url={getRoute(dict.lang, Routes.REGISTRY_TASK_SCHEDULED)}
               variant={
                 props.lifecycleStage == LifecycleStageMap.SCHEDULED ? "active" : "ghost"
               }
@@ -202,7 +204,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.closed}
               leftIcon={CalendarX}
               hasMobileIcon={false}
-              url={`${Routes.REGISTRY_TASK_CLOSED}`}
+              url={getRoute(dict.lang, Routes.REGISTRY_TASK_CLOSED)}
               variant={
                 props.lifecycleStage == LifecycleStageMap.CLOSED ? "active" : "ghost"
               }
@@ -238,7 +240,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   browserStorageManager.clear();
                   resetFormSession();
                   if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
-                    window.location.href = buildUrl(Routes.REGISTRY_ADD, LifecycleStageMap.INVOICE);
+                    window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), LifecycleStageMap.INVOICE);
                   } else {
                     navigateToDrawer(Routes.REGISTRY_ADD,
                       ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
@@ -250,9 +252,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {props.instances.length > 0 && (
-            <ColumnToggle
-              columns={props.tableDescriptor.table.getAllLeafColumns()}
-            />
+            <div className="order-last w-full sm:order-0 sm:w-auto">
+              <ColumnToggle
+                columns={props.tableDescriptor.table.getAllLeafColumns()}
+              />
+            </div>
           )}
           <ClearAllFiltersButton
             tableDescriptor={props.tableDescriptor}
@@ -263,12 +267,27 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             leftIcon={ArrowUpDown}
             aria-label={dict.action.resetOrder}
             className="mt-1"
-            disabled={!props.tableDescriptor.hasCustomOrder}
+            disabled={props.tableDescriptor.hasUpdatedOrder}
             size="icon"
-            onClick={props.tableDescriptor.resetOrder}
+            onClick={() => {
+              props.tableDescriptor.resetOrder();
+              props.triggerRefresh();
+            }}
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
+          {isPermitted("operation") &&
+            (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+              props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (
+              <RedirectButton
+                url={getRoute(dict.lang, Routes.REGISTRY_TASK_PLANNER)}
+                leftIcon={CalendarCheck2}
+                size="icon"
+                aria-label={dict.nav.tooltip.dailyPlanner}
+                tooltipText={dict.nav.tooltip.dailyPlanner}
+                variant="outline"
+              />
+            )}
           {isPermitted("operation") && (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
             <Button
