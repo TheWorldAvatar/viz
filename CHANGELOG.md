@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.90.1
+
+### Bug fix
+
+- Fix to prevent route replacement if its the same url to prevent unexpected behavior
+
 ## 5.90.0
 
 ### Changes
