@@ -79,6 +79,8 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
           aria-describedby={arialDescriptionId}
           disabled={true}
+          // Suppressed due to different date locales between server and client side
+          suppressHydrationWarning
         />
         {props.children}
       </div>
@@ -105,6 +107,8 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
     aria-describedby={arialDescriptionId}
     disabled={props.disabled}
+    // Suppressed due to different date locales between server and client side
+    suppressHydrationWarning
   >
     <DateSelectionInput
       {...props}
