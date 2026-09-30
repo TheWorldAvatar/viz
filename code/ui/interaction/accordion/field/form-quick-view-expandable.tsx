@@ -38,6 +38,8 @@ export default function FormQuickViewExpandable(
     selectedEntityId,
   } = useFormQuickView(props.entity, props.entityType, props.isOntologyConcept);
 
+  const isRedirectAndInstance: boolean = props.nestedLevel === 3 && !props.isOntologyConcept;
+
   return (
     <div className="flex flex-col py-2 w-full ">
       <div className="flex flex-row items-baseline ">
@@ -45,35 +47,24 @@ export default function FormQuickViewExpandable(
           {props.entityType}
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
-          {props.nestedLevel === 3 && !props.isOntologyConcept ? (
-            <Button
-              type="button"
-              size="icon"
-              aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
-              tooltipText={
-                isQuickViewOpen ? dict.action.hide : dict.action.show
+          <Button
+            type="button"
+            size="icon"
+            aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
+            tooltipText={
+              isQuickViewOpen ? dict.action.hide : dict.action.show
+            }
+            leftIcon={isRedirectAndInstance ? ExternalLink : isQuickViewOpen ? ChevronUp : ChevronDown}
+            onClick={() => {
+              if (isRedirectAndInstance) {
+                navigateToDrawer(Routes.REGISTRY, `${props.entityType}/${selectedEntityId}`);
+              } else {
+                setIsQuickViewOpen(!isQuickViewOpen);
               }
-              leftIcon={ExternalLink}
-              onClick={() => navigateToDrawer(Routes.REGISTRY, `${props.entityType}/${selectedEntityId}`)}
-              variant="outline"
-              loading={isQuickViewLoading}
-            />
-          ) : (
-            <Button
-              type="button"
-              size="icon"
-              aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
-              tooltipText={
-                isQuickViewOpen ? dict.action.hide : dict.action.show
-              }
-              leftIcon={
-                isQuickViewOpen ? ChevronUp : ChevronDown
-              }
-              onClick={() => setIsQuickViewOpen(!isQuickViewOpen)}
-              variant={isQuickViewOpen ? "secondary" : "outline"}
-              loading={isQuickViewLoading}
-            />
-          )}
+            }}
+            variant={isQuickViewOpen && !isRedirectAndInstance ? "secondary" : "outline"}
+            loading={isQuickViewLoading}
+          />
         </div>
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
