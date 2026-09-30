@@ -74,6 +74,7 @@ Note that resources are optional and their configuration options can differ from
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
   - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
   - `priority`: OPTIONAL: Set to `true` to enable the prioritise/deprioritise row action on the outstanding and scheduled task tables. High-priority tasks are highlighted in the table. Defaults to `false`.
+  - `dragSync`: OPTIONAL: Set to `true` to enable a separate UI to save the draggable task positions to the backend for reload. Defaults to `false`.
   - `exports`: OPTIONAL: An array of the export options available from the file export agent. See [Export options](#export-options).
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
