@@ -119,7 +119,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             variant={isIncluded ? "info_banner" : "ghost"}
             aria-pressed={isIncluded}
             disabled={props.disabled}
-            className="flex-1 rounded-sm"
+            className="flex-1"
             onClick={() => {
               setIsIncluded(true);
             }}
@@ -131,7 +131,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             variant={!isIncluded ? "info_banner" : "ghost"}
             aria-pressed={!isIncluded}
             disabled={props.disabled}
-            className="flex-1 rounded-sm"
+            className="flex-1"
             onClick={() => {
               setIsIncluded(false);
             }}
