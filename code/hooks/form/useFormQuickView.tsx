@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useId, useState } from 'react';
 import { AgentResponseBody, InternalApiIdentifierMap } from '@/types/backend-agent';
 import { FormTemplateType, OntologyConcept, QuickViewGroupings } from '@/types/form';
 import { parseConceptForQuickViewGroupings, parseFormTemplateForQuickViewGroupings } from '@/ui/interaction/form/form-utils';
 import { getAfterDelimiter } from '@/utils/client-utils';
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from '@/utils/internal-api-services';
+import { useEffect, useId, useState } from 'react';
 
 export interface FormQuickViewState {
     id: string;
@@ -40,7 +40,7 @@ export function useFormQuickView(
                 setIsQuickViewLoading(true);
                 const body: AgentResponseBody = await queryInternalApi(
                     isOntologyConcept
-                        ? makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONCEPT, selectedEntity)
+                        ? makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONCEPT, selectedEntity, "false")
                         : makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, entityType, selectedEntityId)
                 );
                 const quickViewGroups: QuickViewGroupings = isOntologyConcept
