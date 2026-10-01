@@ -1,7 +1,7 @@
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
-import { FLAG_KEY, SYNC_KEY } from "@/utils/constants";
+import { FLAG_KEY, LEXORANK_KEY, SYNC_KEY } from "@/utils/constants";
 import { getBackendApi } from "@/utils/backend-api-services";
 import { logColours } from "@/utils/logColours";
 import { NextRequest, NextResponse } from "next/server";
@@ -279,8 +279,10 @@ function makeExternalEndpoint(
     }
     case InternalApiIdentifierMap.CONCEPT: {
       const uri: string = searchParams.get("uri");
+      const requiresSubclass: string = searchParams.get("subclass");
       const urlObj: URL = new URL(`${agentBaseApi}/type`);
       urlObj.searchParams.set("uri", uri);
+      urlObj.searchParams.set("subclass", requiresSubclass);
       return urlObj.toString();
     }
     case InternalApiIdentifierMap.CONTRACTS: {
@@ -447,7 +449,9 @@ function makeExternalEndpoint(
     case InternalApiIdentifierMap.TASKS: {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      if (contractType == "task") {
+      if (contractType == LEXORANK_KEY) {
+        return `${agentBaseApi}/contracts/service/rank`;
+      } else if (contractType == "task") {
         return `${agentBaseApi}/contracts/task/${idOrTimestamp}`;
       }
       const filters: string = encodeFilters(searchParams.get("filters"));
@@ -469,6 +473,15 @@ function makeExternalEndpoint(
         return `${agentBaseApi}/report/account/invoice`;
       }
       return `${agentBaseApi}/report/account/tasks?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+    }
+    case InternalApiIdentifierMap.PLANNER: {
+      const contractType: string = searchParams.get("type");
+      const startDate: string = searchParams.get("start_date");
+      const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      const sortBy: string = searchParams.get("sort_by");
+      return `${agentBaseApi}/contracts/service/rank?type=${contractType}&startTimestamp=${unixTimestampStartDate}&page=${page}&limit=${limit}&sort_by=${sortBy}`;
     }
     case InternalApiIdentifierMap.SCHEDULED:
     case InternalApiIdentifierMap.CLOSED: {

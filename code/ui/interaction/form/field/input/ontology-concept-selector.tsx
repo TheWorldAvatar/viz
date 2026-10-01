@@ -83,7 +83,7 @@ export default function OntologyConceptSelector(
         );
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
           conceptTypes.map(async (conceptType) => {
-            const resBody: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONCEPT, conceptType));
+            const resBody: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONCEPT, conceptType, "true"));
             if (resBody.error) {
               throw new Error(
                 `Failed to fetch available types for ${conceptType}`

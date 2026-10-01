@@ -178,6 +178,7 @@
     "rescheduleInstruction": "Request a change to a previously scheduled service on {replace}",
     "offlineMode": "Offline mode",
     "offlineQueued": "Saved offline. Your changes will sync automatically when you reconnect.",
+    "syncSuccess": "Your changes have sync successfully!",
     "genericError": "Something went wrong. Please try again.",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
@@ -267,7 +268,8 @@
       "registry": "Open registry",
       "help": "Open help page",
       "landingRedirect": "Click to open the '{replace}' page",
-      "fileUpload": "Click to upload a file"
+      "fileUpload": "Click to upload a file",
+      "dailyPlanner": "Daily planner"
     }
   },
   "title": {

@@ -2,6 +2,35 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.90.3
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.72.0` to `v1.72.1`
+
+### Bug fix
+
+- Display of concepts on form quick view body
+
+## 5.90.2
+
+### Bug fix
+
+- Suppress hydration for aria-label of locale dates
+
+## 5.90.1
+
+### Bug fix
+
+- Fix to prevent route replacement if its the same url to prevent unexpected behavior
+
+## 5.90.0
+
+### Changes
+
+- Added new registry planner page with lexorank functionalities to save and reorder positions when assigning tasks
+- Bump min version of `VisBackend Agent` from `v1.71.0` to `v1.72.0`
+
 ## 5.89.4
 
 ### Changes

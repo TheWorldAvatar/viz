@@ -1,6 +1,6 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "@/types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import { ColFilterValues } from "@/types/table";
 import {
@@ -36,10 +36,12 @@ export interface TableDescriptor {
   setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
+  dirtyTasks: Record<string, FieldValues>;
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
-  hasCustomOrder: boolean;
-  saveOrder: (_rows: FieldValues[]) => void;
+  hasUpdatedOrder: boolean;
+  triggerBulkEdit: boolean;
+  syncOrder: (_rows: FieldValues[], _newIndex: number) => void;
   resetOrder: () => void;
   pagination: PaginationState,
   apiPagination: PaginationState,
@@ -50,6 +52,9 @@ export interface TableDescriptor {
   selectedRowIds: Set<string>;
   setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
   resetRowSelection: () => void;
+  syncTasks: (_id: string, _lexorank: string) => void;
+  onSyncTasks: () => Promise<void>;
+  setTriggerBulkEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -77,9 +82,10 @@ export function useTable(
   const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
-  const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
-  const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
+
+  const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
+  const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
@@ -92,6 +98,7 @@ export function useTable(
     columnFilters,
     tableColumnOptions,
     pagination.pageSize,
+    syncTasks,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -103,8 +110,8 @@ export function useTable(
 
   useEffect(() => {
     const pageRows: FieldValues[] = data?.slice(startIndex, startIndex + pagination.pageSize);
-    setCurrentDataView(hasCustomOrder ? applyOrder(pageRows) : pageRows);
-  }, [data, pagination.pageIndex, hasCustomOrder]);
+    setCurrentDataView(applyOrder(pageRows));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -197,9 +204,11 @@ export function useTable(
     setIsBulkDispatchEdit,
     table,
     data: currentDataView,
+    dirtyTasks,
     setData: setCurrentDataView,
-    hasCustomOrder,
-    saveOrder,
+    hasUpdatedOrder,
+    triggerBulkEdit,
+    syncOrder,
     resetOrder,
     initialInstances,
     pagination,
@@ -211,5 +220,8 @@ export function useTable(
     selectedRowIds,
     setSelectedRows,
     resetRowSelection,
+    syncTasks,
+    onSyncTasks,
+    setTriggerBulkEdit,
   };
 }
