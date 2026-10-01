@@ -60,6 +60,7 @@ export function makeInternalRegistryAPIwithParams(
     case InternalApiIdentifierMap.CONCEPT:
       searchParams = new URLSearchParams({
         uri: params[0],
+        subclass: params[1],
       });
       break;
     case InternalApiIdentifierMap.CONTRACTS:

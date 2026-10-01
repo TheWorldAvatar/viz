@@ -279,8 +279,10 @@ function makeExternalEndpoint(
     }
     case InternalApiIdentifierMap.CONCEPT: {
       const uri: string = searchParams.get("uri");
+      const requiresSubclass: string = searchParams.get("subclass");
       const urlObj: URL = new URL(`${agentBaseApi}/type`);
       urlObj.searchParams.set("uri", uri);
+      urlObj.searchParams.set("subclass", requiresSubclass);
       return urlObj.toString();
     }
     case InternalApiIdentifierMap.CONTRACTS: {

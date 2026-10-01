@@ -13,6 +13,7 @@ interface FormQuickViewExpandableProps {
   entity: string;
   entityType: string;
   nestedLevel: number;
+  isOntologyConcept: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ interface FormQuickViewExpandableProps {
  * @param {string} entity - The target entity instance.
  * @param {string} entityType - The type of the entity.
  * @param {number} nestedLevel - The current level of nesting/recursion.
+ * @param {boolean} isOntologyConcept - Indicates that the entity is an ontology concept.
  **/
 export default function FormQuickViewExpandable(
   props: Readonly<FormQuickViewExpandableProps>
@@ -34,7 +36,9 @@ export default function FormQuickViewExpandable(
     isQuickViewOpen,
     setIsQuickViewOpen,
     selectedEntityId,
-  } = useFormQuickView(props.entity, props.entityType);
+  } = useFormQuickView(props.entity, props.entityType, props.isOntologyConcept);
+
+  const isRedirectAndInstance: boolean = props.nestedLevel === 3 && !props.isOntologyConcept;
 
   return (
     <div className="flex flex-col py-2 w-full ">
@@ -43,35 +47,24 @@ export default function FormQuickViewExpandable(
           {props.entityType}
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
-          {props.nestedLevel === 3 ? (
-            <Button
-              type="button"
-              size="icon"
-              aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
-              tooltipText={
-                isQuickViewOpen ? dict.action.hide : dict.action.show
+          <Button
+            type="button"
+            size="icon"
+            aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
+            tooltipText={
+              isQuickViewOpen ? dict.action.hide : dict.action.show
+            }
+            leftIcon={isRedirectAndInstance ? ExternalLink : isQuickViewOpen ? ChevronUp : ChevronDown}
+            onClick={() => {
+              if (isRedirectAndInstance) {
+                navigateToDrawer(Routes.REGISTRY, `${props.entityType}/${selectedEntityId}`);
+              } else {
+                setIsQuickViewOpen(!isQuickViewOpen);
               }
-              leftIcon={ExternalLink}
-              onClick={() => navigateToDrawer(Routes.REGISTRY, `${props.entityType}/${selectedEntityId}`)}
-              variant="outline"
-              loading={isQuickViewLoading}
-            />
-          ) : (
-            <Button
-              type="button"
-              size="icon"
-              aria-label={isQuickViewOpen ? dict.action.hide : dict.action.show}
-              tooltipText={
-                isQuickViewOpen ? dict.action.hide : dict.action.show
-              }
-              leftIcon={
-                isQuickViewOpen ? ChevronUp : ChevronDown
-              }
-              onClick={() => setIsQuickViewOpen(!isQuickViewOpen)}
-              variant={isQuickViewOpen ? "secondary" : "outline"}
-              loading={isQuickViewLoading}
-            />
-          )}
+            }}
+            variant={isQuickViewOpen && !isRedirectAndInstance ? "secondary" : "outline"}
+            loading={isQuickViewLoading}
+          />
         </div>
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
