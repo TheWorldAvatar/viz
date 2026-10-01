@@ -28,8 +28,8 @@ export const buttonVariants = cva(
         active: "bg-background border border-border text-gray-800 hover:bg-gray-200 dark:bg-muted dark:text-foreground dark:hover:bg-zinc-900",
       },
       size: {
-        xs: "h-8 gap-1 px-2.5 has-data-[icon=inline-start]:pl-2 has-data-[icon=inline-end]:pr-2 [&_svg:not([class*='size-'])]:size-4",
-        sm: "h-9 gap-1.5 px-3 has-data-[icon=inline-start]:pl-2.5 has-data-[icon=inline-end]:pr-2.5 [&_svg:not([class*='size-'])]:size-5",
+        xs: "h-8 gap-1 px-2.5 text-sm has-data-[icon=inline-start]:pl-2 has-data-[icon=inline-end]:pr-2 [&_svg:not([class*='size-'])]:size-4",
+        sm: "h-9 gap-1.5 px-3 text-sm has-data-[icon=inline-start]:pl-2.5 has-data-[icon=inline-end]:pr-2.5 [&_svg:not([class*='size-'])]:size-5",
         default: "h-10 gap-1.5 px-4 text-base has-data-[icon=inline-start]:pl-3 has-data-[icon=inline-end]:pr-3 [&_svg:not([class*='size-'])]:size-5",
         lg: "h-11 gap-2 px-5 has-data-[icon=inline-start]:pl-4 has-data-[icon=inline-end]:pr-4 [&_svg:not([class*='size-'])]:size-5",
         "icon-xs": "size-7 [&_svg:not([class*='size-'])]:size-4",

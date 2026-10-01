@@ -115,10 +115,11 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <Button
             label={dict.action.include}
             leftIcon={Check}
+            size="sm"
             variant={isIncluded ? "info_banner" : "ghost"}
             aria-pressed={isIncluded}
             disabled={props.disabled}
-            className="flex-1 text-sm font-medium rounded-sm"
+            className="flex-1 rounded-sm"
             onClick={() => {
               setIsIncluded(true);
             }}
@@ -126,10 +127,11 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <Button
             label={dict.action.exclude}
             leftIcon={Ban}
+            size="sm"
             variant={!isIncluded ? "info_banner" : "ghost"}
             aria-pressed={!isIncluded}
             disabled={props.disabled}
-            className="flex-1 text-sm font-medium rounded-sm"
+            className="flex-1 rounded-sm"
             onClick={() => {
               setIsIncluded(false);
             }}
