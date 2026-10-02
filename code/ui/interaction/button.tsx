@@ -93,9 +93,9 @@ export interface ButtonProps extends Omit<ButtonPrimitive.Props, "className" | "
  */
 export default function Button({
   className, // Allow custom classes to be passed in
-  variant, // Defaults are owned by buttonVariants
-  size, // Defaults are owned by buttonVariants
-  shape, // Defaults are owned by buttonVariants
+  variant,
+  size,
+  shape,
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
   children,
@@ -116,11 +116,11 @@ export default function Button({
 
   const button: React.ReactElement = (
     // Base UI blocks click and key handlers itself while disabled, so onClick is passed as-is.
-    // focusableWhenDisabled keeps focus on the button while it is loading
     <ButtonPrimitive
       ref={ref}
       className={buttonVariants({ variant, size, shape, className })}
       disabled={isInactive}
+      // focusableWhenDisabled keeps focus on the button while it is loading
       focusableWhenDisabled={loading}
       aria-busy={loading || undefined}
       {...props}
