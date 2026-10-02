@@ -118,7 +118,6 @@ export default function RegistryGridComponent(
                 actions={[<Button
                   key={virtualItem.key + dict.action.complete}
                   variant="ghost"
-                  size="md"
                   leftIcon={Check}
                   label={dict.action.complete}
                   onClick={() => {
@@ -135,7 +134,6 @@ export default function RegistryGridComponent(
                   bottomSheet
                   key={virtualItem.key + dict.action.view}
                   variant="ghost"
-                  size="md"
                   leftIcon={ExternalLink}
                   label={parseWordsForLabels(dict.action.view)}
                 >

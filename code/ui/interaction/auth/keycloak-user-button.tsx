@@ -19,9 +19,9 @@ export default function KeycloakUserButton() {
     <PopoverActionButton
       leftIcon={User}
       size="icon"
-      variant="primary"
+      shape="pill"
       placement="bottom"
-      className="size-11 md:size-12 rounded-full!"
+      className="size-11 md:size-12"
       aria-label={dict.title.user}
     >
       <div className="flex flex-col justify-center items-center p-1">

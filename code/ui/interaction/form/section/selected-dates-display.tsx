@@ -73,9 +73,9 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                 <Button
                                     type="button"
                                     leftIcon={X}
-                                    variant="destructiveOutline"
+                                    variant="destructive"
                                     size="icon-sm"
-                                    className="w-8 h-8"
+                                    className="bg-transparent dark:bg-transparent"
                                     onClick={() => handleRemoveDate(originalIndex)}
                                     disabled={props.disabled || props.dates.length === 1}
                                     aria-label={`Remove date ${formatDateValue(date)}`}

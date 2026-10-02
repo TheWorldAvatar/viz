@@ -33,7 +33,6 @@ export default function CustomYearsDropdown(props: DropdownProps) {
             placement="bottom-start"
             rightIcon={ChevronDown}
             size="sm"
-            className="text-sm"
             label={String(selectedYear)}
             aria-label={`${dict.form.year}, ${selectedYear}`}
             isOpen={isOpen}
@@ -77,7 +76,7 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                             variant={isSelected ? "info" : "ghost"}
                             disabled={isDisabled}
                             onClick={() => selectYear(year)}
-                            className={`w-full min-h-12 min-w-12 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                            className={`w-full min-h-12 min-w-12 ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                         >
                             {year}
                         </Button>

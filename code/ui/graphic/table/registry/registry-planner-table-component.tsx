@@ -96,7 +96,6 @@ export default function RegistryPlannerTableComponent(
               tableDescriptor.onSyncTasks();
             }}
             tooltipText={dict.action.save}
-            variant="primary"
           />
           <Button
             size="icon"

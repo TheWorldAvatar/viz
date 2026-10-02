@@ -52,7 +52,7 @@
     --border-tertiary: #9898af;
 
     /* Destructive action (delete, cancel, error buttons) */
-    --destructive: #d14343 ;
+    --destructive: #e7000b ;
 
     /* For toggle/tab backgrounds */
     --ring: #e5e7eb;

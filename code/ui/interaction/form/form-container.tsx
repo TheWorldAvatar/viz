@@ -184,8 +184,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button
                 variant="secondary"
                 leftIcon={Ban}
-                className="mr-2"
-                tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 disabled={isLoading}
                 label={dict.action.terminate}
                 onClick={() => {
@@ -201,7 +199,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label={dict.action.approve}
                 disabled={isLoading}
                 loading={isLoading}
-                tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
             )}

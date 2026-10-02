@@ -55,12 +55,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
-      <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
-        <div className="flex flex-1 items-stretch">
+      <div className="flex flex-row items-center justify-between gap-1.5 mb-1">
+        <div className="flex flex-1 items-center">
           <input
             autoFocus
             type="text"
-            className="border border-border rounded pl-3 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
+            className="h-11 border border-border rounded-lg pl-3 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
@@ -75,22 +75,21 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
           <Button
             leftIcon={Filter}
-            size="icon"
+            size="icon-lg"
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
               props.onSubmission(selectedOptions, isIncluded);
             }}
             tooltipText={dict.action.applyFilter}
-            variant="primary"
-            className="p-5 border border-border ml-2"
+            className="ml-2"
             disabled={props.disabled || !isConnected}
             aria-label={"Submit for " + props.label}
           />
         </div>
         {selectedOptions.length > 0 && <Button
           leftIcon={SquareMinus}
-          size="icon"
+          size="icon-lg"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -102,7 +101,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }
           }}
           variant="secondary"
-          className="p-5 border border-border"
           disabled={props.disabled}
           tooltipText={dict.action.clear}
           aria-label={dict.action.clear}
@@ -121,7 +119,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             variant={isIncluded ? "info_banner" : "ghost"}
             aria-pressed={isIncluded}
             disabled={props.disabled}
-            className="flex-1 text-sm font-medium rounded-sm"
+            className="flex-1"
             onClick={() => {
               setIsIncluded(true);
             }}
@@ -133,7 +131,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             variant={!isIncluded ? "info_banner" : "ghost"}
             aria-pressed={!isIncluded}
             disabled={props.disabled}
-            className="flex-1 text-sm font-medium rounded-sm"
+            className="flex-1"
             onClick={() => {
               setIsIncluded(false);
             }}

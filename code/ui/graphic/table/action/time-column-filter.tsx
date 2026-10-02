@@ -101,7 +101,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex space-x-1">
+            <div className="flex items-center space-x-1">
                 <div className="w-100 md:w-40">
                     <SimpleSelector
                         options={operators}
@@ -118,9 +118,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                 </div>
                 <Button
                     leftIcon={Filter}
-                    size="icon"
-                    variant="primary"
-                    className="p-5"
+                    size="icon-lg"
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -132,9 +130,8 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                 />
                 <Button
                     leftIcon={FunnelX}
-                    size="icon"
+                    size="icon-lg"
                     variant="secondary"
-                    className="p-5 border border-border"
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -149,7 +146,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
             <input
                 autoFocus
                 type="time"
-                className="border border-border rounded px-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
+                className="h-11 border border-border rounded-lg px-3 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
                 value={value1 ?? ""}
                 aria-label={interpolate(isBetweenComparisonOperator ? dict.title.lowerBoundFor : dict.title.filterInputFor, props.label)}
                 onChange={(event) => setValue1(event.target.value)}
@@ -159,7 +156,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                 <>
                     <input
                         type="time"
-                        className="border border-border rounded px-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
+                        className="h-11 border border-border rounded-lg px-3 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
                         value={value2 ?? ""}
                         aria-label={interpolate(dict.title.upperBoundFor, props.label)}
                         onChange={(event) => setValue2(event.target.value)}

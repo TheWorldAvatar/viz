@@ -99,7 +99,6 @@ function Toast(props: Readonly<ToastProps>) {
         <Button
           variant="ghost"
           size="icon"
-          className={`size-8 shrink-0 ${toastConfig.text}`}
           leftIcon={X}
           aria-label={dict.action.dismiss}
           tooltipText={dict.action.dismiss}
