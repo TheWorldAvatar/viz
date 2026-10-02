@@ -1,0 +1,175 @@
+import { useConnected } from "@/hooks/useConnected";
+import { useDictionary } from "@/hooks/useDictionary";
+import useRefresh from "@/hooks/useRefresh";
+import { Dictionary } from "@/types/dictionary";
+import { ColFilterValues } from "@/types/table";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
+import StatusComponent from "@/ui/text/status/status";
+import { Ban, Check, Filter, SquareMinus } from "lucide-react";
+import { useMemo, useState } from "react";
+import Button from "../button";
+import SelectOption from "../input/select-option";
+
+
+interface SearchSelectorProps {
+  label: string;
+  searchString: string;
+  options: string[];
+  initSelectedOptions: ColFilterValues;
+  onSubmission: (_options: string[], _isIncluded: boolean) => void;
+  setSearchString: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  disabled?: boolean;
+  disableExclusion?: boolean;
+  className?: string;
+}
+
+/**
+ * This component renders a dropdown selector with searching capabilities.
+ *
+ * @param {string} label The aria-label for the component.
+ * @param {string} searchString The uncontrolled search option.
+ * @param {string[]} options The options to be displayed.
+ * @param {ColFilterValues} initSelectedOptions The initial options that have been selected.
+ * @param onSubmission Function to be executed on submission.
+ * @param setSearchString Dispatch function to set search string state.
+ * @param {boolean} isLoading The loading state to indicate if options are fetching.
+ * @param setIsLoading State function to set loading state.
+ * @param {boolean} disabled An optional state to disable the filter.
+ * @param {boolean} disableExclusion An optional state to disable the exclusion functionality.
+ * @param {string} className Optional additional styling applied to the selector.
+ */
+export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
+  const dict: Dictionary = useDictionary();
+  const isConnected: boolean = useConnected();
+  const { refreshFlag, triggerRefresh } = useRefresh(100);
+  const [isIncluded, setIsIncluded] = useState<boolean>(props.initSelectedOptions.isIncluded);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions.values);
+
+  const visibleOptions: string[] = useMemo(() => {
+    return props.searchString.trim().length > 0
+      ? [...props.options.filter((opt) => !selectedOptions.includes(opt)), ...selectedOptions]
+      : Array.from(new Set([...selectedOptions, ...props.options]))
+  }, [props.options, props.searchString]);
+
+  return (
+    <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
+      <div className="flex flex-row items-center justify-between gap-1.5 mb-1">
+        <div className="flex flex-1 items-center">
+          <input
+            autoFocus
+            type="text"
+            className="h-11 border border-border rounded-lg pl-3 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
+            value={props.searchString}
+            placeholder={dict.message.typeFilter}
+            aria-label={"search input for " + props.label}
+            disabled={props.disabled}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
+            onChange={(event) => {
+              props.setSearchString(event.target.value);
+            }}
+          />
+          <Button
+            leftIcon={Filter}
+            size="icon-lg"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              props.onSubmission(selectedOptions, isIncluded);
+            }}
+            tooltipText={dict.action.applyFilter}
+            className="ml-2"
+            disabled={props.disabled || !isConnected}
+            aria-label={"Submit for " + props.label}
+          />
+        </div>
+        {selectedOptions.length > 0 && <Button
+          leftIcon={SquareMinus}
+          size="icon-lg"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            triggerRefresh();
+            setSelectedOptions([]);
+            if (props.searchString.length > 0) {
+              props.setIsLoading(true);
+              props.setSearchString("");
+            }
+          }}
+          variant="secondary"
+          disabled={props.disabled}
+          tooltipText={dict.action.clear}
+          aria-label={dict.action.clear}
+        />}
+      </div>
+      {!props.isLoading && visibleOptions.length > 0 && !props.disableExclusion &&
+        <div
+          role="group"
+          aria-label={"filter mode for " + props.label}
+          className="flex gap-1 mt-1.5 mb-0.5"
+        >
+          <Button
+            label={dict.action.include}
+            leftIcon={Check}
+            size="sm"
+            variant={isIncluded ? "info_banner" : "ghost"}
+            aria-pressed={isIncluded}
+            disabled={props.disabled}
+            className="flex-1"
+            onClick={() => {
+              setIsIncluded(true);
+            }}
+          />
+          <Button
+            label={dict.action.exclude}
+            leftIcon={Ban}
+            size="sm"
+            variant={!isIncluded ? "info_banner" : "ghost"}
+            aria-pressed={!isIncluded}
+            disabled={props.disabled}
+            className="flex-1"
+            onClick={() => {
+              setIsIncluded(false);
+            }}
+          />
+        </div>
+      }
+      <div className="max-h-80 w-full overflow-y-auto overflow-x-auto">
+        {props.isLoading && (
+          <div role="status" aria-live="polite" className="p-2.5 mt-2">
+            <LoadingSpinner size="md" />
+            <span className="sr-only">{dict.message.loading}</span>
+          </div>
+        )}
+        {!props.isLoading && <p className="text-sm text-foreground/80 italic px-2 my-1">
+          {props.options.length === 0 && dict.message.noOptions}
+          {props.options.length > 20 && dict.message.typeMore}
+        </p>}
+        {!props.isLoading && !refreshFlag && visibleOptions.map((option) => (
+          <SelectOption
+            key={option}
+            option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
+              props.label === "scheduleType" ? dict.form[option] : option}
+            labelComponent={props.label === "status" ? <StatusComponent status={option} /> : null}
+            initialChecked={selectedOptions.includes(option)}
+            onClick={() => {
+              if (selectedOptions.includes(option)) {
+                setSelectedOptions(selectedOptions.filter((value) => value !== option));
+              } else {
+                const newOptions: string[] = [...selectedOptions, option];
+                setSelectedOptions(newOptions);
+              }
+            }}
+          />
+        ))}
+        <p className="text-2xl text-foreground/80 italic px-2">
+          {props.options.length > 20 && "..."}
+        </p>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,221 @@
+import { useDictionary } from "@/hooks/useDictionary";
+import { Dictionary } from "@/types/dictionary";
+import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "@/types/table";
+import Button from "@/ui/interaction/button";
+import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
+import NumberInput from "@/ui/interaction/input/number-input";
+import { interpolate } from "@/utils/client-utils";
+import { useState } from "react";
+import { getInitialFilters } from "../registry/registry-table-utils";
+import { Filter, FunnelX, Search } from "lucide-react";
+import Checkbox from "@/ui/interaction/input/checkbox";
+
+interface NumericColumnFilterProps {
+  label: string;
+  currentVal: string[];
+  onSubmission: (_options: string[]) => void;
+  disabled?: boolean;
+}
+
+/**
+ * A numeric column filter component that allows filtering table data using one or two
+ * numeric comparison conditions combined with AND/OR logic.
+ *
+ * @param {string} label The name of the column.
+ * @param {string[]} currentVal The current value stored in the table filters.
+ * @param {void} onSubmission Function that submits the filtered options.
+ * @param {boolean} disabled An optional state to disable the filter.
+ */
+export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
+  const dict: Dictionary = useDictionary();
+  const initialFilterState: string[] = getInitialFilters(props.currentVal);
+  // Use between when there is more than 2 by default
+  const hasBetweenComparisonOperator: boolean = initialFilterState?.length > 2;
+  const [error, setError] = useState<string | null>(null);
+
+  const [isOptional, setIsOptional] = useState<boolean>(props.currentVal.includes("null"));
+  const [value1, setValue1] = useState<string | null>(initialFilterState?.length ? initialFilterState[1] : null);
+  const [value2, setValue2] = useState<string | null>(hasBetweenComparisonOperator ? initialFilterState[2] : null);
+
+  const [selectedOperator, setSelectedOperator] = useState<ComparisonOperator>(
+    hasBetweenComparisonOperator ? ComparisonOperatorMap.BETWEEN
+      : initialFilterState?.length ?
+        ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap]
+        // Default
+        : ComparisonOperatorMap.EQUALS);
+
+  const [betweenOption, setBetweenOption] = useState<BetweenComparisonOption>(
+    hasBetweenComparisonOperator && (ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap] == ComparisonOperatorMap.GREATER_THAN) ?
+      BetweenComparisonOptionMap.EXCLUSIVE :
+      BetweenComparisonOptionMap.INCLUSIVE);
+
+
+  const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1) && value1 !== "";
+  const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2) && value2 !== "";
+  const isBetweenComparisonOperator: boolean = selectedOperator === ComparisonOperatorMap.BETWEEN;
+
+  const operators: SelectOptionType[] = [
+    { value: ComparisonOperatorMap.EQUALS, label: dict.title.equal, disabled: false, },
+    { value: ComparisonOperatorMap.NOT_EQUALS, label: dict.title.notEqual, disabled: false, },
+    { value: ComparisonOperatorMap.GREATER_THAN, label: dict.title.greaterThan, disabled: false, },
+    { value: ComparisonOperatorMap.GREATER_THAN_OR_EQUALS_TO, label: dict.title.greaterThanOrEqual, disabled: false, },
+    { value: ComparisonOperatorMap.LESS_THAN, label: dict.title.lessThan, disabled: false, },
+    { value: ComparisonOperatorMap.LESS_THAN_OR_EQUALS_TO, label: dict.title.lessThanOrEqual, disabled: false, },
+    { value: ComparisonOperatorMap.BETWEEN, label: dict.title.between, disabled: false, },
+  ]
+
+  const handleFilter = (): void => {
+    setError(null);
+    const queryParams: string[] = [];
+
+    // For between comparisons, two params should be pushed
+    if (isBetweenComparisonOperator && hasSecondValue) {
+      // Validation step
+      if (betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? Number(value2!) <= Number(value1!) : Number(value2!) < Number(value1!)) {
+        setError(betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ?
+          dict.message.invalidExclusiveRange :
+          dict.message.invalidInclusiveRange
+        );
+        return;
+      }
+
+      const lowerOp: Extract<ComparisonOperator, "gt" | "gte"> = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? ComparisonOperatorMap.GREATER_THAN : ComparisonOperatorMap.GREATER_THAN_OR_EQUALS_TO;
+      const upperOp: Extract<ComparisonOperator, "lt" | "lte"> = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? ComparisonOperatorMap.LESS_THAN : ComparisonOperatorMap.LESS_THAN_OR_EQUALS_TO;
+      queryParams.push(`${lowerOp}${value1}`);
+      queryParams.push(`${upperOp}${value2}`);
+
+      // All other comparisons should only contain one param
+    } else if (hasFirstValue) {
+      queryParams.push(`${selectedOperator}${value1}`);
+    }
+    // Add optional null if required
+    if (isOptional) {
+      queryParams.push("null");
+    }
+
+    props.onSubmission(queryParams);
+  }
+
+  const handleClearFilter = (): void => {
+    setValue1(null);
+    setValue2(null);
+    setError(null);
+    setSelectedOperator(ComparisonOperatorMap.EQUALS);
+    props.onSubmission([]);
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center space-x-1">
+        <div className="w-100 md:w-40">
+          <SimpleSelector
+            options={operators}
+            defaultVal={selectedOperator}
+            onChange={(selected) => {
+              if (selected) {
+                setSelectedOperator((selected as SelectOptionType).value as ComparisonOperator);
+                setValue2(null);
+                setError(null);
+              }
+            }}
+            ariaLabel={interpolate(dict.action.selectItem, "operator")}
+          />
+        </div>
+        <Button
+          leftIcon={Filter}
+          size="icon-lg"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handleFilter();
+          }}
+          tooltipText={dict.action.applyFilter}
+          disabled={(!isOptional && !hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)) || props.disabled}
+          aria-label={interpolate(dict.action.filterBy, props.label)}
+        />
+        <Button
+          leftIcon={FunnelX}
+          size="icon-lg"
+          variant="secondary"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handleClearFilter();
+          }}
+          tooltipText={dict.action.clearFilter}
+          disabled={(!hasFirstValue && !props.currentVal?.length) || props.disabled}
+          aria-label={interpolate(dict.action.clearFilterFor, props.label)}
+        />
+      </div>
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      <div className="relative">
+        <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
+          <Search className="size-4 leading-none" aria-hidden />
+        </span>
+        <NumberInput
+          autoFocus
+          inputMode="decimal"
+          className="h-11 border border-border rounded-lg pl-8 pr-3 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
+          value={value1}
+          placeholder={isBetweenComparisonOperator ? dict.form.from : dict.title.value}
+          aria-label={interpolate(isBetweenComparisonOperator ? dict.title.lowerBoundFor : dict.title.filterInputFor, props.label)}
+          onInputChange={setValue1}
+        />
+      </div>
+
+      {isBetweenComparisonOperator && (
+        <>
+          <div className="relative">
+            <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
+              <Search className="size-4 leading-none" aria-hidden />
+            </span>
+            <NumberInput
+              autoFocus
+              inputMode="decimal"
+              className="h-11 border border-border rounded-lg pl-8 pr-3 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
+              value={value2}
+              placeholder={dict.form.to}
+              aria-label={interpolate(dict.title.upperBoundFor, props.label)}
+              onInputChange={setValue2}
+            />
+          </div>
+          <div className="flex items-center justify-center gap-2 py-1">
+            <input
+              id="inclusive"
+              type="radio"
+              name="between-option"
+              value={BetweenComparisonOptionMap.INCLUSIVE}
+              checked={betweenOption === BetweenComparisonOptionMap.INCLUSIVE}
+              onChange={() => setBetweenOption(BetweenComparisonOptionMap.INCLUSIVE)}
+              className="accent-foreground"
+            />
+            <label htmlFor="inclusive" className="text-sm">
+              {dict.title.inclusive}
+            </label>
+            <input
+              id="exclusive"
+              type="radio"
+              name="between-option"
+              value={BetweenComparisonOptionMap.EXCLUSIVE}
+              checked={betweenOption === BetweenComparisonOptionMap.EXCLUSIVE}
+              onChange={() => setBetweenOption(BetweenComparisonOptionMap.EXCLUSIVE)}
+              className="accent-foreground"
+            />
+            <label htmlFor="exclusive" className="text-sm">
+              {dict.title.exclusive}
+            </label>
+          </div>
+        </>
+      )}
+      <Checkbox
+        label={dict.form.includeBlanks}
+        aria-label={dict.form.includeBlanks}
+        className="cursor-pointer"
+        checked={isOptional}
+        handleChange={(checked) => {
+          setIsOptional(checked);
+        }}
+      />
+    </div>
+  );
+}

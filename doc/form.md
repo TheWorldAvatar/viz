@@ -148,8 +148,8 @@ For date fields, the `sh:defaultValue` property in the SHACL file can be set to 
 
 
 > If a new default date token is introduced in a SHACL file, two changes are required in the viz codebase:
-> 1. Add the new token string to `ShaclDefaultDateValueMap` in [code/src/types/form.ts](../code/src/types/form.ts).
-> 2. Add the corresponding resolution logic to the `getDefaultVal` function in [code/src/ui/interaction/form/form-utils.ts](../code/src/ui/interaction/form/form-utils.ts).
+> 1. Add the new token string to `ShaclDefaultDateValueMap` in [code/types/form.ts](../code/types/form.ts).
+> 2. Add the corresponding resolution logic to the `getDefaultVal` function in [code/ui/interaction/form/form-utils.ts](../code/ui/interaction/form/form-utils.ts).
 
 ### 2.3. Form validation
 

@@ -39,3 +39,7 @@ package-lock.json
 /.swc/
 
 *.log
+
+# Generated per-deployment from public/config by scripts/generate-icon-registry.mjs
+# Its contents are specific to whichever config is mounted
+ui/graphic/icon/icon-registry.generated.ts

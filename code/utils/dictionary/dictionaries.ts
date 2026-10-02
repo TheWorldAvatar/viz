@@ -1,0 +1,17 @@
+import "server-only";
+import { Dictionary, SupportedLanguage } from "@/types/dictionary";
+
+const dictionaries: Record<string, () => Promise<Dictionary>> = {
+  de: () =>
+    import("@/utils/dictionary/data/de.json").then((module) => module.default as Dictionary),
+  en: () =>
+    import("@/utils/dictionary/data/en.json").then((module) => module.default as Dictionary),
+};
+
+export const getDictionary = async (locale: string): Promise<Dictionary> =>
+  dictionaries[locale]()
+    .then((dict) => ({ ...dict, lang: (locale as SupportedLanguage) }))
+    .catch((error) => {
+      console.error(`Failed to load dictionary for locale: ${locale}`, error);
+      throw error;
+    });

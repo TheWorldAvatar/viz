@@ -1,0 +1,44 @@
+"use client";
+
+import { useDictionary } from "@/hooks/useDictionary";
+import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { Dictionary } from "@/types/dictionary";
+import { Paperclip } from "lucide-react";
+
+interface FileInputButtonProps {
+  form: UseFormReturn<FieldValues>;
+}
+
+/**
+ * A clickable button to upload a file input.
+ *
+ * @param {UseFormReturn<FieldValues>} form React hook form's use form hook.
+ */
+export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
+  const dict: Dictionary = useDictionary();
+  const filesKey: string = "files";
+  const control: Control = props.form.control;
+  const currentFiles: FileList = useWatch<FieldValues>({
+    control,
+    name: filesKey,
+  });
+
+  return (
+    <div>
+      <label
+        htmlFor="file-upload"
+        className={`cursor-pointer flex items-center w-full h-11 max-w-md py-2 px-4 rounded-lg bg-info-background hover:bg-info-background-hover border border-info-border shadow-xs`}
+      >
+        <Paperclip className="size-5 text-info-foreground" aria-hidden />
+        <p className="ml-2 text-info-foreground text-base truncate">
+          {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
+        </p>
+        <input
+          id="file-upload"
+          type="file"
+          {...props.form.register(filesKey)}
+        />
+      </label>
+    </div>
+  );
+}
