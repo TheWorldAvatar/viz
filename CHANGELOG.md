@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.90.4
+
+### Changes
+
+- Replaced the old `Button` component with Base UI Button primitives
+- Installed `class-variance-authority` library
+- Button styles are now composed with `class-variance-authority` to allow for more flexible and consistent styling across the application
+
 ## 5.90.3
 
 ### Changes
