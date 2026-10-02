@@ -48,10 +48,14 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
+              let input: string = selectedDate ? `${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}` : "";
+              if (isOptional) {
+                input = input ? `${input}..null` : "null";
+              }
+              props.onSubmission([input]);
             }}
             tooltipText={dict.action.applyFilter}
-            disabled={props.disabled || !selectedDate}
+            disabled={props.disabled || (!selectedDate && !isOptional)}
             aria-label={interpolate(dict.action.filterBy, props.label)}
           />
           <Button
