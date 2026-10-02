@@ -49,7 +49,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
         }
     };
 
-    const disabledClasses: string = disabled ? "cursor-not-allowed" : "";
+    const disabledClasses: string = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
     return (
         <div className="flex items-center space-x-2 accent-black dark:accent-white">
@@ -67,7 +67,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
             />
             {!!labelComponent && labelComponent}
             {!labelComponent && label && (
-                <label htmlFor={checkboxId} className="text-base text-foreground">
+                <label htmlFor={checkboxId} className={`text-base text-foreground ${disabledClasses}`}>
                     {label}
                 </label>
             )}
