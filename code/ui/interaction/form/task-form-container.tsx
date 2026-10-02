@@ -493,6 +493,21 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                       onClick={() => navigateToTaskAction("report")}
                     />
                   )}
+                {/* Save button - shown for complete task type */}
+                {isPermitted("saveTask") &&
+                  props.formType === FormTypeMap.COMPLETE && (
+                    <Button
+                      leftIcon={Save}
+                      variant="secondary"
+                      className="self-start"
+                      disabled={isLoading}
+                      label={dict.action.save}
+                      onClick={() => {
+                        setIsSubmitting(true);
+                        setIsSaving(true);
+                      }}
+                    />
+                  )}
                 {/* Submit and Duplicate button - shown for complete task type */}
                 {isPermitted("completeAndDuplicateTask") &&
                   props.formType === FormTypeMap.COMPLETE &&
@@ -505,20 +520,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                       onClick={() => {
                         setIsSubmitting(true);
                         setIsDuplicate(true);
-                      }}
-                    />
-                  )}
-                {/* Save button - shown for complete task type */}
-                {isPermitted("saveTask") &&
-                  props.formType === FormTypeMap.COMPLETE && (
-                    <Button
-                      leftIcon={Save}
-                      variant="secondary"
-                      disabled={isLoading}
-                      label={dict.action.save}
-                      onClick={() => {
-                        setIsSubmitting(true);
-                        setIsSaving(true);
                       }}
                     />
                   )}
