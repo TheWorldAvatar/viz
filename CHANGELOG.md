@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.90.5
+
+### Bug fixes
+
+- Fixed drawer navigation checks for task action redirects due to presence of query parameters
+- Fixed navigation redirects in task view form to other task actions
+
 ## 5.90.4
 
 ### Changes
