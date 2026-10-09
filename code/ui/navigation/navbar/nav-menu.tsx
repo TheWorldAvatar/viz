@@ -324,7 +324,11 @@ function NavMenuContents(
               key={externalLink.title + index}
               title={externalLink.title}
               icon={externalLink.icon}
-              url={externalLink.url}
+              url={
+                externalLink.type === "page"
+                  ? `${getRoute(dict.lang, Routes.PAGE)}/${externalLink.id}`
+                  : externalLink.url
+              }
               isMobile={props.isMobile}
               tooltip={
                 externalLink.type === "file"
@@ -334,7 +338,7 @@ function NavMenuContents(
               caption={props.isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
-                !externalLink.type || externalLink.type === "default"
+                !externalLink.type || externalLink.type === "default" || externalLink.type === "page"
                   ? undefined
                   : createHandleFileClick({
                     ...externalLink,

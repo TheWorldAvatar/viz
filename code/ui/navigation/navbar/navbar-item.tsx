@@ -9,7 +9,7 @@ import IconComponent from "@/ui/graphic/icon/icon";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { interpolate } from "@/utils/client-utils";
 
-export type NavBarItemType = "default" | "file" | "date";
+export type NavBarItemType = "default" | "file" | "date" | "page";
 
 export interface NavBarItemProps {
   title: string;
