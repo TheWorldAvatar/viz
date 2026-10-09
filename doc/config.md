@@ -51,12 +51,13 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `registry`: REQUIRED. Displays the registry page if enabled
   - `billing`: REQUIRED. Displays the billing page if enabled
 - `links`: optional configuration for adding or updating redirect links on the landing page. This configuration can overwrite the defaults for the map, dashboard, and help modules. It requires an `ARRAY` of the following JSON format:
+  - `id`: OPTIONAL. A unique identifier for the link. Required when `type` is `page`, as it is used in the page url, i.e. `/{lang}/page/{id}`.
   - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, `registry`, and `billing` accordingly.
   - `title`: REQUIRED. Thumbnail title on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon id from the [lucide](https://lucide.dev/icons) icon set, in kebab-case (for example `map-pin` or `trash-2`). Optional for only internal links, which defaults to the default if not set.
   - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
-  - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
+  - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url. When set to `page`, the thumbnail opens the url as an Iframe within the platform's content pane, keeping the navigation bar visible.
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario, registry, billing
     - `url`: optional that is only used with scenario and dashboard resources
@@ -132,6 +133,14 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "title": "Explore",
       "caption": "Describe your map here",
       "icon": "map"
+    },
+    {
+      "id": "scheduler", // Used in the page url: /{lang}/page/scheduler
+      "url": "https://scheduler.example.com", // External application to embed
+      "title": "Scheduler",
+      "caption": "Plan and schedule jobs",
+      "icon": "calendar",
+      "type": "page" // Opens the url within the content pane
     }
   ],
   "resources": {
