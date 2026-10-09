@@ -312,6 +312,11 @@ function NavMenuContents(
         })}
 
       {props.settings.links?.map((externalLink, index) => {
+        // Page links require an id to generate their route
+        if (externalLink.type === "page" && !externalLink.id) {
+          console.warn(`Skipping the "${externalLink.title}" link in ui-settings.json: links with type "page" require an "id".`);
+          return null;
+        }
         if (
           !Object.values(Modules).includes(externalLink.url) &&
           // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
