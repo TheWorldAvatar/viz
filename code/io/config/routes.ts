@@ -48,6 +48,7 @@ export const Routes = {
   REGISTRY_TERMINATE: "REGISTRY_TERMINATE",
   REGISTRY_TASK_RESCHEDULE: "REGISTRY_TASK_RESCHEDULE",
   HELP: "HELP",
+  PAGE: "PAGE",
 };
 
 export type RouteKey = (typeof Routes)[keyof typeof Routes];
@@ -78,6 +79,7 @@ export const Paths: Record<RouteKey, string> = {
   [Routes.REGISTRY_TERMINATE]: "terminate",
   [Routes.REGISTRY_TASK_RESCHEDULE]: `${REGISTRY_TASK}/reschedule`,
   [Routes.HELP]: "help",
+  [Routes.PAGE]: "page",
 };
 
 export const PageTitles: {

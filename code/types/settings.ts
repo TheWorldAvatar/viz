@@ -72,6 +72,7 @@ export interface ResourcesPathSettings {
 }
 
 export interface NavBarItemSettings {
+  id?: string;
   url: string;
   title: string;
   icon: string;
