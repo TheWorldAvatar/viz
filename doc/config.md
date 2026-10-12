@@ -135,11 +135,11 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "icon": "map"
     },
     {
-      "id": "scheduler", // Used in the page url: /{lang}/page/scheduler
-      "url": "https://scheduler.example.com", // External application to embed
-      "title": "Scheduler",
-      "caption": "Plan and schedule jobs",
-      "icon": "calendar",
+      "id": "external", // Used in the page url: /{lang}/page/external
+      "url": "https://example.com", // External application to embed
+      "title": "External application",
+      "caption": "Open the external application",
+      "icon": "link",
       "type": "page" // Opens the url within the content pane
     }
   ],
