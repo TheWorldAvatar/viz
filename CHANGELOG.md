@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.91.0
+
+### Changes
+
+- Added a new `page` link type in `ui-settings.json` to display external web applications as an IFrame within the content pane, available at `/{lang}/page/{id}`
+- Added an optional `id` field to `links` in `ui-settings.json`, which is required for `page` links
+
 ## 5.90.5
 
 ### Bug fixes
