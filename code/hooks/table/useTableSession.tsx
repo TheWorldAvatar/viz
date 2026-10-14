@@ -34,7 +34,9 @@ const useTableSession = (): useTableSessionReturn => {
         ...tableSession,
         isBulkActionPermitted: tableSession.lifecycleStage === LifecycleStageMap.PENDING || tableSession.lifecycleStage === LifecycleStageMap.ACTIVE
             || tableSession.lifecycleStage === LifecycleStageMap.ARCHIVE || tableSession.lifecycleStage === LifecycleStageMap.OUTSTANDING || tableSession.lifecycleStage === LifecycleStageMap.SCHEDULED
-            || tableSession.lifecycleStage === LifecycleStageMap.CLOSED || tableSession.lifecycleStage === LifecycleStageMap.BILLABLE,
+            || tableSession.lifecycleStage === LifecycleStageMap.CLOSED || tableSession.lifecycleStage === LifecycleStageMap.BILLABLE
+            || (tableSession.lifecycleStage === LifecycleStageMap.PLANNER &&
+                !tableSession.tableDescriptor.isBulkDispatchEdit && isPermitted("operation")),
         exportOptions,
     };
 };
