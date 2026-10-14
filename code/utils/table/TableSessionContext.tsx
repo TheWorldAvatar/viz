@@ -87,7 +87,7 @@ export const TableSessionContextProvider = ({
             await onBulkEditSubmit();
         }
 
-        if (tableDescriptor.triggerBulkEdit && rowRefs.current
+        if (tableDescriptor.triggerBulkEdit && tableDescriptor.isBulkDispatchEdit && rowRefs.current
             .filter(row => !!row && Object.keys(row.getRowData()).length > 0)
             .length > 0) {
             startBulkEditSubmit();
