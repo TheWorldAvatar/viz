@@ -16,6 +16,7 @@ interface TableRowOrderDescriptor {
     syncOrder: (_rows: FieldValues[], _newIndex: number) => void;
     syncTasks: (_id: string, _lexorank: string) => void;
     resetOrder: () => void;
+    saveTaskOrder: () => Promise<boolean>;
     onSyncTasks: () => Promise<void>;
     setTriggerBulkEdit: React.Dispatch<React.SetStateAction<boolean>>,
 }
@@ -55,14 +56,21 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
             [idOnly]: { id: idOnly, lexorank }, // Overwrites if already dirty, adds if new
         }));
     };
-    const onSyncTasks = async (): Promise<void> => {
+
+    const saveTaskOrder = async (): Promise<boolean> => {
         const response: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, LEXORANK_KEY),
             "PUT", JSON.stringify(Object.values(dirtyTasks)));
         if (response?.error) {
             toast(response?.error?.message, "error");
-        } else {
-            resetOrder();
+            return false;
+        }
+        resetOrder();
+        return true;
+    };
+
+    const onSyncTasks = async (): Promise<void> => {
+        if (await saveTaskOrder()) {
             setTriggerBulkEdit(true);
         }
     };
@@ -97,6 +105,6 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
 
     return {
         hasUpdatedOrder: !orderRef.current,
-        triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, onSyncTasks, setTriggerBulkEdit
+        triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, saveTaskOrder, onSyncTasks, setTriggerBulkEdit
     };
 }

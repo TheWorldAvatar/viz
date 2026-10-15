@@ -53,6 +53,18 @@ export default function RegistryPlannerTableComponent(
   const tableScrollDescriptor: TableScrollDescriptor = useTableScroll();
 
   useEffect(() => {
+    // Trigger refresh when back navigation occurs
+    const handleHistoryChange = () => {
+      triggerRefresh();
+      tableDescriptor.table.resetRowSelection();
+    };
+    window.addEventListener("popstate", handleHistoryChange);
+    return () => {
+      window.removeEventListener("popstate", handleHistoryChange);
+    };
+  }, [tableDescriptor.table, triggerRefresh]);
+
+  useEffect(() => {
     setSelectedDateRange({ from: selectedDate, to: selectedDate, });
     tableDescriptor.resetOrder();
     tableDescriptor.table.setColumnFilters([{
