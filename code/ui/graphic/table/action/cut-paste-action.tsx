@@ -32,13 +32,10 @@ export default function CutPasteAction(
       return;
     }
     const updatedRows: FieldValues[] = [...tableDescriptor.data];
-    // Update lexorank before reordering rows
-    tableDescriptor.syncOrder(updatedRows, newIndex);
-
-    // Move data around
     const [cutRow] = updatedRows.splice(oldIndex, 1);
     const insertIndex: number = insertBelow ? newIndex : newIndex - 1;
     updatedRows.splice(insertIndex, 0, cutRow);
+    tableDescriptor.syncOrder(updatedRows, insertIndex);
     tableDescriptor.setData(updatedRows);
     setActiveCutRowId(null);
   }
