@@ -17,6 +17,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from '../internal
 
 export interface TableSessionState {
     activeRowId: string;
+    activeCutRowId: string;
     recordType: string;
     exports: RegistryExportSettings[];
     lifecycleStage: LifecycleStage;
@@ -27,6 +28,7 @@ export interface TableSessionState {
     allowTaskPrioritisation: boolean;
     pricingType: string;
     setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
+    setActiveCutRowId: React.Dispatch<React.SetStateAction<string>>;
     setHistoryId: React.Dispatch<React.SetStateAction<string>>;
     setIsOpenHistoryModal: React.Dispatch<React.SetStateAction<boolean>>;
     onBulkEditSubmit: () => void;
@@ -62,6 +64,7 @@ export const TableSessionContextProvider = ({
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
     const [historyId, setHistoryId] = useState<string>("");
     const [activeRowId, setActiveRowId] = useState<string>("");
+    const [activeCutRowId, setActiveCutRowId] = useState<string>("");
 
     const dict: Dictionary = useDictionary();
     const { startLoading, stopLoading } = useOperationStatus();
@@ -101,7 +104,7 @@ export const TableSessionContextProvider = ({
     }, [tableDescriptor.triggerBulkEdit])
 
     return (
-        <TableSessionContext.Provider value={{ activeRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, setActiveRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
+        <TableSessionContext.Provider value={{ activeRowId, activeCutRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, setActiveRowId, setActiveCutRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
             {children}
             {isOpenHistoryModal && historyId != "" &&
                 <HistoryModal
