@@ -197,7 +197,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               id={props.row.id} />}
             {lifecycleStage == LifecycleStageMap.PLANNER && <CutPasteAction
               id={props.row.id}
-              disabled={isLoading}
+              disabled={isLoading || ((tableDescriptor.table.getIsSomePageRowsSelected() || tableDescriptor.table.getIsAllRowsSelected()) && lifecycleStage == LifecycleStageMap.PLANNER)}
             />}
             {!tableDescriptor.isBulkDispatchEdit && lifecycleStage != LifecycleStageMap.PLANNER && <RegistryRowAction
               recordType={recordType}
