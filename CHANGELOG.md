@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.91.1
+
+### Changes
+
+- Added bulk task dispatch to the registry planner, automatically saving pending task order changes before opening the dispatch form
+- Kept standard planner order saves separate from inline bulk assignment
+
 ## 5.91.0
 
 ### Changes
