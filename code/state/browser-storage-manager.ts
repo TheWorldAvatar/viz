@@ -58,6 +58,19 @@ class BrowserStorageManager {
   }
 
   /**
+   * Removes a single item from the storage.
+   *
+   * @param key The key of the item to remove.
+   */
+  public remove(key: string): void {
+    try {
+      this.storage?.removeItem(key);
+    } catch (error) {
+      console.error(`Error removing key "${key}" from storage:`, error);
+    }
+  }
+
+  /**
    * Clears all items from the storage. Use with caution.
    */
   public clear(): void {
