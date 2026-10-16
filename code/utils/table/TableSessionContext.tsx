@@ -64,7 +64,7 @@ export const TableSessionContextProvider = ({
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
     const [historyId, setHistoryId] = useState<string>("");
     const [activeRowId, setActiveRowId] = useState<string>("");
-    const [activeCutRowId, setActiveCutRowId] = useState<string>("");
+    const [activeCutRowId, setActiveCutRowId] = useState<string | null>(null);
 
     const dict: Dictionary = useDictionary();
     const { startLoading, stopLoading } = useOperationStatus();
