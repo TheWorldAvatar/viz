@@ -5,11 +5,8 @@ import { Dictionary } from "@/types/dictionary";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
 import { interpolate } from "@/utils/client-utils";
-import { isHexColour } from "@/utils/colour-profile";
 import { Check, Palette } from "lucide-react";
 import React from "react";
-
-const MAX_PREVIEW_COLOURS: number = 3;
 
 interface ColourProfileSelectorProps {
   colourProfiles: ColourProfilesDescriptor;
@@ -55,7 +52,6 @@ export default function ColourProfileSelector(props: Readonly<ColourProfileSelec
           <ColourProfileOption
             key={profile.id}
             label={profile.name}
-            colours={getPreviewColours(profile)}
             isActive={profile.id === activeProfile?.id}
             onClick={() => handleSelect(profile.id)}
           />
@@ -72,16 +68,14 @@ interface ColourProfileOptionProps {
   label: string;
   isActive: boolean;
   onClick: () => void;
-  colours?: string[];
 }
 
 /**
- * An option in the colour profile menu, with a check mark when active and a preview of the profile colours.
+ * An option in the colour profile menu, with a check mark when active.
  *
  * @param {string} label The display name of the option.
  * @param {boolean} isActive Indicates if the option is the active selection.
  * @param onClick Click handler for the option.
- * @param {string[]} colours Optional colours to preview.
  */
 function ColourProfileOption(props: Readonly<ColourProfileOptionProps>) {
   return (
@@ -96,35 +90,7 @@ function ColourProfileOption(props: Readonly<ColourProfileOptionProps>) {
           ? <Check className="size-4 shrink-0" aria-hidden="true" />
           : <span className="size-4 shrink-0" aria-hidden="true" />}
         <span className="truncate">{props.label}</span>
-        {props.colours?.length > 0 && (
-          <span className="ml-auto flex shrink-0 gap-1 pl-2" aria-hidden="true">
-            {props.colours.map((colour) => (
-              <span
-                key={colour}
-                className="size-3 rounded-full border border-border"
-                style={{ backgroundColor: colour }}
-              />
-            ))}
-          </span>
-        )}
       </span>
     </Button>
   );
-}
-
-/**
- * Retrieves up to three distinct colours from the profile rules for previewing. Only valid hex colours are kept.
- *
- * @param {ColourProfile} profile The colour profile.
- */
-function getPreviewColours(profile: ColourProfile): string[] {
-  const colours: Set<string> = new Set();
-  for (const rule of Array.isArray(profile.rules) ? profile.rules : []) {
-    const colour: unknown = rule?.style?.background ?? rule?.style?.text;
-    if (isHexColour(colour)) {
-      colours.add(colour.toLowerCase());
-    }
-    if (colours.size >= MAX_PREVIEW_COLOURS) break;
-  }
-  return [...colours];
 }

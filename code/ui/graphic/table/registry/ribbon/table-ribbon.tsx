@@ -267,7 +267,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tableScrollDescriptor={props.tableScrollDescriptor}
             disabled={props.tableDescriptor.filters.every((filter) => (filter?.value as string[])?.length == 0)}
           />
-          {props.colourProfiles && <ColourProfileSelector colourProfiles={props.colourProfiles} />}
           <Button
             leftIcon={ArrowUpDown}
             aria-label={dict.action.resetOrder}
@@ -280,6 +279,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
+          {props.colourProfiles && <ColourProfileSelector colourProfiles={props.colourProfiles} />}
           {isPermitted("operation") &&
             (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
               props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (
