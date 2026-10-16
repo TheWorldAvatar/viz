@@ -22,6 +22,7 @@ import { History } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import LoadingSpinner from "../../loader/spinner";
+import CutPasteAction from "../action/cut-paste-action";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
@@ -194,6 +195,10 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             {(!props.disableRowAction || lifecycleStage == LifecycleStageMap.PLANNER) && <DragActionHandle
               disabled={isLoading || ((tableDescriptor.table.getIsSomePageRowsSelected() || tableDescriptor.table.getIsAllRowsSelected()) && lifecycleStage == LifecycleStageMap.PLANNER)}
               id={props.row.id} />}
+            {lifecycleStage == LifecycleStageMap.PLANNER && <CutPasteAction
+              id={props.row.id}
+              disabled={isLoading || ((tableDescriptor.table.getIsSomePageRowsSelected() || tableDescriptor.table.getIsAllRowsSelected()) && lifecycleStage == LifecycleStageMap.PLANNER)}
+            />}
             {!tableDescriptor.isBulkDispatchEdit && lifecycleStage != LifecycleStageMap.PLANNER && <RegistryRowAction
               recordType={recordType}
               accountType={props.accountType}

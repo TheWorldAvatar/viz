@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.92.0
+
+### Changes
+
+- Added long range reorder via cut and paste in registry planner
+
 ## 5.91.1
 
 ### Changes
