@@ -277,6 +277,12 @@ function makeExternalEndpoint(
       }
       return "";
     }
+    case InternalApiIdentifierMap.COLOUR_PROFILES: {
+      const table: string = searchParams.get("table");
+      const urlObj: URL = new URL(`${agentBaseApi}/table-appearance/colour-profiles`);
+      urlObj.searchParams.set("table", table);
+      return urlObj.toString();
+    }
     case InternalApiIdentifierMap.CONCEPT: {
       const uri: string = searchParams.get("uri");
       const requiresSubclass: string = searchParams.get("subclass");

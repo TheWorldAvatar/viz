@@ -44,6 +44,7 @@ export const InternalApiIdentifierMap = {
   ACCOUNT: "account",
   ADDRESS: "address",
   BILL: "bill",
+  COLOUR_PROFILES: "colour_profiles",
   CONCEPT: "concept",
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",
