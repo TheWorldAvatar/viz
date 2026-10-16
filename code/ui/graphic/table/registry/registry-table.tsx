@@ -12,6 +12,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { ColourRuleMap } from "@/types/colour-profile";
 import { Dictionary } from "@/types/dictionary";
 import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
 import { RegistryExportSettings } from "@/types/settings";
@@ -43,6 +44,7 @@ interface RegistryTableProps {
   addEntity?: string;
   allowTaskPrioritisation?: boolean;
   exports: RegistryExportSettings[];
+  colourRuleMap?: ColourRuleMap;
 }
 
 /**
@@ -60,6 +62,7 @@ interface RegistryTableProps {
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  * @param {boolean} allowTaskPrioritisation Optional flag to enable the task prioritisation row action.
  * @param {RegistryExportSettings[]} exports The export options available for this table.
+ * @param {ColourRuleMap} colourRuleMap Optional rules of the active colour profile grouped by column.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -119,6 +122,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         addEntity={props.addEntity}
         allowTaskPrioritisation={props.allowTaskPrioritisation}
         pricingType={props.pricingType}
+        colourRuleMap={props.colourRuleMap}
       >
         <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div

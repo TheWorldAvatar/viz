@@ -1,5 +1,6 @@
 "use client";
 
+import { ColourProfilesDescriptor, useColourProfiles } from "@/hooks/table/api/useColourProfiles";
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
 import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
 import { useConnected } from "@/hooks/useConnected";
@@ -89,6 +90,7 @@ export default function RegistryTableComponent(
   );
 
   const tableScrollDescriptor: TableScrollDescriptor = useTableScroll();
+  const colourProfiles: ColourProfilesDescriptor = useColourProfiles(props.entityType, props.lifecycleStage);
 
   const triggerTableRefresh = () => {
     triggerRefresh();
@@ -152,6 +154,7 @@ export default function RegistryTableComponent(
             tableScrollDescriptor={tableScrollDescriptor}
             dragSync={props.dragSync}
             message={dict.translate(props.message)}
+            colourProfiles={colourProfiles}
           />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (
@@ -170,6 +173,7 @@ export default function RegistryTableComponent(
           tableScrollDescriptor={tableScrollDescriptor}
           addEntity={props.addEntity}
           allowTaskPrioritisation={props.allowTaskPrioritisation}
+          colourRuleMap={colourProfiles.colourRuleMap}
         />
       )}
     </div>

@@ -5,6 +5,7 @@ import { TableScrollDescriptor } from '@/hooks/table/useTableScroll';
 import { useDictionary } from '@/hooks/useDictionary';
 import useOperationStatus from '@/hooks/useOperationStatus';
 import { AgentResponseBody, InternalApiIdentifierMap } from '@/types/backend-agent';
+import { ColourRuleMap } from '@/types/colour-profile';
 import { Dictionary } from '@/types/dictionary';
 import { FormTypeMap, LifecycleStage } from '@/types/form';
 import { RegistryExportSettings } from '@/types/settings';
@@ -26,6 +27,7 @@ export interface TableSessionState {
     addEntity: string;
     allowTaskPrioritisation: boolean;
     pricingType: string;
+    colourRuleMap?: ColourRuleMap;
     setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
     setHistoryId: React.Dispatch<React.SetStateAction<string>>;
     setIsOpenHistoryModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,6 +47,7 @@ export const TableSessionContextProvider = ({
     addEntity,
     allowTaskPrioritisation = false,
     pricingType,
+    colourRuleMap,
     children,
 }: {
     recordType: string;
@@ -57,6 +60,7 @@ export const TableSessionContextProvider = ({
     addEntity?: string;
     allowTaskPrioritisation?: boolean;
     pricingType?: string;
+    colourRuleMap?: ColourRuleMap;
     children: React.ReactNode;
 }) => {
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
@@ -101,7 +105,7 @@ export const TableSessionContextProvider = ({
     }, [tableDescriptor.triggerBulkEdit])
 
     return (
-        <TableSessionContext.Provider value={{ activeRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, setActiveRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
+        <TableSessionContext.Provider value={{ activeRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, colourRuleMap, setActiveRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
             {children}
             {isOpenHistoryModal && historyId != "" &&
                 <HistoryModal
