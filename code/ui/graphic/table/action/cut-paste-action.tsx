@@ -28,12 +28,17 @@ export default function CutPasteAction(
     tableDescriptor.table.resetRowSelection();
     const oldIndex: number = tableDescriptor.data.findIndex((record, index) => (record.id + index) == activeCutRowId);
     const newIndex: number = tableDescriptor.data.findIndex((record, index) => (record.id + index) == props.id);
-    if (oldIndex < 0 || newIndex < 0) {
+    if (oldIndex < 0 || newIndex < 0 || oldIndex == newIndex) {
       return;
     }
     const updatedRows: FieldValues[] = [...tableDescriptor.data];
     const [cutRow] = updatedRows.splice(oldIndex, 1);
-    const insertIndex: number = insertBelow ? newIndex : newIndex - 1;
+    let insertIndex: number;
+    if (oldIndex > newIndex) {
+      insertIndex = insertBelow ? newIndex + 1 : newIndex;
+    } else {
+      insertIndex = insertBelow ? newIndex : newIndex - 1;
+    }
     updatedRows.splice(insertIndex, 0, cutRow);
     tableDescriptor.syncOrder(updatedRows, insertIndex);
     tableDescriptor.setData(updatedRows);
