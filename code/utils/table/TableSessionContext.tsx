@@ -18,6 +18,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from '../internal
 
 export interface TableSessionState {
     activeRowId: string;
+    activeCutRowId: string;
     recordType: string;
     exports: RegistryExportSettings[];
     lifecycleStage: LifecycleStage;
@@ -29,6 +30,7 @@ export interface TableSessionState {
     pricingType: string;
     colourRuleMap?: ColourRuleMap;
     setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
+    setActiveCutRowId: React.Dispatch<React.SetStateAction<string>>;
     setHistoryId: React.Dispatch<React.SetStateAction<string>>;
     setIsOpenHistoryModal: React.Dispatch<React.SetStateAction<boolean>>;
     onBulkEditSubmit: () => void;
@@ -66,6 +68,7 @@ export const TableSessionContextProvider = ({
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
     const [historyId, setHistoryId] = useState<string>("");
     const [activeRowId, setActiveRowId] = useState<string>("");
+    const [activeCutRowId, setActiveCutRowId] = useState<string | null>(null);
 
     const dict: Dictionary = useDictionary();
     const { startLoading, stopLoading } = useOperationStatus();
@@ -91,7 +94,7 @@ export const TableSessionContextProvider = ({
             await onBulkEditSubmit();
         }
 
-        if (tableDescriptor.triggerBulkEdit && rowRefs.current
+        if (tableDescriptor.triggerBulkEdit && tableDescriptor.isBulkDispatchEdit && rowRefs.current
             .filter(row => !!row && Object.keys(row.getRowData()).length > 0)
             .length > 0) {
             startBulkEditSubmit();
@@ -105,7 +108,7 @@ export const TableSessionContextProvider = ({
     }, [tableDescriptor.triggerBulkEdit])
 
     return (
-        <TableSessionContext.Provider value={{ activeRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, colourRuleMap, setActiveRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
+        <TableSessionContext.Provider value={{ activeRowId, activeCutRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, colourRuleMap, setActiveRowId, setActiveCutRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
             {children}
             {isOpenHistoryModal && historyId != "" &&
                 <HistoryModal
