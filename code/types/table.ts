@@ -28,3 +28,15 @@ export const BetweenComparisonOptionMap = {
 } as const;
 
 export type BetweenComparisonOption = typeof BetweenComparisonOptionMap[keyof typeof BetweenComparisonOptionMap];
+
+interface ConditionalFormatField {
+    background: string;
+    operator: string;
+    value: string;
+    text?: string;
+}
+
+export interface ConditionalFormatSetting {
+    conditional_format: string;
+    [key: string]: string | ConditionalFormatField[];
+}

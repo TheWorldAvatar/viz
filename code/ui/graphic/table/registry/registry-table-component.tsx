@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import { ConditionalFormatSetting } from "@/types/table";
 
 
 interface RegistryTableComponentProps {
@@ -32,6 +33,7 @@ interface RegistryTableComponentProps {
   accountType?: string;
   pricingType?: string;
   message?: LanguageDictionary;
+  cellFormatSettings?: ConditionalFormatSetting[];
   tableColumnOptions: TableColumnOption[];
   addEntity?: string;
   allowTaskPrioritisation?: boolean;
@@ -48,6 +50,7 @@ interface RegistryTableComponentProps {
  * @param {string} pricingType Optional value to indicate the type of pricing for billing capabilities.
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
+ * @param {ConditionalFormatSetting[]} cellFormatSettings Configuration for cell formatting based on conditions.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  * @param {boolean} allowTaskPrioritisation Optional flag to enable the task prioritisation row action.
  * @param {boolean} dragSync Optional flag to enable the drag sync UI.

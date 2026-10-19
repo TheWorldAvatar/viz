@@ -6,6 +6,8 @@ import SettingsStore from '@/io/config/settings';
 import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { LifecycleStageMap } from '@/types/form';
+import { ConditionalFormatSetting } from '@/types/table';
+import { getConditionalFormattingStyles } from '@/utils/fetch/serverside-fetch';
 
 interface ActiveRegistryPageProps {
   params: Promise<{
@@ -39,10 +41,13 @@ export default async function ActiveRegistryPage(props: ActiveRegistryPageProps)
     redirect(Routes.HOME);
   }
 
+  const conditionalFormattingStyles: ConditionalFormatSetting[] = await getConditionalFormattingStyles(LifecycleStageMap.ACTIVE);
+
   return (
     <RegistryTableComponent
       entityType={decodedType}
       lifecycleStage={LifecycleStageMap.ACTIVE}
+      cellFormatSettings={conditionalFormattingStyles}
       tableColumnOptions={tableColumnSettings}
       exports={uiSettings.resources?.registry?.exports ?? []}
     />

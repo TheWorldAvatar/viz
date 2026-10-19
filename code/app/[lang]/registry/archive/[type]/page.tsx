@@ -6,6 +6,8 @@ import SettingsStore from '@/io/config/settings';
 import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { LifecycleStageMap } from '@/types/form';
+import { ConditionalFormatSetting } from '@/types/table';
+import { getConditionalFormattingStyles } from '@/utils/fetch/serverside-fetch';
 
 interface ArchiveRegistryPageProps {
   params: Promise<{
@@ -37,10 +39,12 @@ export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistr
   const decodedType: string = decodeURIComponent(resolvedParams.type);
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(decodedType, LifecycleStageMap.ARCHIVE);
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
+    const conditionalFormattingStyles: ConditionalFormatSetting[] = await getConditionalFormattingStyles(LifecycleStageMap.ARCHIVE);
     return (
       <RegistryTableComponent
         entityType={decodedType}
         lifecycleStage={LifecycleStageMap.ARCHIVE}
+        cellFormatSettings={conditionalFormattingStyles}
         tableColumnOptions={tableColumnSettings}
         exports={uiSettings.resources?.registry?.exports ?? []}
       />

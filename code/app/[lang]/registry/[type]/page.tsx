@@ -8,6 +8,8 @@ import { NavBarItemSettings, ResourcesPathSettings, TableColumnOption, UISetting
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from '@/utils/client-utils';
 import { LanguageDictionary } from '@/types/dictionary';
+import { ConditionalFormatSetting } from '@/types/table';
+import { getConditionalFormattingStyles } from '@/utils/fetch/serverside-fetch';
 
 interface GeneralRegistryPageProps {
   params: Promise<{
@@ -42,10 +44,13 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
     let lifecycleStage: LifecycleStage;
     let caption: LanguageDictionary;
     const registryPath: ResourcesPathSettings = uiSettings.resources?.registry?.paths?.find(path => parseStringsForUrls(path.type) == decodedType);
+    let conditionalFormattingStyles: ConditionalFormatSetting[] = [];
     if (registryPath) {
       lifecycleStage = LifecycleStageMap.GENERAL;
+      conditionalFormattingStyles = await getConditionalFormattingStyles(decodedType);
       caption = registryPath.caption;
     } else if (uiSettings.resources?.registry?.data) {
+      conditionalFormattingStyles = await getConditionalFormattingStyles(LifecycleStageMap.PENDING);
       lifecycleStage = LifecycleStageMap.PENDING;
     } else {
       redirect(Routes.HOME);
@@ -56,6 +61,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
         entityType={decodedType}
         message={caption}
         lifecycleStage={lifecycleStage}
+        cellFormatSettings={conditionalFormattingStyles}
         tableColumnOptions={tableColumnSettings}
         accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT)?.key}
         addEntity={registryPath?.add}

@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { LifecycleStageMap } from "@/types/form";
 import { NavBarItemSettings, TableColumnOption, UISettings } from "@/types/settings";
 import RegistryTableComponent from "@/ui/graphic/table/registry/registry-table-component";
+import { ConditionalFormatSetting } from "@/types/table";
+import { getConditionalFormattingStyles } from "@/utils/fetch/serverside-fetch";
 
 /**
  * Set page metadata.
@@ -19,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function PricingModelsPage() {
+export default async function PricingModelsPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key, LifecycleStageMap.PRICING);
 
@@ -27,11 +29,13 @@ export default function PricingModelsPage() {
     redirect(Routes.HOME);
   }
 
+  const conditionalFormattingStyles: ConditionalFormatSetting[] = await getConditionalFormattingStyles(LifecycleStageMap.PRICING);
   return (
     <RegistryTableComponent
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
       accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
       lifecycleStage={LifecycleStageMap.PRICING}
+      cellFormatSettings={conditionalFormattingStyles}
       tableColumnOptions={tableColumnSettings}
       exports={uiSettings.resources?.billing?.exports ?? []}
     />

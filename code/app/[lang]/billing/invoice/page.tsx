@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { LifecycleStageMap } from "@/types/form";
 import { NavBarItemSettings, TableColumnOption, UISettings } from "@/types/settings";
 import RegistryTableComponent from "@/ui/graphic/table/registry/registry-table-component";
+import { ConditionalFormatSetting } from "@/types/table";
+import { getConditionalFormattingStyles } from "@/utils/fetch/serverside-fetch";
 
 /**
  * Set page metadata.
@@ -19,18 +21,20 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 }
 
-export default function InvoicesPage() {
+export default async function InvoicesPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(LifecycleStageMap.INVOICE, LifecycleStageMap.INVOICE);
 
     if (!uiSettings.modules.billing) {
         redirect(Routes.HOME);
     }
+    const conditionalFormattingStyles: ConditionalFormatSetting[] = await getConditionalFormattingStyles(LifecycleStageMap.INVOICE);
 
     return (
         <RegistryTableComponent
             entityType={LifecycleStageMap.INVOICE}
             lifecycleStage={LifecycleStageMap.INVOICE}
+            cellFormatSettings={conditionalFormattingStyles}
             tableColumnOptions={tableColumnSettings}
             exports={uiSettings.resources?.billing?.exports ?? []}
         />

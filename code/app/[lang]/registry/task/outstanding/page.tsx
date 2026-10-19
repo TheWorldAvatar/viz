@@ -6,6 +6,8 @@ import SettingsStore from '@/io/config/settings';
 import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { LifecycleStageMap } from '@/types/form';
+import { getConditionalFormattingStyles } from '@/utils/fetch/serverside-fetch';
+import { ConditionalFormatSetting } from '@/types/table';
 
 /**
  * Set page metadata.
@@ -21,18 +23,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the registry page for viewing tasks by dates.
+ * Displays the registry page for viewing outstanding tasks by dates.
  * 
  * @returns React component for display. 
  */
-export default function RegistryTaskByDatePage() {
+export default async function RegistryOutstandingTaskPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.OUTSTANDING);
+
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
+    const conditionalFormattingStyles: ConditionalFormatSetting[] = await getConditionalFormattingStyles(LifecycleStageMap.OUTSTANDING);
     return (
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={LifecycleStageMap.OUTSTANDING}
+        cellFormatSettings={conditionalFormattingStyles}
         tableColumnOptions={tableColumnSettings}
         allowTaskPrioritisation={uiSettings.resources?.registry?.priority}
         dragSync={uiSettings.resources?.registry?.dragSync}
