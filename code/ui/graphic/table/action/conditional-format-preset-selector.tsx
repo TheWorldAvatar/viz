@@ -1,16 +1,13 @@
-import { ColourProfilesDescriptor } from "@/hooks/table/api/useColourProfiles";
+import { ConditionalFormatPresetDescriptor } from "@/hooks/table/settings/useConditionalFormatPresets";
 import { useDictionary } from "@/hooks/useDictionary";
-import { ColourProfile } from "@/types/colour-profile";
 import { Dictionary } from "@/types/dictionary";
+import { ConditionalFormatSetting } from "@/types/table";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
 import { interpolate } from "@/utils/client-utils";
-import { Check, Palette } from "lucide-react";
+import { Check, TableCellsMerge } from "lucide-react";
 import React from "react";
 
-interface ColourProfileSelectorProps {
-  colourProfiles: ColourProfilesDescriptor;
-}
 
 /**
  * An icon button that opens a menu to choose the active colour profile of a table.
@@ -18,25 +15,23 @@ interface ColourProfileSelectorProps {
  *
  * @param {ColourProfilesDescriptor} colourProfiles The colour profiles of the table and the active selection.
  */
-export default function ColourProfileSelector(props: Readonly<ColourProfileSelectorProps>) {
+export default function ConditionalFormatPresetSelector(props: Readonly<ConditionalFormatPresetDescriptor>) {
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const labelId: string = React.useId();
-  const { profiles, activeProfileId, setActiveProfileId } = props.colourProfiles;
-  const activeProfile: ColourProfile | undefined = profiles.find((profile) => profile.id === activeProfileId);
-  const buttonLabel: string = interpolate(dict.title.colourProfileActive, activeProfile?.name ?? dict.title.defaultColourProfile);
+  const buttonLabel: string = interpolate(dict.title.colourProfileActive, props.currentConditionalFormatPreset?.conditional_format ?? dict.title.defaultColourProfile);
 
-  const handleSelect = (id: string | null): void => {
-    setActiveProfileId(id);
+  const handleSelect = (preset: ConditionalFormatSetting | null): void => {
+    props.updateCurrentConditionalFormatPreset(preset);
     setIsOpen(false);
   };
 
   return (
     <PopoverActionButton
       placement="bottom-end"
-      leftIcon={Palette}
+      leftIcon={TableCellsMerge}
       size="icon"
-      variant={activeProfile ? "info_banner" : "outline"}
+      variant={props.currentConditionalFormatPreset ? "info_banner" : "outline"}
       tooltipText={buttonLabel}
       aria-label={buttonLabel}
       isOpen={isOpen}
@@ -50,42 +45,39 @@ export default function ColourProfileSelector(props: Readonly<ColourProfileSelec
         <p id={labelId} className="sticky top-0 z-10 bg-muted px-2 py-1 font-semibold">
           {dict.title.colourProfiles}
         </p>
-        {/* The default option applies no colour profile */}
-        <ColourProfileOption
+        {/* The default option applies no conditional formats */}
+        <CellFormatPreset
           label={dict.title.defaultColourProfile}
-          isActive={!activeProfile}
+          isActive={!props.currentConditionalFormatPreset}
           onClick={() => handleSelect(null)}
         />
-        {profiles.map((profile) => (
-          <ColourProfileOption
-            key={profile.id}
-            label={profile.name}
-            isActive={profile.id === activeProfile?.id}
-            onClick={() => handleSelect(profile.id)}
+        {props.conditionalFormatPresets.map((preset) => (
+          <CellFormatPreset
+            key={preset.conditional_format}
+            label={preset.conditional_format}
+            isActive={preset.conditional_format === props.currentConditionalFormatPreset?.conditional_format}
+            onClick={() => handleSelect(preset)}
           />
         ))}
-        {profiles.length === 0 && (
-          <p className="px-3 py-1 text-sm text-foreground/70 italic">{dict.title.noColourProfiles}</p>
-        )}
       </div>
     </PopoverActionButton>
   );
 }
 
-interface ColourProfileOptionProps {
+interface CellFormatPresetProps {
   label: string;
   isActive: boolean;
   onClick: () => void;
 }
 
 /**
- * An option in the colour profile menu, with a check mark when active.
+ * An option in the conditional format preset menu, with a check mark when active.
  *
  * @param {string} label The display name of the option.
  * @param {boolean} isActive Indicates if the option is the active selection.
  * @param onClick Click handler for the option.
  */
-function ColourProfileOption(props: Readonly<ColourProfileOptionProps>) {
+function CellFormatPreset(props: Readonly<CellFormatPresetProps>) {
   return (
     <Button
       variant="ghost"

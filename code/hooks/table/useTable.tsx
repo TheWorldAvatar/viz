@@ -2,12 +2,12 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
-import { ColFilterValues } from "@/types/table";
+import { ColFilterValues, ConditionalFormatSetting } from "@/types/table";
 import {
   genSortParams,
   getInitialColumnVisibilityState,
   getInitialSortingState,
-  getInitialSortParams
+  getInitialSortParams,
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import {
@@ -28,8 +28,9 @@ import { FieldValues } from "react-hook-form";
 import { useTableData } from "./api/useTableData";
 import { useTablePagination } from "./useTablePagination";
 import { useTableRowOrder } from "./useTableRowOrder";
+import { ConditionalFormatPresetDescriptor, useConditionalFormatPresets } from "./settings/useConditionalFormatPresets";
 
-export interface TableDescriptor {
+export interface TableDescriptor extends ConditionalFormatPresetDescriptor {
   isLoading: boolean;
   isBackgroundLoading: boolean;
   isBulkDispatchEdit: boolean;
@@ -46,6 +47,7 @@ export interface TableDescriptor {
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
+  conditionalFormatPresets: ConditionalFormatSetting[];
   filters: ColumnFilter[];
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
   sortParams: string;
@@ -64,6 +66,7 @@ export interface TableDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+* @param {ConditionalFormatSetting[]} conditionalFormatPresets Presets with conditions for the cell format.
 * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
@@ -72,6 +75,7 @@ export function useTable(
   entityType: string,
   refreshId: number,
   lifecycleStage: LifecycleStage,
+  conditionalFormatPresets: ConditionalFormatSetting[],
   tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
@@ -87,7 +91,7 @@ export function useTable(
 
   const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, saveTaskOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
-
+  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(lifecycleStage == LifecycleStageMap.GENERAL ? entityType : lifecycleStage, conditionalFormatPresets);
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
@@ -225,5 +229,6 @@ export function useTable(
     saveTaskOrder,
     onSyncTasks,
     setTriggerBulkEdit,
+    ...conditionalFormatDescriptor,
   };
 }

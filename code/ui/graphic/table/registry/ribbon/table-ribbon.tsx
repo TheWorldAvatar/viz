@@ -2,7 +2,6 @@
 
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
-import { ColourProfilesDescriptor } from "@/hooks/table/api/useColourProfiles";
 import { TableDescriptor } from "@/hooks/table/useTable";
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
@@ -20,8 +19,8 @@ import { Archive, ArrowUpDown, CalendarCheck2, CalendarX, CircleCheck, CircleDol
 import React from "react";
 import { DateRange } from "react-day-picker";
 import ClearAllFiltersButton from "../../action/clear-all-filters-button";
-import ColourProfileSelector from "../../action/colour-profile-selector";
 import ColumnToggle from "../../action/column-toggle";
+import ConditionalFormatPresetSelector from "../../action/conditional-format-preset-selector";
 import { getDisabledDates } from "../registry-table-utils";
 
 interface TableRibbonProps {
@@ -37,7 +36,6 @@ interface TableRibbonProps {
   tableScrollDescriptor: TableScrollDescriptor
   message?: string;
   dragSync?: boolean;
-  colourProfiles?: ColourProfilesDescriptor;
 }
 
 /**
@@ -55,7 +53,6 @@ interface TableRibbonProps {
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {boolean} dragSync Optional flag to enable the drag sync UI.
  * @param {string} message Optional value to display a user-defined message at the table ribbon.
- * @param {ColourProfilesDescriptor} colourProfiles Optional colour profiles of the table and the active selection.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
@@ -279,7 +276,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
-          {props.colourProfiles && <ColourProfileSelector colourProfiles={props.colourProfiles} />}
+          <ConditionalFormatPresetSelector
+            conditionalFormatPresets={props.tableDescriptor.conditionalFormatPresets}
+            currentConditionalFormatPreset={props.tableDescriptor.currentConditionalFormatPreset}
+            updateCurrentConditionalFormatPreset={props.tableDescriptor.updateCurrentConditionalFormatPreset}
+          />
           {isPermitted("operation") &&
             (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
               props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (

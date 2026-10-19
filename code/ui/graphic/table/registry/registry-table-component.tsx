@@ -87,13 +87,13 @@ export default function RegistryTableComponent(
     props.entityType,
     refreshId,
     props.lifecycleStage,
+    props.cellFormatSettings,
     props.tableColumnOptions,
     null,
     selectedDate,
   );
 
   const tableScrollDescriptor: TableScrollDescriptor = useTableScroll();
-  const colourProfiles: ColourProfilesDescriptor = useColourProfiles(props.entityType, props.lifecycleStage);
 
   const triggerTableRefresh = () => {
     triggerRefresh();
@@ -157,7 +157,6 @@ export default function RegistryTableComponent(
             tableScrollDescriptor={tableScrollDescriptor}
             dragSync={props.dragSync}
             message={dict.translate(props.message)}
-            colourProfiles={colourProfiles}
           />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (
@@ -176,7 +175,6 @@ export default function RegistryTableComponent(
           tableScrollDescriptor={tableScrollDescriptor}
           addEntity={props.addEntity}
           allowTaskPrioritisation={props.allowTaskPrioritisation}
-          colourRuleMap={colourProfiles.colourRuleMap}
         />
       )}
     </div>

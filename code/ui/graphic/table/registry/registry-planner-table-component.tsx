@@ -45,6 +45,7 @@ export default function RegistryPlannerTableComponent(
     props.entityType,
     refreshId,
     LifecycleStageMap.PLANNER,
+    [],
     props.tableColumnOptions,
     null,
     selectedDateRange,

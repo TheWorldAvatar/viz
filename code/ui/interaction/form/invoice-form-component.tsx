@@ -58,6 +58,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
         props.entityType,
         refreshId,
         LifecycleStageMap.BILLABLE,
+        [],
         props.tableColumnOptions,
         invoiceAccountFilter,
     );
