@@ -21,6 +21,7 @@ interface ColourProfileSelectorProps {
 export default function ColourProfileSelector(props: Readonly<ColourProfileSelectorProps>) {
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const labelId: string = React.useId();
   const { profiles, activeProfileId, setActiveProfileId } = props.colourProfiles;
   const activeProfile: ColourProfile | undefined = profiles.find((profile) => profile.id === activeProfileId);
   const buttonLabel: string = interpolate(dict.title.colourProfileActive, activeProfile?.name ?? dict.title.defaultColourProfile);
@@ -41,7 +42,14 @@ export default function ColourProfileSelector(props: Readonly<ColourProfileSelec
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-      <div className="flex flex-col gap-1 min-w-56 max-h-80 overflow-y-auto">
+      <div
+        role="group"
+        aria-labelledby={labelId}
+        className="flex flex-col gap-1 min-w-56 max-h-80 overflow-y-auto"
+      >
+        <p id={labelId} className="sticky top-0 z-10 bg-muted px-2 py-1 font-semibold">
+          {dict.title.colourProfiles}
+        </p>
         {/* The default option applies no colour profile */}
         <ColourProfileOption
           label={dict.title.defaultColourProfile}

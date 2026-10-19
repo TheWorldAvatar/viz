@@ -283,6 +283,7 @@
     "amount": "Betrag",
     "blank": "(leer)",
     "colourProfileActive": "Farbprofil: {replace}",
+    "colourProfiles": "Farbprofile",
     "customiseCol": "Spalten ein-/ausblenden",
     "defaultColourProfile": "Standard",
     "noColourProfiles": "Noch keine Farbprofile für diese Tabelle",

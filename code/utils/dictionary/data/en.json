@@ -283,6 +283,7 @@
     "amount": "Amount",
     "blank": "(blank)",
     "colourProfileActive": "Colour profile: {replace}",
+    "colourProfiles": "Colour profiles",
     "customiseCol": "Show/Hide Columns",
     "defaultColourProfile": "Default",
     "noColourProfiles": "No colour profiles for this table yet",
