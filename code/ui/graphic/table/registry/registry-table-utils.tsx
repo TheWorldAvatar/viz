@@ -27,7 +27,7 @@ import ArrayTextCell from "../cell/array-text-cell";
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
   dataType: string;
   stage: string;
-  getCellStyles: (value: string) => React.CSSProperties;
+  getCellStyles: (value: string, currentConditionalFormatPreset: ConditionalFormatSetting) => React.CSSProperties;
 };
 
 /**
@@ -161,7 +161,6 @@ export function parseColumnsMetadata(
   columns: ColumnDefinitionResponse[],
   columnOptions: TableColumnOption[],
   dict: Dictionary,
-  currentConditionalFormatPreset: ConditionalFormatSetting,
 ): EnhancedColumnDef<FieldValues>[] {
   const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(dict.title.blank);
   const results: EnhancedColumnDef<FieldValues>[] = [];
@@ -191,7 +190,7 @@ export function parseColumnsMetadata(
       header: title,
       dataType: col.value == FLAG_KEY ? col.value : col.type == "array" || col.type == "virtual" ? col.type : col.datatype,
       stage: col.stage,
-      getCellStyles: (value: string) => {
+      getCellStyles: (value: string, currentConditionalFormatPreset: ConditionalFormatSetting) => {
         const styles: React.CSSProperties = {};
         if (currentConditionalFormatPreset) {
           const activeCondition: ConditionalFormatField = (currentConditionalFormatPreset[col.value] as ConditionalFormatField[])

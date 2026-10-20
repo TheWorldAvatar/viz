@@ -101,7 +101,6 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
-    conditionalFormatDescriptor.currentConditionalFormatPreset,
     tableColumnOptions,
     pagination.pageSize,
     syncTasks,

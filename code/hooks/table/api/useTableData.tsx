@@ -34,7 +34,6 @@ export interface TableDataDescriptor {
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
-* @param {ConditionalFormatSetting} currentConditionalFormatPreset Currently active preset with conditions for the cell format.
 * @param {TableColumnOption[]} columnOptions Configuration for table columns options.
 * @param {number} firstVisiblePageSize Number of records to fetch immediately for the first visible page.
 * @param {Function} syncTasks Function to sync tasks with changes to lexorank on first initialisation.
@@ -48,7 +47,6 @@ export function useTableData(
   selectedDate: DateRange,
   apiPagination: PaginationState,
   filters: ColumnFilter[],
-  currentConditionalFormatPreset: ConditionalFormatSetting,
   columnOptions: TableColumnOption[],
   firstVisiblePageSize: number,
   syncTasks: (_id: string, _lexorank: string) => void,
@@ -117,7 +115,7 @@ export function useTableData(
         // fetches. This keeps the header visible when a later response has no metadata
         setColumns(prevColumns => prevColumns.length > 0
           ? prevColumns
-          : parseColumnsMetadata(res.data?.columns ?? [], columnOptions, dict, currentConditionalFormatPreset));
+          : parseColumnsMetadata(res.data?.columns ?? [], columnOptions, dict));
         setIsLoading(false);
         if (firstVisiblePageSize < 50) {
           // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
