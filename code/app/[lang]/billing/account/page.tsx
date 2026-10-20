@@ -5,9 +5,7 @@ import {
   NavBarItemSettings, TableColumnOption,
   UISettings
 } from "@/types/settings";
-import { ConditionalFormatSetting } from "@/types/table";
 import RegistryTableComponent from "@/ui/graphic/table/registry/registry-table-component";
-import { getConditionalFormattingStyles } from "@/utils/fetch/serverside-fetch";
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
 import { redirect } from "next/navigation";
 
@@ -32,12 +30,10 @@ export default async function BillingAccountsPage() {
     redirect(Routes.HOME);
   }
 
-  const conditionalFormattingStyles: ConditionalFormatSetting[] = await getConditionalFormattingStyles(LifecycleStageMap.ACCOUNT);
   return (
     <RegistryTableComponent
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
       lifecycleStage={LifecycleStageMap.ACCOUNT}
-      cellFormatSettings={conditionalFormattingStyles}
       tableColumnOptions={tableColumnSettings}
       exports={uiSettings.resources?.billing?.exports ?? []}
     />

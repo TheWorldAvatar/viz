@@ -277,10 +277,9 @@ function makeExternalEndpoint(
       }
       return "";
     }
-    case InternalApiIdentifierMap.COLOUR_PROFILES: {
-      const table: string = searchParams.get("table");
-      const urlObj: URL = new URL(`${agentBaseApi}/table-appearance/colour-profiles`);
-      urlObj.searchParams.set("table", table);
+    case InternalApiIdentifierMap.CONDITIONAL_FORMATTING: {
+      const resource: string = searchParams.get("resource");
+      const urlObj: URL = new URL(`${agentBaseApi}/views/rules/${resource}`);
       return urlObj.toString();
     }
     case InternalApiIdentifierMap.CONCEPT: {

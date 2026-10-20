@@ -276,11 +276,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.resetOrder}
             variant="destructive"
           />
-          <ConditionalFormatPresetSelector
+          {props.tableDescriptor.conditionalFormatPresets && <ConditionalFormatPresetSelector
             conditionalFormatPresets={props.tableDescriptor.conditionalFormatPresets}
             currentConditionalFormatPreset={props.tableDescriptor.currentConditionalFormatPreset}
             updateCurrentConditionalFormatPreset={props.tableDescriptor.updateCurrentConditionalFormatPreset}
-          />
+          />}
           {isPermitted("operation") &&
             (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
               props.lifecycleStage == LifecycleStageMap.SCHEDULED) && props.dragSync && (

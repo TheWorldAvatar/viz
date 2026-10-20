@@ -2,7 +2,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
-import { ColFilterValues, ConditionalFormatSetting } from "@/types/table";
+import { ColFilterValues } from "@/types/table";
 import {
   genSortParams,
   getInitialColumnVisibilityState,
@@ -47,7 +47,6 @@ export interface TableDescriptor extends ConditionalFormatPresetDescriptor {
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
-  conditionalFormatPresets: ConditionalFormatSetting[];
   filters: ColumnFilter[];
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
   sortParams: string;
@@ -66,7 +65,6 @@ export interface TableDescriptor extends ConditionalFormatPresetDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {ConditionalFormatSetting[]} conditionalFormatPresets Presets with conditions for the cell format.
 * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
@@ -75,7 +73,6 @@ export function useTable(
   entityType: string,
   refreshId: number,
   lifecycleStage: LifecycleStage,
-  conditionalFormatPresets: ConditionalFormatSetting[],
   tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
@@ -91,7 +88,7 @@ export function useTable(
 
   const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, saveTaskOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
-  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(lifecycleStage == LifecycleStageMap.GENERAL ? entityType : lifecycleStage, conditionalFormatPresets);
+  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(lifecycleStage == LifecycleStageMap.GENERAL ? entityType : lifecycleStage);
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,

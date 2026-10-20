@@ -9,7 +9,6 @@ import { addItem, selectItem } from "@/state/context-menu-slice";
 import { Dictionary, LanguageDictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { ContextItemMap, RegistryExportSettings, TableColumnOption } from "@/types/settings";
-import { ConditionalFormatSetting } from "@/types/table";
 import { ContextItemDefinition } from "@/ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
@@ -32,7 +31,6 @@ interface RegistryTableComponentProps {
   accountType?: string;
   pricingType?: string;
   message?: LanguageDictionary;
-  cellFormatSettings?: ConditionalFormatSetting[];
   tableColumnOptions: TableColumnOption[];
   addEntity?: string;
   allowTaskPrioritisation?: boolean;
@@ -49,7 +47,6 @@ interface RegistryTableComponentProps {
  * @param {string} pricingType Optional value to indicate the type of pricing for billing capabilities.
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
- * @param {ConditionalFormatSetting[]} cellFormatSettings Configuration for cell formatting based on conditions.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  * @param {boolean} allowTaskPrioritisation Optional flag to enable the task prioritisation row action.
  * @param {boolean} dragSync Optional flag to enable the drag sync UI.
@@ -86,7 +83,6 @@ export default function RegistryTableComponent(
     props.entityType,
     refreshId,
     props.lifecycleStage,
-    props.cellFormatSettings,
     props.tableColumnOptions,
     null,
     selectedDate,

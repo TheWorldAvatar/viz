@@ -1,6 +1,8 @@
 import { localStorageManager } from "@/state/browser-storage-manager";
+import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { ConditionalFormatSetting } from "@/types/table";
-import { useState } from "react";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { useEffect, useState } from "react";
 
 export interface ConditionalFormatPresetDescriptor {
   conditionalFormatPresets: ConditionalFormatSetting[];
@@ -13,14 +15,12 @@ export interface ConditionalFormatPresetDescriptor {
  * The active profile is stored in local storage per table, and kept in sync across tabs.
  *
  * @param {string} resource The resource for conditional format.
- * @param {ConditionalFormatSetting[]} conditionalFormatPresets Presets with conditions for the cell format.
  */
 export function useConditionalFormatPresets(
   resource: string,
-  conditionalFormatPresets: ConditionalFormatSetting[],
 ): ConditionalFormatPresetDescriptor {
-  const [currentConditionalFormatPreset, setCurrentConditionalFormatPreset] = useState<ConditionalFormatSetting>(
-    loadConditionalFormatPreset(resource, conditionalFormatPresets));
+  const [conditionalFormatPresets, setConditionalFormatPresets] = useState<ConditionalFormatSetting[]>(undefined);
+  const [currentConditionalFormatPreset, setCurrentConditionalFormatPreset] = useState<ConditionalFormatSetting>(undefined);
 
 
   const updateCurrentConditionalFormatPreset = (selected: ConditionalFormatSetting) => {
@@ -32,6 +32,25 @@ export function useConditionalFormatPresets(
       localStorageManager.remove(resourceKey);
     }
   }
+
+  useEffect(() => {
+    const fetchConditionalFormatPresets = async (): Promise<void> => {
+      const response: AgentResponseBody = await queryInternalApi(
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONDITIONAL_FORMATTING, resource),
+        "GET",
+        undefined,
+      );
+      if (response.error) {
+        console.error(`Failed to fetch conditional format presets:`, response.error.message);
+        return;
+      }
+
+      const presets: ConditionalFormatSetting[] = response.data.items as ConditionalFormatSetting[];
+      setConditionalFormatPresets(presets);
+      setCurrentConditionalFormatPreset(loadConditionalFormatPreset(resource, presets));
+    };
+    fetchConditionalFormatPresets();
+  }, [resource]);
   return { conditionalFormatPresets, currentConditionalFormatPreset, updateCurrentConditionalFormatPreset };
 }
 
