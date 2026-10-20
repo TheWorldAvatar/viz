@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * 
  * @returns React component for display. 
  */
-export default async function RegistryOutstandingTaskPage() {
+export default function RegistryOutstandingTaskPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.OUTSTANDING);
 

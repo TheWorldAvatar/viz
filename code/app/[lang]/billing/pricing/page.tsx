@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function PricingModelsPage() {
+export default function PricingModelsPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key, LifecycleStageMap.PRICING);
 

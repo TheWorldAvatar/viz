@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function BillingAccountsPage() {
+export default function BillingAccountsPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key, LifecycleStageMap.ACCOUNT);
 

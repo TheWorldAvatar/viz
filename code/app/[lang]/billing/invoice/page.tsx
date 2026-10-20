@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 }
 
-export default async function InvoicesPage() {
+export default function InvoicesPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(LifecycleStageMap.INVOICE, LifecycleStageMap.INVOICE);
 

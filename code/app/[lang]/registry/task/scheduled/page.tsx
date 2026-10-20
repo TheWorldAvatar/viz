@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
  *
  * @returns React component for display.
  */
-export default async function RegistryScheduledTaskPage() {
+export default function RegistryScheduledTaskPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.SCHEDULED);
 
