@@ -26,7 +26,11 @@ export function useConditionalFormatPresets(
   const updateCurrentConditionalFormatPreset = (selected: ConditionalFormatSetting) => {
     const resourceKey: string = getResourceStorageKey(resource);
     setCurrentConditionalFormatPreset(selected);
-    localStorageManager.set(resourceKey, selected.conditional_format);
+    if (selected) {
+      localStorageManager.set(resourceKey, selected.conditional_format);
+    } else {
+      localStorageManager.remove(resourceKey);
+    }
   }
   return { conditionalFormatPresets, currentConditionalFormatPreset, updateCurrentConditionalFormatPreset };
 }
