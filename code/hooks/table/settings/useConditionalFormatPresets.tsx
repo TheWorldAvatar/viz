@@ -12,7 +12,7 @@ export interface ConditionalFormatPresetDescriptor {
 
 /**
  * A custom hook to retrieve the active conditional formatting preset and manage all presets.
- * The active profile is stored in local storage per table, and kept in sync across tabs.
+ * The active profile is stored in local storage per table.
  *
  * @param {string} resource The resource for conditional format.
  */
@@ -35,17 +35,23 @@ export function useConditionalFormatPresets(
 
   useEffect(() => {
     const fetchConditionalFormatPresets = async (): Promise<void> => {
-      const response: AgentResponseBody = await queryInternalApi(
-        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONDITIONAL_FORMATTING, resource),
-        "GET",
-        undefined,
-      );
-      if (response.error) {
-        console.error(`Failed to fetch conditional format presets:`, response.error.message);
+      let presets: ConditionalFormatSetting[];
+      try {
+        const response: AgentResponseBody = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONDITIONAL_FORMATTING, resource),
+          "GET",
+          undefined,
+        );
+        if (response.error) {
+          console.error(`Failed to fetch conditional format presets:`, response.error.message);
+          return;
+        }
+        presets = response.data.items as ConditionalFormatSetting[];
+      } catch (e) {
+        console.error(`Failed to fetch conditional format presets:`, e);
         return;
       }
 
-      const presets: ConditionalFormatSetting[] = response.data.items as ConditionalFormatSetting[];
       setConditionalFormatPresets(presets);
       setCurrentConditionalFormatPreset(loadConditionalFormatPreset(resource, presets));
     };
