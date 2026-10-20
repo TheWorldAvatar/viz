@@ -10,10 +10,8 @@ import React from "react";
 
 
 /**
- * An icon button that opens a menu to choose the active colour profile of a table.
- * The button is highlighted when a profile is active, so that no text is needed on the ribbon.
- *
- * @param {ColourProfilesDescriptor} colourProfiles The colour profiles of the table and the active selection.
+ * An icon button that opens a menu to select the conditional formatting presets of a table.
+ * The button is highlighted when active, so that no text is needed on the ribbon.
  */
 export default function ConditionalFormatPresetSelector(props: Readonly<ConditionalFormatPresetDescriptor>) {
   const dict: Dictionary = useDictionary();
