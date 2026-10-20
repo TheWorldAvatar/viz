@@ -4,7 +4,6 @@ import { Dictionary } from "@/types/dictionary";
 import { ConditionalFormatSetting } from "@/types/table";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
-import { interpolate } from "@/utils/client-utils";
 import { Check, TableCellsMerge } from "lucide-react";
 import React from "react";
 
@@ -17,7 +16,6 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const labelId: string = React.useId();
-  const buttonLabel: string = interpolate(dict.title.colourProfileActive, props.currentConditionalFormatPreset?.conditional_format ?? dict.title.defaultColourProfile);
 
   const handleSelect = (preset: ConditionalFormatSetting | null): void => {
     props.updateCurrentConditionalFormatPreset(preset);
@@ -30,8 +28,8 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
       leftIcon={TableCellsMerge}
       size="icon"
       variant={props.currentConditionalFormatPreset ? "info_banner" : "outline"}
-      tooltipText={buttonLabel}
-      aria-label={buttonLabel}
+      tooltipText={dict.title.conditionalFormat}
+      aria-label={dict.title.conditionalFormat}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
@@ -41,11 +39,11 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
         className="flex flex-col gap-1 min-w-56 max-h-80 overflow-y-auto"
       >
         <p id={labelId} className="sticky top-0 z-10 bg-muted px-2 py-1 font-semibold">
-          {dict.title.colourProfiles}
+          {dict.title.conditionalFormat}
         </p>
         {/* The default option applies no conditional formats */}
         <CellFormatPreset
-          label={dict.title.defaultColourProfile}
+          label={dict.title.default}
           isActive={!props.currentConditionalFormatPreset}
           onClick={() => handleSelect(null)}
         />
