@@ -55,7 +55,7 @@
     "lucide-react": "^1.45.0",
     "mapbox-gl": "3.30.0",
     "markdown-it": "^15.0.2",
-    "moment": "^2.30.1",
+    "moment": "^2.31.0",
     "negotiator": "^1.1.0",
     "next": "16.3.5",
     "postcss": "^8.5.28",
