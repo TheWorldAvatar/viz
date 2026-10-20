@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 
 import { Modules, PageTitles, Routes } from "@/io/config/routes";
 import SettingsStore from "@/io/config/settings";
+import { LifecycleStageMap } from "@/types/form";
 import { NavBarItemSettings, TableColumnOption, UISettings } from "@/types/settings";
 import RegistryTableComponent from "@/ui/graphic/table/registry/registry-table-component";
-import { LifecycleStageMap } from "@/types/form";
 
 /**
  * Set page metadata.
@@ -23,13 +23,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the registry page for viewing tasks by dates.
+ * Displays the registry page for viewing scheduled tasks by dates.
  *
  * @returns React component for display.
  */
-export default function RegistryTaskByDatePage() {
+export default function RegistryScheduledTaskPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.SCHEDULED);
+
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent

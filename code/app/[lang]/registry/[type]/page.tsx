@@ -3,11 +3,11 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from '@/io/config/routes';
 import SettingsStore from '@/io/config/settings';
+import { LanguageDictionary } from '@/types/dictionary';
 import { LifecycleStage, LifecycleStageMap } from '@/types/form';
 import { NavBarItemSettings, ResourcesPathSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from '@/utils/client-utils';
-import { LanguageDictionary } from '@/types/dictionary';
 
 interface GeneralRegistryPageProps {
   params: Promise<{

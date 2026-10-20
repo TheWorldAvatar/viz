@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.93.0
+
+### Changes
+
+- Added conditional formatting capabilities integrated with backend agent
+- Bump min version of `VisBackend Agent` from `v1.72.1` to `v1.73.0`
+
 ## 5.92.0
 
 ### Changes
@@ -122,7 +129,7 @@
 
 ### Changes
 
-- Made time inputs in the forms optional 
+- Made time inputs in the forms optional
 
 ## 5.88.1
 

@@ -277,6 +277,11 @@ function makeExternalEndpoint(
       }
       return "";
     }
+    case InternalApiIdentifierMap.CONDITIONAL_FORMATTING: {
+      const resource: string = searchParams.get("resource");
+      const urlObj: URL = new URL(`${agentBaseApi}/views/rules/${resource}`);
+      return urlObj.toString();
+    }
     case InternalApiIdentifierMap.CONCEPT: {
       const uri: string = searchParams.get("uri");
       const requiresSubclass: string = searchParams.get("subclass");

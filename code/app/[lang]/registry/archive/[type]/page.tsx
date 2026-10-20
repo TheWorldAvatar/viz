@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from '@/io/config/routes';
 import SettingsStore from '@/io/config/settings';
+import { LifecycleStageMap } from '@/types/form';
 import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
-import { LifecycleStageMap } from '@/types/form';
 
 interface ArchiveRegistryPageProps {
   params: Promise<{

@@ -258,26 +258,31 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               key={cell.id + index}
               width={cell.column.getSize()}
               className="cursor-pointer"
-              onClick={tableDescriptor.isBulkDispatchEdit ? undefined : () => {
-                if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-                  const isSelected: boolean = props.row.getIsSelected();
-                  tableDescriptor.setSelectedRows(
-                    getId(props.row.getValue("event_id")), isSelected);
-                  props.row.toggleSelected(!isSelected);
-                } else {
-                  onRowClick(props.row.original as FieldValues);
+              style={(cell.column.columnDef as EnhancedColumnDef<FieldValues>)
+                .getCellStyles(String(cell.getValue()), tableDescriptor.currentConditionalFormatPreset)}
+              onClick={
+                tableDescriptor.isBulkDispatchEdit ? undefined : () => {
+                  if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+                    const isSelected: boolean = props.row.getIsSelected();
+                    tableDescriptor.setSelectedRows(
+                      getId(props.row.getValue("event_id")), isSelected);
+                    props.row.toggleSelected(!isSelected);
+                  } else {
+                    onRowClick(props.row.original as FieldValues);
+                  }
                 }
-              }}
+              }
             >
-              {flexRender(
-                cell.column.columnDef.cell,
-                cell.getContext()
-              )}
+              {
+                flexRender(
+                  cell.column.columnDef.cell,
+                  cell.getContext()
+                )}
             </TableCell>
           }
         })}
       </tr>
-    </FormSessionContextProvider>
+    </FormSessionContextProvider >
   );
 };
 

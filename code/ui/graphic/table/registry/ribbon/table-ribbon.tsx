@@ -20,6 +20,7 @@ import React from "react";
 import { DateRange } from "react-day-picker";
 import ClearAllFiltersButton from "../../action/clear-all-filters-button";
 import ColumnToggle from "../../action/column-toggle";
+import ConditionalFormatPresetSelector from "../../action/conditional-format-preset-selector";
 import { getDisabledDates } from "../registry-table-utils";
 
 interface TableRibbonProps {
@@ -274,6 +275,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             }}
             tooltipText={dict.action.resetOrder}
             variant="destructive"
+          />
+          <ConditionalFormatPresetSelector
+            conditionalFormatPresets={props.tableDescriptor.conditionalFormatPresets}
+            currentConditionalFormatPreset={props.tableDescriptor.currentConditionalFormatPreset}
+            updateCurrentConditionalFormatPreset={props.tableDescriptor.updateCurrentConditionalFormatPreset}
           />
           {isPermitted("operation") &&
             (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||

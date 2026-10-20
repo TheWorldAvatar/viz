@@ -57,6 +57,11 @@ export function makeInternalRegistryAPIwithParams(
         date: params[2] ?? null,
       });
       break;
+    case InternalApiIdentifierMap.CONDITIONAL_FORMATTING:
+      searchParams = new URLSearchParams({
+        resource: params[0],
+      });
+      break;
     case InternalApiIdentifierMap.CONCEPT:
       searchParams = new URLSearchParams({
         uri: params[0],

@@ -12,11 +12,16 @@ import {
 } from "@dnd-kit/sortable";
 
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { useConnected } from "@/hooks/useConnected";
 import { Dictionary } from "@/types/dictionary";
 import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
 import { RegistryExportSettings } from "@/types/settings";
 import Button from "@/ui/interaction/button";
+import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
+import { ArrowUp } from "lucide-react";
 import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -24,11 +29,6 @@ import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
-import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
-import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
-import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
-import { useConnected } from "@/hooks/useConnected";
-import { ArrowUp } from "lucide-react";
 
 interface RegistryTableProps {
   recordType: string;

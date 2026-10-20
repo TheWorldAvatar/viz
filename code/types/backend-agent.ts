@@ -45,6 +45,7 @@ export const InternalApiIdentifierMap = {
   ADDRESS: "address",
   BILL: "bill",
   CONCEPT: "concept",
+  CONDITIONAL_FORMATTING: "conditional_format",
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",
   EVENT: EVENT_KEY,

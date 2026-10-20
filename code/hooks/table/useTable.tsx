@@ -7,7 +7,7 @@ import {
   genSortParams,
   getInitialColumnVisibilityState,
   getInitialSortingState,
-  getInitialSortParams
+  getInitialSortParams,
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import {
@@ -26,10 +26,11 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { useTableData } from "./api/useTableData";
+import { ConditionalFormatPresetDescriptor, useConditionalFormatPresets } from "./settings/useConditionalFormatPresets";
 import { useTablePagination } from "./useTablePagination";
 import { useTableRowOrder } from "./useTableRowOrder";
 
-export interface TableDescriptor {
+export interface TableDescriptor extends ConditionalFormatPresetDescriptor {
   isLoading: boolean;
   isBackgroundLoading: boolean;
   isBulkDispatchEdit: boolean;
@@ -87,7 +88,7 @@ export function useTable(
 
   const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, saveTaskOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
-
+  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(lifecycleStage == LifecycleStageMap.GENERAL ? entityType : lifecycleStage);
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
@@ -225,5 +226,6 @@ export function useTable(
     saveTaskOrder,
     onSyncTasks,
     setTriggerBulkEdit,
+    ...conditionalFormatDescriptor,
   };
 }
