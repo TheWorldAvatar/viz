@@ -2,11 +2,11 @@ import { ConditionalFormatPresetDescriptor } from "@/hooks/table/settings/useCon
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { ConditionalFormatSetting } from "@/types/table";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
 import { Check, TableCellsMerge } from "lucide-react";
 import React from "react";
-
 
 /**
  * An icon button that opens a menu to select the conditional formatting presets of a table.
@@ -21,7 +21,6 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
     props.updateCurrentConditionalFormatPreset(preset);
     setIsOpen(false);
   };
-
   return (
     <PopoverActionButton
       placement="bottom-end"
@@ -33,7 +32,8 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-      <div
+      {!props.conditionalFormatPresets && <LoadingSpinner size="sm" />}
+      {props.conditionalFormatPresets && <div
         role="group"
         aria-labelledby={labelId}
         className="flex flex-col gap-1 min-w-56 max-h-80 overflow-y-auto"
@@ -55,7 +55,7 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             onClick={() => handleSelect(preset)}
           />
         ))}
-      </div>
+      </div>}
     </PopoverActionButton>
   );
 }
