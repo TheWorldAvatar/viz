@@ -1,6 +1,5 @@
 "use client";
 
-import { ColourProfilesDescriptor, useColourProfiles } from "@/hooks/table/api/useColourProfiles";
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
 import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
 import { useConnected } from "@/hooks/useConnected";
@@ -10,6 +9,7 @@ import { addItem, selectItem } from "@/state/context-menu-slice";
 import { Dictionary, LanguageDictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { ContextItemMap, RegistryExportSettings, TableColumnOption } from "@/types/settings";
+import { ConditionalFormatSetting } from "@/types/table";
 import { ContextItemDefinition } from "@/ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import { ConditionalFormatSetting } from "@/types/table";
 
 
 interface RegistryTableComponentProps {

@@ -29,9 +29,25 @@ export const BetweenComparisonOptionMap = {
 
 export type BetweenComparisonOption = typeof BetweenComparisonOptionMap[keyof typeof BetweenComparisonOptionMap];
 
-interface ConditionalFormatField {
+/**
+ * The operators a rule condition can use to match a cell value.
+ */
+export const ConditionalFormatFieldOperatorMap = {
+    EQUALS: "equals", // Value is exactly the given text
+    NOT_EQUALS: "notEquals", // Value is anything except the given text
+    CONTAINS: "contains", // Value contains the given text
+    EMPTY: "empty", // Value is null, undefined or ""
+    NOT_EMPTY: "notEmpty", // Value is anything other than null, undefined or ""
+    GT: "gt", // Value is greater than the number
+    GTE: "gte", // Value is greater than or equal to the number
+    LT: "lt", // Value is less than the number
+    LTE: "lte", // Value is less than or equal to the number
+} as const;
+export type ConditionalFormatFieldOperator = typeof ConditionalFormatFieldOperatorMap[keyof typeof ConditionalFormatFieldOperatorMap];
+
+export interface ConditionalFormatField {
     background: string;
-    operator: string;
+    operator: ConditionalFormatFieldOperator;
     value: string;
     text?: string;
 }

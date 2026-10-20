@@ -26,9 +26,9 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { useTableData } from "./api/useTableData";
+import { ConditionalFormatPresetDescriptor, useConditionalFormatPresets } from "./settings/useConditionalFormatPresets";
 import { useTablePagination } from "./useTablePagination";
 import { useTableRowOrder } from "./useTableRowOrder";
-import { ConditionalFormatPresetDescriptor, useConditionalFormatPresets } from "./settings/useConditionalFormatPresets";
 
 export interface TableDescriptor extends ConditionalFormatPresetDescriptor {
   isLoading: boolean;
@@ -101,6 +101,7 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
+    conditionalFormatDescriptor.currentConditionalFormatPreset,
     tableColumnOptions,
     pagination.pageSize,
     syncTasks,

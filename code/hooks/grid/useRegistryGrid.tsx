@@ -154,7 +154,7 @@ export function useRegistryGrid(
                     tasks?.columns.filter(col => mobileFields.current.includes(col.value)
                         || col.value == "id" || col.value == "event_id"
                         || col.value == "date");
-                const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, mobileColumnOptions.current, dict);
+                const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, mobileColumnOptions.current, dict, null);
                 setColumns(columnData);
             }
             // If total length is equal or more than limit, start a background sync

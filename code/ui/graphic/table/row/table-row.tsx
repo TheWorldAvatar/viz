@@ -11,7 +11,6 @@ import Button from "@/ui/interaction/button";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import Checkbox from "@/ui/interaction/input/checkbox";
 import { getId } from "@/utils/client-utils";
-import { getCellColourStyle } from "@/utils/colour-profile";
 import { PRIORITY_KEY } from "@/utils/constants";
 import { useIsSyncing } from "@/utils/db/dexie-form-repository";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
@@ -64,7 +63,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
   });
 
 
-  const { activeRowId, recordType, lifecycleStage, tableDescriptor, colourRuleMap, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
+  const { activeRowId, recordType, lifecycleStage, tableDescriptor, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
   const isSyncing: boolean = useIsSyncing();
 
   const isSelected: boolean = props.row?.getIsSelected();
@@ -258,29 +257,32 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             return <TableCell
               key={cell.id + index}
               width={cell.column.getSize()}
-              // Skip the background of active or selected rows so that their highlight stays visible
-              style={getCellColourStyle(colourRuleMap, cell.column.id, cell.getValue(), isActive || isSelected)}
               className="cursor-pointer"
-              onClick={tableDescriptor.isBulkDispatchEdit ? undefined : () => {
-                if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-                  const isSelected: boolean = props.row.getIsSelected();
-                  tableDescriptor.setSelectedRows(
-                    getId(props.row.getValue("event_id")), isSelected);
-                  props.row.toggleSelected(!isSelected);
-                } else {
-                  onRowClick(props.row.original as FieldValues);
+              style={(cell.column.columnDef as EnhancedColumnDef<FieldValues>)
+                .getCellStyles(String(cell.getValue()))}
+              onClick={
+                tableDescriptor.isBulkDispatchEdit ? undefined : () => {
+                  if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+                    const isSelected: boolean = props.row.getIsSelected();
+                    tableDescriptor.setSelectedRows(
+                      getId(props.row.getValue("event_id")), isSelected);
+                    props.row.toggleSelected(!isSelected);
+                  } else {
+                    onRowClick(props.row.original as FieldValues);
+                  }
                 }
-              }}
+              }
             >
-              {flexRender(
-                cell.column.columnDef.cell,
-                cell.getContext()
-              )}
+              {
+                flexRender(
+                  cell.column.columnDef.cell,
+                  cell.getContext()
+                )}
             </TableCell>
           }
         })}
       </tr>
-    </FormSessionContextProvider>
+    </FormSessionContextProvider >
   );
 };
 
