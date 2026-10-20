@@ -283,17 +283,17 @@ export function parseColumnsMetadata(
 function matchesCondition(operatorCondition: ConditionalFormatFieldOperator, valueCondition: string, value: string | null): boolean {
   switch (operatorCondition) {
     case ConditionalFormatFieldOperatorMap.EMPTY:
-      return value === null;
+      return !value;
     case ConditionalFormatFieldOperatorMap.NOT_EMPTY:
-      return value !== null;
+      return !!value;
     case ConditionalFormatFieldOperatorMap.EQUALS:
       return value === valueCondition;
     case ConditionalFormatFieldOperatorMap.NOT_EQUALS:
       return value !== valueCondition;
     case ConditionalFormatFieldOperatorMap.CONTAINS:
-      return value !== null && value.includes(valueCondition);
+      return !!value && value.includes(valueCondition);
   }
-  const numericValue: number = value === null || value.trim() === "" ? Number.NaN : Number(value);
+  const numericValue: number = !value || value.trim() === "" ? Number.NaN : Number(value);
   if (Number.isNaN(numericValue)) return false;
   switch (operatorCondition) {
     case ConditionalFormatFieldOperatorMap.GT:
