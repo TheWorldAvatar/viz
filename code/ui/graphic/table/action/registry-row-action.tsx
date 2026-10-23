@@ -49,7 +49,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
-  const { addEntity, allowTaskPrioritisation, exportOptions } = useTableSession();
+  const { addEntity, allowTaskPrioritisation, exportOptions, tableDescriptor } = useTableSession();
 
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -126,6 +126,21 @@ export default function RegistryRowAction(
       PRIORITY_KEY,
     );
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
+  };
+
+  const handleClickAssign = async (): Promise<void> => {
+    if (props.lifecycleStage === LifecycleStageMap.PLANNER && Object.keys(tableDescriptor.dirtyTasks).length > 0) {
+      startLoading();
+      try {
+        if (!await tableDescriptor.saveTaskOrder()) {
+          return;
+        }
+      } finally {
+        stopLoading();
+      }
+    }
+    handleClickRowAction();
+    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${recordId}`);
   };
 
   const submitPendingActions = async (
@@ -283,7 +298,7 @@ export default function RegistryRowAction(
           )}
           {!isSubmissionOrGeneralPage && (
             <>
-              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <RowActionButton
+              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && props.lifecycleStage !== LifecycleStageMap.PLANNER && <RowActionButton
                 icon={ExternalLink}
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
@@ -306,10 +321,8 @@ export default function RegistryRowAction(
               {isActionAllowed("ASSIGN_TASK") && <RowActionButton
                 icon={ClipboardList}
                 label={dict.action.dispatch}
-                onClick={() => {
-                  handleClickRowAction();
-                  navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${recordId}`);
-                }}
+                disabled={isLoading}
+                onClick={handleClickAssign}
               />}
               {isActionAllowed("RESCHEDULE_TASK") &&
                 props.row.scheduleType == "singleService" && (
