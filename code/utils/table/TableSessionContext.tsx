@@ -8,6 +8,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from '@/types/backend-age
 import { Dictionary } from '@/types/dictionary';
 import { FormTypeMap, LifecycleStage } from '@/types/form';
 import { RegistryExportSettings } from '@/types/settings';
+import { TableDensity, TableDensityMap } from '@/types/table';
 import { TableRowHandle } from '@/ui/graphic/table/row/table-row';
 import { toast } from '@/ui/interaction/action/toast/toast';
 import HistoryModal from '@/ui/interaction/modal/history-modal';
@@ -27,6 +28,7 @@ export interface TableSessionState {
     addEntity: string;
     allowTaskPrioritisation: boolean;
     pricingType: string;
+    tableDensity: TableDensity;
     setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
     setActiveCutRowId: React.Dispatch<React.SetStateAction<string>>;
     setHistoryId: React.Dispatch<React.SetStateAction<string>>;
@@ -47,6 +49,7 @@ export const TableSessionContextProvider = ({
     addEntity,
     allowTaskPrioritisation = false,
     pricingType,
+    tableDensity = TableDensityMap.DEFAULT,
     children,
 }: {
     recordType: string;
@@ -59,6 +62,7 @@ export const TableSessionContextProvider = ({
     addEntity?: string;
     allowTaskPrioritisation?: boolean;
     pricingType?: string;
+    tableDensity?: TableDensity;
     children: React.ReactNode;
 }) => {
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
@@ -104,7 +108,7 @@ export const TableSessionContextProvider = ({
     }, [tableDescriptor.triggerBulkEdit])
 
     return (
-        <TableSessionContext.Provider value={{ activeRowId, activeCutRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, setActiveRowId, setActiveCutRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
+        <TableSessionContext.Provider value={{ activeRowId, activeCutRowId, recordType, exports, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, allowTaskPrioritisation, pricingType, tableDensity, setActiveRowId, setActiveCutRowId, setHistoryId, setIsOpenHistoryModal, onBulkEditSubmit }}>
             {children}
             {isOpenHistoryModal && historyId != "" &&
                 <HistoryModal
