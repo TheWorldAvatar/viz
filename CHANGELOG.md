@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.93.1
+
+### Changes
+
+- Allowed conditional formatting in Planner mode - it uses the same conditional formating presets as the outstanding tasks
+- Allowed users to cancel an ongoing cut-and-paste operation by pressing the Escape key, resetting the operation without making changes
+
 ## 5.93.0
 
 ### Changes
