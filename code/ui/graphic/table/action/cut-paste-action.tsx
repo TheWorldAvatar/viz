@@ -66,13 +66,14 @@ export default function CutPasteAction(
         leftIcon={Scissors}
         size="icon"
         variant={activeCutRowId == props.id ? "active" : "ghost"}
-        disabled={props.disabled || !!activeCutRowId}
+        disabled={props.disabled}
         onClick={() => {
-          setActiveCutRowId(props.id);
+          // Clicking the active cut row again cancels the cut
+          setActiveCutRowId(activeCutRowId == props.id ? null : props.id);
         }}
-        tooltipText={dict.action.cut}
+        tooltipText={activeCutRowId == props.id ? dict.action.cancel : dict.action.cut}
         tooltipDisableHoverablePopup
-        aria-label={`${dict.action.cut}, ${props.id}`}
+        aria-label={`${activeCutRowId == props.id ? dict.action.cancel : dict.action.cut}, ${props.id}`}
       />}
       {(activeCutRowId && activeCutRowId != props.id) && <PopoverActionButton
         leftIcon={ClipboardPaste}
