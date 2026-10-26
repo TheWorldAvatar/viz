@@ -1,8 +1,10 @@
 import Button from "@/ui/interaction/button";
 
 import { useSortable } from "@dnd-kit/sortable";
+import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
+import { TableDensityMap } from "@/types/table";
 import { GripVertical } from "lucide-react";
 
 interface DragActionHandleProps {
@@ -20,12 +22,13 @@ export default function DragActionHandle(
   props: Readonly<DragActionHandleProps>
 ) {
   const dict: Dictionary = useDictionary();
+  const { tableDensity } = useTableSession();
   const { attributes, listeners } = useSortable({ id: props.id });
 
   return (
     <Button
       leftIcon={GripVertical}
-      size="icon"
+      size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon"}
       variant="ghost"
       disabled={props.disabled}
       {...attributes}
