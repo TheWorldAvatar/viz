@@ -88,7 +88,11 @@ export function useTable(
 
   const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, saveTaskOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
-  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(lifecycleStage == LifecycleStageMap.GENERAL ? entityType : lifecycleStage);
+  // Planner shares the conditional format presets of the outstanding tasks
+  const conditionalFormatResource: string = lifecycleStage == LifecycleStageMap.GENERAL ? entityType
+    : lifecycleStage == LifecycleStageMap.PLANNER ? LifecycleStageMap.OUTSTANDING
+      : lifecycleStage;
+  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(conditionalFormatResource);
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,

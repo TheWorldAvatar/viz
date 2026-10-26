@@ -6,6 +6,7 @@ import { Dictionary } from "@/types/dictionary";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { CircleChevronDown, CircleChevronUp, ClipboardPaste, Scissors } from "lucide-react";
 import { FieldValues } from "react-hook-form";
+import { useEffect } from "react";
 
 interface CutPasteActionProps {
   id: string;
@@ -45,19 +46,34 @@ export default function CutPasteAction(
     setActiveCutRowId(null);
   }
 
+  // Handle Escape key to cancel cut action
+  useEffect(() => {
+    if (activeCutRowId !== props.id) {
+      return;
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveCutRowId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [activeCutRowId, props.id, setActiveCutRowId]);
+
   return (
     <>
       {(!activeCutRowId || (activeCutRowId && activeCutRowId == props.id)) && <Button
         leftIcon={Scissors}
         size="icon"
         variant={activeCutRowId == props.id ? "active" : "ghost"}
-        disabled={props.disabled || !!activeCutRowId}
+        disabled={props.disabled}
         onClick={() => {
-          setActiveCutRowId(props.id);
+          // Clicking the active cut row again cancels the cut
+          setActiveCutRowId(activeCutRowId == props.id ? null : props.id);
         }}
-        tooltipText={dict.action.cut}
+        tooltipText={activeCutRowId == props.id ? dict.action.cancel : dict.action.cut}
         tooltipDisableHoverablePopup
-        aria-label={`${dict.action.cut}, ${props.id}`}
+        aria-label={`${activeCutRowId == props.id ? dict.action.cancel : dict.action.cut}, ${props.id}`}
       />}
       {(activeCutRowId && activeCutRowId != props.id) && <PopoverActionButton
         leftIcon={ClipboardPaste}
