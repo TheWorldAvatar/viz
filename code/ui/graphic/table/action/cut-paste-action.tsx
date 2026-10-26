@@ -6,6 +6,7 @@ import { Dictionary } from "@/types/dictionary";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { CircleChevronDown, CircleChevronUp, ClipboardPaste, Scissors } from "lucide-react";
 import { FieldValues } from "react-hook-form";
+import { useEffect } from "react";
 
 interface CutPasteActionProps {
   id: string;
@@ -44,6 +45,20 @@ export default function CutPasteAction(
     tableDescriptor.setData(updatedRows);
     setActiveCutRowId(null);
   }
+
+  // Handle Escape key to cancel cut action
+  useEffect(() => {
+    if (activeCutRowId !== props.id) {
+      return;
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveCutRowId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [activeCutRowId, props.id, setActiveCutRowId]);
 
   return (
     <>
