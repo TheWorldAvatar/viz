@@ -8,6 +8,7 @@ import { interpolate } from "@/utils/client-utils";
 import { useState } from "react";
 import { getInitialFilters } from "../registry/registry-table-utils";
 import { Filter, FunnelX, Search } from "lucide-react";
+import Checkbox from "@/ui/interaction/input/checkbox";
 
 interface NumericColumnFilterProps {
   label: string;
@@ -32,6 +33,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   const hasBetweenComparisonOperator: boolean = initialFilterState?.length > 2;
   const [error, setError] = useState<string | null>(null);
 
+  const [isOptional, setIsOptional] = useState<boolean>(props.currentVal.includes("null"));
   const [value1, setValue1] = useState<string | null>(initialFilterState?.length ? initialFilterState[1] : null);
   const [value2, setValue2] = useState<string | null>(hasBetweenComparisonOperator ? initialFilterState[2] : null);
 
@@ -63,7 +65,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   ]
 
   const handleFilter = (): void => {
-    if (!hasFirstValue) return;
     setError(null);
     const queryParams: string[] = [];
 
@@ -84,8 +85,12 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
       queryParams.push(`${upperOp}${value2}`);
 
       // All other comparisons should only contain one param
-    } else {
+    } else if (hasFirstValue) {
       queryParams.push(`${selectedOperator}${value1}`);
+    }
+    // Add optional null if required
+    if (isOptional) {
+      queryParams.push("null");
     }
 
     props.onSubmission(queryParams);
@@ -125,7 +130,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             handleFilter();
           }}
           tooltipText={dict.action.applyFilter}
-          disabled={(!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)) || props.disabled}
+          disabled={(!isOptional && !hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)) || props.disabled}
           aria-label={interpolate(dict.action.filterBy, props.label)}
         />
         <Button
@@ -202,6 +207,15 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           </div>
         </>
       )}
+      <Checkbox
+        label={dict.form.includeBlanks}
+        aria-label={dict.form.includeBlanks}
+        className="cursor-pointer"
+        checked={isOptional}
+        handleChange={(checked) => {
+          setIsOptional(checked);
+        }}
+      />
     </div>
   );
 }
