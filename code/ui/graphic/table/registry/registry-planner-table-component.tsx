@@ -20,6 +20,7 @@ import { DateRange } from "react-day-picker";
 import ColumnToggle from "../action/column-toggle";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
+import ConditionalFormatPresetSelector from "../action/conditional-format-preset-selector";
 
 interface RegistryPlannerTableComponentProps {
   entityType: string;
@@ -79,7 +80,7 @@ export default function RegistryPlannerTableComponent(
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">
       <div className="flex flex-wrap items-center gap-1 py-2">
-        <div className="flex items-center gap-2 mr-auto">
+        <div className="flex items-end gap-2 mr-auto">
           <ReturnButton
             leftIcon={ArrowLeft}
             size="icon"
@@ -122,6 +123,11 @@ export default function RegistryPlannerTableComponent(
             tooltipText={dict.action.bulkAssign}
             aria-label={dict.action.bulkAssign}
             variant="outline"
+          />
+          <ConditionalFormatPresetSelector
+            conditionalFormatPresets={tableDescriptor.conditionalFormatPresets}
+            currentConditionalFormatPreset={tableDescriptor.currentConditionalFormatPreset}
+            updateCurrentConditionalFormatPreset={tableDescriptor.updateCurrentConditionalFormatPreset}
           />
           <Button
             size="icon"
