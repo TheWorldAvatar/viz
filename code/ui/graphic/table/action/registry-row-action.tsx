@@ -128,19 +128,22 @@ export default function RegistryRowAction(
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
 
-  const handleClickAssign = async (): Promise<void> => {
+  const savePlannerOrder = async (): Promise<void> => {
     if (props.lifecycleStage === LifecycleStageMap.PLANNER && Object.keys(tableDescriptor.dirtyTasks).length > 0) {
-      startLoading();
-      try {
-        if (!await tableDescriptor.saveTaskOrder()) {
-          return;
-        }
-      } finally {
-        stopLoading();
-      }
+      await tableDescriptor.saveTaskOrder();
     }
+  };
+
+  const handleClickAssign = async (): Promise<void> => {
+    await savePlannerOrder();
     handleClickRowAction();
     navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${recordId}`);
+  };
+
+  const handleClickReschedule = async (): Promise<void> => {
+    await savePlannerOrder();
+    handleClickRowAction();
+    navigateToDrawer(Routes.REGISTRY_TASK_RESCHEDULE, recordId);
   };
 
   const submitPendingActions = async (
@@ -330,10 +333,7 @@ export default function RegistryRowAction(
                     icon={Clock}
                     disabled={isLoading}
                     label={dict.action.reschedule}
-                    onClick={() => {
-                      handleClickRowAction();
-                      navigateToDrawer(Routes.REGISTRY_TASK_RESCHEDULE, recordId);
-                    }}
+                    onClick={handleClickReschedule}
                   />
                 )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, true) && (
