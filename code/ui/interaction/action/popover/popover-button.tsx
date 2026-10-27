@@ -34,7 +34,7 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param onClose Optional actions to perform on close.
  * @param {Placement} placement Optional position of popover.
  * @param {boolean} draggable Optional flag to render a drag handle on the bottom sheet, allowing the sheet to be dismissed by dragging it past the bottom.
- * @param {boolean} bottomSheet Optional flag to force the bottom-sheet presentation on larger screens; mobile always renders as a sheet.
+ * @param {boolean} bottomSheet Optional flag to force the bottom-sheet presentation. Defaults to a sheet on mobile only.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {string} tooltipSide Optional side of the button to show the tooltip on: "top", "bottom", "left" or "right".
@@ -67,7 +67,7 @@ export default function PopoverActionButton({
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
   const screenType: ScreenType = useScreenType();
-  const isSheet: boolean = screenType == ScreenTypeMap.MOBILE || bottomSheet;
+  const isSheet: boolean = bottomSheet ?? screenType == ScreenTypeMap.MOBILE;
   const isDraggable: boolean = draggable && isSheet;
 
   const popover = usePopover(placement, isOpen, rest.disabled, setIsOpen, onClose);

@@ -1,10 +1,9 @@
 import useFormSession from "@/hooks/form/useFormSession";
 import { FieldError } from "react-hook-form";
 import { FormTypeMap, OntologyConcept, PropertyShape, VALUE_KEY } from "@/types/form";
-import Tooltip from "@/ui/interaction/tooltip/tooltip";
+import InfoHint from "@/ui/interaction/tooltip/info-hint";
 import FormErrorComponent from "@/ui/text/error/form-error";
 import { parseWordsForLabels } from "@/utils/client-utils";
-import { Info } from "lucide-react";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -48,18 +47,20 @@ export default function FormInputContainer(
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-wrap items-center justify-between">
-        <label className={labelClassNames} htmlFor={props.field.fieldId}>
-          <span className="text-lg font-semibold flex gap-1.5">
-            {parseWordsForLabels(label)}
-            {props.error && "*"}
-            <Tooltip text={description} side="right">
-              <Info className="size-5.5" aria-hidden />
-            </Tooltip>
-          </span>
+        <div className={labelClassNames}>
+          <div className="flex items-center gap-1.5">
+            <label className="text-lg font-semibold" htmlFor={props.field.fieldId}>
+              {parseWordsForLabels(label)}
+              {props.error && "*"}
+            </label>
+            <InfoHint text={description} />
+          </div>
           {props.formatLabel && (
-            <span className="text-muted-foreground text-sm">{props.formatLabel}</span>
+            <label className="block text-muted-foreground text-sm" htmlFor={props.field.fieldId}>
+              {props.formatLabel}
+            </label>
           )}
-        </label>
+        </div>
       </div>
       <div>{props.children}</div>
       <FormErrorComponent error={props.error} />
