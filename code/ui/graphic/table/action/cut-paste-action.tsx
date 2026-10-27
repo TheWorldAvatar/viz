@@ -1,5 +1,6 @@
 import Button from "@/ui/interaction/button";
 
+import useTableDensity from "@/hooks/table/useTableDensity";
 import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
@@ -24,6 +25,7 @@ export default function CutPasteAction(
 ) {
   const dict: Dictionary = useDictionary();
   const { activeCutRowId, tableDescriptor, setActiveCutRowId } = useTableSession();
+  const { iconButtonSize } = useTableDensity();
 
   const onPaste = (insertBelow: boolean) => {
     tableDescriptor.table.resetRowSelection();
@@ -64,7 +66,7 @@ export default function CutPasteAction(
     <>
       {(!activeCutRowId || (activeCutRowId && activeCutRowId == props.id)) && <Button
         leftIcon={Scissors}
-        size="icon"
+        size={iconButtonSize}
         variant={activeCutRowId == props.id ? "active" : "ghost"}
         disabled={props.disabled}
         onClick={() => {
@@ -78,7 +80,7 @@ export default function CutPasteAction(
       {(activeCutRowId && activeCutRowId != props.id) && <PopoverActionButton
         leftIcon={ClipboardPaste}
         placement="right"
-        size="icon"
+        size={iconButtonSize}
         variant={"ghost"}
         disabled={props.disabled}
         tooltipText={dict.action.paste}

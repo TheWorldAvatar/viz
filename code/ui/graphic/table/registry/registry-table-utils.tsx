@@ -9,7 +9,7 @@ import {
 import { TableColumnOption } from "@/types/settings";
 import { ColFilterValues, ComparisonOperatorMap, ConditionalFormatField, ConditionalFormatFieldOperator, ConditionalFormatFieldOperatorMap, ConditionalFormatSetting } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
-import StatusComponent from "@/ui/text/status/status";
+import StatusCell from "../cell/status-cell";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
 import { FLAG_EMOJI, FLAG_KEY, LEXORANK_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
@@ -233,7 +233,7 @@ export function parseColumnsMetadata(
         if (col.value === "scheduleType") {
           value = dict.form[value];
         } else if (col.value === "status") {
-          return <StatusComponent status={value} />;
+          return <StatusCell status={value} />;
         }
 
         return (

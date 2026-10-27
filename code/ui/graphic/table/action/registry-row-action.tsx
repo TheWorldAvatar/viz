@@ -24,6 +24,7 @@ import ReviewBillableRowAction from "./registry/review-billable-row-action";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
 import { Ban, BanknoteX, Check, CircleDollarSign, CircleX, ClipboardList, Clock, EllipsisVertical, ExternalLink, Flag, Pencil, Trash2, TriangleAlert, Undo2, CircleCheckBig, HandCoins, Star, StarOff } from "lucide-react";
+import useTableDensity from "@/hooks/table/useTableDensity";
 
 
 interface RegistryRowActionProps {
@@ -50,6 +51,7 @@ export default function RegistryRowAction(
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
   const { addEntity, allowTaskPrioritisation, exportOptions, tableDescriptor } = useTableSession();
+  const { iconButtonSize } = useTableDensity();
 
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -229,7 +231,7 @@ export default function RegistryRowAction(
         variant="ghost"
         tooltipText={dict.title.actions}
         tooltipDisableHoverablePopup
-        size="icon"
+        size={iconButtonSize}
         isOpen={isActionMenuOpen}
         setIsOpen={setIsActionMenuOpen}
         aria-label={`${dict.title.actions}, ${props.row.id}`}

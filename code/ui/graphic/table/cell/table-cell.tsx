@@ -1,4 +1,5 @@
 import React from "react";
+import useTableDensity from "@/hooks/table/useTableDensity";
 import { TableCellTag, TableCellTagMap } from "@/types/table";
 
 export interface TableCellProps {
@@ -21,6 +22,7 @@ export interface TableCellProps {
  * @param {TableCellTag} as The HTML element to render, either "td" or "th". Defaults to "td".
  */
 export default function TableCell(props: Readonly<TableCellProps>) {
+  const { cellPadding, cellTextSize, rowMinHeight } = useTableDensity();
   const CellTag: TableCellTag = props.as ?? TableCellTagMap.TD;
   return (
     <CellTag
@@ -30,10 +32,10 @@ export default function TableCell(props: Readonly<TableCellProps>) {
         ...props.style,
       }}
       onClick={props.onClick}
-      className={`border-r border-border border-b p-1.5 px-2 text-lg text-left  font-normal last:border-r-0 ${props.className ?? ""
+      className={`border-r border-border border-b ${cellPadding} ${cellTextSize} text-left font-normal last:border-r-0 ${props.className ?? ""
         }`}
     >
-      <div className="grid min-h-10 items-center">{props.children}</div>
+      <div className={`grid ${rowMinHeight} items-center`}>{props.children}</div>
     </CellTag>
   );
 }
