@@ -22,7 +22,6 @@ export interface RowActionButtonProps {
 export default function RowActionButton(props: Readonly<RowActionButtonProps>) {
   return <Button
     variant="ghost"
-    size="md"
     className="w-full justify-start"
     leftIcon={props.icon}
     label={props.label}

@@ -39,7 +39,6 @@ export default function FileMenu(props: Readonly<FileMenuProps>) {
                             <ExternalRedirectButton
                                 label={file.name}
                                 variant="link"
-                                size="md"
                                 className="block! text-left! truncate! max-w-50 "
                                 url={`${props.directory.url}/${file.name}`}
                             />

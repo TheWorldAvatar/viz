@@ -33,12 +33,12 @@ import { FormTemplate } from "@/ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "@/ui/text/status/status";
 import { compareDates, formatDateValue, getAfterDelimiter, interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { BULK_IDENTIFIER } from "@/utils/constants";
+import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
-import PopoverActionButton from "../action/popover/popover-button";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
-import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
-import { Check, CircleX, ClipboardList, EllipsisVertical, RefreshCw, Save, Send, SendHorizontal, TriangleAlert, X } from "lucide-react";
+import { Check, CircleX, ClipboardList, EllipsisVertical, RefreshCw, Save, SendHorizontal, TriangleAlert, X } from "lucide-react";
+import PopoverActionButton from "../action/popover/popover-button";
 
 interface TaskFormContainerComponentProps {
   id: string;
@@ -93,7 +93,7 @@ export function TaskFormContainerComponent(
             type="button"
             tooltipText={dict.action.close}
             aria-label={dict.action.close}
-            className="rounded-full!"
+            shape="pill"
             onClick={() => router.back()}
           />
         </div>
@@ -333,7 +333,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    navigateToDrawer(Routes.REGISTRY_TASK, action, task?.id);
+    navigateToDrawer(Routes.REGISTRY_TASK, `${action}?id=${task?.id}`);
   };
 
   return (
@@ -437,7 +437,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 rightIcon={EllipsisVertical}
                 variant="outline"
                 label={dict.title.actions}
-                className="mr-2"
                 isOpen={isActionMenuOpen}
                 setIsOpen={setIsActionMenuOpen}
               >
@@ -448,7 +447,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon={Check}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.complete}
                       onClick={() => navigateToTaskAction("complete")}
@@ -462,7 +460,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon={ClipboardList}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.dispatch}
                       onClick={() => navigateToTaskAction("dispatch")}
@@ -477,7 +474,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     <Button
                       variant="secondary"
                       leftIcon={CircleX}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.cancel}
                       onClick={() => navigateToTaskAction("cancel")}
@@ -492,10 +488,24 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     <Button
                       variant="secondary"
                       leftIcon={TriangleAlert}
-                      size="md"
                       className="w-full justify-start"
                       label={dict.action.report}
                       onClick={() => navigateToTaskAction("report")}
+                    />
+                  )}
+                {/* Save button - shown for complete task type */}
+                {isPermitted("saveTask") &&
+                  props.formType === FormTypeMap.COMPLETE && (
+                    <Button
+                      leftIcon={Save}
+                      variant="secondary"
+                      className="self-start"
+                      disabled={isLoading}
+                      label={dict.action.save}
+                      onClick={() => {
+                        setIsSubmitting(true);
+                        setIsSaving(true);
+                      }}
                     />
                   )}
                 {/* Submit and Duplicate button - shown for complete task type */}
@@ -510,20 +520,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                       onClick={() => {
                         setIsSubmitting(true);
                         setIsDuplicate(true);
-                      }}
-                    />
-                  )}
-                {/* Save button - shown for complete task type */}
-                {isPermitted("saveTask") &&
-                  props.formType === FormTypeMap.COMPLETE && (
-                    <Button
-                      leftIcon={Save}
-                      variant="secondary"
-                      disabled={isLoading}
-                      label={dict.action.save}
-                      onClick={() => {
-                        setIsSubmitting(true);
-                        setIsSaving(true);
                       }}
                     />
                   )}

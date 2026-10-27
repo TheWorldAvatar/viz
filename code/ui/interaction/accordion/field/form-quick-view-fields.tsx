@@ -31,7 +31,7 @@ export default function FormQuickViewFields(
                 </h4>
               )}
               {Object.entries(fields).map(([field, valueArray], fieldIndex) => {
-                if (valueArray?.[0].type === "mapUri") {
+                if (valueArray?.[0]?.type === "mapUri") {
                   return valueArray.map((value, arrayIndex) => (
                     <FormQuickViewMap
                       key={groupIndex + fieldIndex + arrayIndex}
@@ -41,13 +41,14 @@ export default function FormQuickViewFields(
                   ));
                 }
 
-                if (valueArray?.[0].type === "uri") {
+                if (valueArray?.[0]?.type === "uri") {
                   return valueArray.map((value, arrayIndex) => (
                     <FormQuickViewExpandable
                       key={groupIndex + fieldIndex + arrayIndex}
                       entity={value.value}
                       entityType={field}
                       nestedLevel={props.nestedLevel + 1}
+                      isOntologyConcept={value.dataType === "concept"}
                     />
                   ));
                 }

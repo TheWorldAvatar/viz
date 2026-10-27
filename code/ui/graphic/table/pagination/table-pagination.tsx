@@ -2,6 +2,7 @@ import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 
 import { Dictionary } from "@/types/dictionary";
+import { LifecycleStageMap } from "@/types/form";
 import Button from "@/ui/interaction/button";
 import { interpolate } from "@/utils/client-utils";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
@@ -13,8 +14,8 @@ const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
  */
 export default function TablePagination() {
   const dict: Dictionary = useDictionary();
-  const { tableDescriptor, tableScrollDescriptor } = useTableSession();
-
+  const { lifecycleStage, tableDescriptor, tableScrollDescriptor } = useTableSession();
+  const isPlanner: boolean = lifecycleStage == LifecycleStageMap.PLANNER;
   const numberOfSelectedRows: number = tableDescriptor.table.getSelectedRowModel().rows.length;
   const lastPageIndex: number = Math.ceil(tableDescriptor.table.getRowCount() / tableDescriptor.pagination.pageSize);
   return (
@@ -31,7 +32,7 @@ export default function TablePagination() {
             <label htmlFor="rows-per-page">{dict.message.rowsPerPage}</label>
             <select
               id="rows-per-page"
-              className="px-2 py-1.5 border border-border rounded bg-background"
+              className={`px-2 py-1.5 border border-border rounded bg-background disabled:bg-muted-100 disabled:cursor-not-allowed disabled:opacity-75`}
               value={tableDescriptor.pagination.pageSize}
               onChange={(e) => {
                 tableDescriptor.table.setPageSize(Number(e.target.value));
@@ -39,8 +40,9 @@ export default function TablePagination() {
                 tableScrollDescriptor.scrollToTop();
                 tableDescriptor.resetOrder();
               }}
+              disabled={isPlanner}
             >
-              {PAGE_SIZE_OPTIONS.map((pageSize) => (
+              {isPlanner ? <option>100</option> : PAGE_SIZE_OPTIONS.map((pageSize) => (
                 <option
                   className="bg-background"
                   key={pageSize}

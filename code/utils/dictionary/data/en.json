@@ -32,6 +32,8 @@
     "filterBy": "Filter by {replace}",
     "flag": "Flag overdue",
     "flagResolution": "Resolve flag",
+    "priority": "Prioritise",
+    "priorityResolution": "Deprioritise",
     "search": "Search",
     "showAll": "Show all",
     "show": "Show",
@@ -42,6 +44,10 @@
     "viewTasks": "view tasks",
     "date": "Date",
     "update": "Update",
+    "cut": "Cut",
+    "paste": "Paste",
+    "insertAbove": "Insert above",
+    "insertBelow": "Insert below",
     "clear": "Clear",
     "clearSort": "Clear sort",
     "resetOrder": "Reset rows",
@@ -176,6 +182,7 @@
     "rescheduleInstruction": "Request a change to a previously scheduled service on {replace}",
     "offlineMode": "Offline mode",
     "offlineQueued": "Saved offline. Your changes will sync automatically when you reconnect.",
+    "syncSuccess": "Your changes have sync successfully!",
     "genericError": "Something went wrong. Please try again.",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
@@ -265,7 +272,8 @@
       "registry": "Open registry",
       "help": "Open help page",
       "landingRedirect": "Click to open the '{replace}' page",
-      "fileUpload": "Click to upload a file"
+      "fileUpload": "Click to upload a file",
+      "dailyPlanner": "Daily planner"
     }
   },
   "title": {
@@ -274,7 +282,9 @@
     "allCol": "Show All",
     "amount": "Amount",
     "blank": "(blank)",
+    "conditionalFormat": "Conditional Formatting",
     "customiseCol": "Show/Hide Columns",
+    "default": "Default",
     "date": "Date",
     "description": "Description",
     "eventId": "Event ID",

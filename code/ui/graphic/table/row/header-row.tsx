@@ -47,6 +47,7 @@ interface HeaderRowProps {
 export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isOpeningBulkDispatch, setIsOpeningBulkDispatch] = useState<boolean>(false);
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
@@ -104,12 +105,38 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
     }
   };
 
+  const handleBulkDispatch = async (): Promise<void> => {
+    const tasks: RegistryTaskOption[] = tableDescriptor.table.getSelectedRowModel().rows.map((row) => ({
+      id: getId(row.original.event_id),
+      contract: row.original.id,
+      date: row.original.date,
+    }));
+
+    if (lifecycleStage === LifecycleStageMap.PLANNER && Object.keys(tableDescriptor.dirtyTasks).length > 0) {
+      setIsOpeningBulkDispatch(true);
+      try {
+        if (!await tableDescriptor.saveTaskOrder()) {
+          return;
+        }
+      } finally {
+        setIsOpeningBulkDispatch(false);
+      }
+    }
+
+    setIsActionMenuOpen(false);
+    browserStorageManager.clear();
+    browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
+    resetFormSession();
+    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${BULK_IDENTIFIER}`);
+  };
+
   return (
     <tr className="border-b border-border text-left bg-background text-foreground">
       {tableDescriptor.table.getRowModel().rows.length > 0 && (
         <TableCell className="w-1/10 sticky left-0 z-sticky-cell bg-background">
           <div className="flex justify-end items-center rounded-md gap-2">
-            {numberOfSelectedRows > 0 && (
+            {(numberOfSelectedRows > 0 &&
+              (lifecycleStage != LifecycleStageMap.PLANNER || !tableDescriptor.isBulkDispatchEdit)) && (
               <PopoverActionButton
                 placement="bottom-start"
                 leftIcon={isActionMenuOpen ? ChevronUp : ChevronDown}
@@ -120,7 +147,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                 setIsOpen={setIsActionMenuOpen}
                 aria-label={dict.title.bulkActions}
               >
-                <div className="flex flex-col space-y-3">
+                <div className="flex flex-col items-start space-y-3">
                   {
                     tableDescriptor.isBulkDispatchEdit && <Button
                       leftIcon={ClipboardPlus}
@@ -155,30 +182,19 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       )}
                     </>
                   )}
-                  {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED)
+                  {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED ||
+                    (lifecycleStage === LifecycleStageMap.PLANNER && isPermitted("operation")))
                     && !tableDescriptor.isBulkDispatchEdit && (
                       <Button
                         leftIcon={ClipboardPlus}
                         label={dict.action.dispatch}
                         variant="ghost"
-                        disabled={isLoading}
-                        onClick={() => {
-                          const tasks: RegistryTaskOption[] = [];
-                          tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
-                            tasks.push({
-                              id: getId(row.original.event_id),
-                              contract: row.original.id,
-                              date: row.original.date,
-                            }))
-                          setIsActionMenuOpen(false);
-                          browserStorageManager.clear();
-                          browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
-                          resetFormSession();
-                          navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${BULK_IDENTIFIER}`);
-                        }}
+                        disabled={isLoading || isOpeningBulkDispatch}
+                        onClick={handleBulkDispatch}
                       />
                     )}
-                  {!tableDescriptor.isBulkDispatchEdit && bulkExportOptions.length > 0 && (
+                  {lifecycleStage != LifecycleStageMap.PLANNER &&
+                    !tableDescriptor.isBulkDispatchEdit && bulkExportOptions.length > 0 && (
                     <FileDownloadButtons
                       targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
                         getRowRecordId(row.original))}
@@ -188,7 +204,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       onComplete={() => setIsActionMenuOpen(false)}
                     />
                   )}
-                  {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
+                  {lifecycleStage != LifecycleStageMap.PLANNER &&
+                    isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
                     <DraftTemplateButton
                       rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
                       recordType={recordType}
@@ -232,9 +249,9 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             selectedDate={props.selectedDate}
             filters={tableDescriptor.filters}
             isEditable={tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
-            disableSort={!header.column.getCanSort() || colDef.dataType == "array" || colDef.dataType == FLAG_KEY}
-            disableFilter={!header.column.getCanFilter() || colDef.dataType == "array" || colDef.dataType == FLAG_KEY ||
-              (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
+            disableSort={!header.column.getCanSort() || colDef.dataType == "array" || colDef.dataType == "virtual" || colDef.dataType == FLAG_KEY || lifecycleStage == LifecycleStageMap.PLANNER}
+            disableFilter={!header.column.getCanFilter() || colDef.dataType == "array" || colDef.dataType == "virtual" || colDef.dataType == FLAG_KEY ||
+              (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType) || lifecycleStage == LifecycleStageMap.PLANNER}
           />
         );
       })}

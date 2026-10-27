@@ -3,7 +3,6 @@ import { useState } from "react";
 import { DropdownOption, DropdownProps } from "react-day-picker";
 import { Dictionary } from "@/types/dictionary";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
-import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { YEARS_PER_PAGE } from "@/utils/constants";
 import Button from "../../button";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -34,7 +33,6 @@ export default function CustomYearsDropdown(props: DropdownProps) {
             placement="bottom-start"
             rightIcon={ChevronDown}
             size="sm"
-            className="text-sm"
             label={String(selectedYear)}
             aria-label={`${dict.form.year}, ${selectedYear}`}
             isOpen={isOpen}
@@ -46,24 +44,22 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                     {pageStart} - {pageStart + YEARS_PER_PAGE - 1}
                 </span>
                 <div className="flex gap-1">
-                    <Tooltip text={dict.action.previousYears} placement="top">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            leftIcon={ChevronUp}
-                            onClick={() => setPageStart(pageStart - YEARS_PER_PAGE)}
-                            aria-label={dict.action.previousYears}
-                        />
-                    </Tooltip>
-                    <Tooltip text={dict.action.nextYears} placement="top">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            leftIcon={ChevronDown}
-                            onClick={() => setPageStart(pageStart + YEARS_PER_PAGE)}
-                            aria-label={dict.action.nextYears}
-                        />
-                    </Tooltip>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        leftIcon={ChevronUp}
+                        onClick={() => setPageStart(pageStart - YEARS_PER_PAGE)}
+                        aria-label={dict.action.previousYears}
+                        tooltipText={dict.action.previousYears}
+                    />
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        leftIcon={ChevronDown}
+                        onClick={() => setPageStart(pageStart + YEARS_PER_PAGE)}
+                        aria-label={dict.action.nextYears}
+                        tooltipText={dict.action.nextYears}
+                    />
                 </div>
             </div>
             <div className="grid grid-cols-4 gap-2">
@@ -80,7 +76,7 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                             variant={isSelected ? "info" : "ghost"}
                             disabled={isDisabled}
                             onClick={() => selectYear(year)}
-                            className={`w-full min-h-12 min-w-12 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                            className={`w-full min-h-12 min-w-12 ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                         >
                             {year}
                         </Button>

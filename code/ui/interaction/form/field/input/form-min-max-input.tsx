@@ -27,7 +27,7 @@ export default function FormInputMinMaxField(
   const originalField: string = props.field.fieldId;
   const minFieldId: string = "min " + originalField;
   const maxFieldId: string = "max " + originalField;
-  const inputFieldStyles: string = "text-foreground w-full h-[1.8rem] p-5 rounded-lg border border-border bg-muted text-sm";
+  const inputFieldStyles: string = "text-foreground w-full h-11 px-4 rounded-lg border border-border bg-muted text-sm";
 
   return (
     <FormInputContainer

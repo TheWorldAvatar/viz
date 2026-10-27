@@ -20,6 +20,7 @@ export const LifecycleStageMap = {
   OUTSTANDING: "outstanding",
   SCHEDULED: "scheduled",
   CLOSED: "closed",
+  PLANNER: "planner",
   ACCOUNT: "account",
   PRICING: "pricing",
   BILLABLE: "billable",
@@ -74,8 +75,8 @@ export const RegistryStatusMap = {
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
 
-export interface useLiveFormOptionReturn  {
-    options: SelectOptionType[];
+export interface useLiveFormOptionReturn {
+  options: SelectOptionType[];
 }
 
 export interface SparqlResponseField {

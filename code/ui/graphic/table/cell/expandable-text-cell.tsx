@@ -1,3 +1,4 @@
+import useTableDensity from "@/hooks/table/useTableDensity";
 import { useDictionary } from "@/hooks/useDictionary";
 import { useEffect, useRef, useState } from "react";
 import { Dictionary } from "@/types/dictionary";
@@ -20,6 +21,7 @@ interface ExpandableTextCellProps {
  */
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const dict: Dictionary = useDictionary();
+    const { iconButtonSize } = useTableDensity();
     const textRef = useRef<HTMLDivElement>(null);
     const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -50,11 +52,11 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                             setIsExpanded(!isExpanded);
                         }}
                         variant="ghost"
-                        size="icon"
+                        size={iconButtonSize}
                         leftIcon={isExpanded ? ListChevronsDownUpIcon : ListChevronsUpDown}
                         tooltipText={isExpanded ? dict.action.showLess : dict.action.showMore}
                         aria-label={isExpanded ? dict.action.showLess : dict.action.showMore}
-                        className="text-info-foreground!"
+                        className="text-info-foreground"
                     />
                 </div>
             )}

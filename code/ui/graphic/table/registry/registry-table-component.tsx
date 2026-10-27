@@ -33,6 +33,8 @@ interface RegistryTableComponentProps {
   message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
   addEntity?: string;
+  allowTaskPrioritisation?: boolean;
+  dragSync?: boolean;
   exports: RegistryExportSettings[];
 }
 
@@ -46,6 +48,8 @@ interface RegistryTableComponentProps {
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
+ * @param {boolean} allowTaskPrioritisation Optional flag to enable the task prioritisation row action.
+ * @param {boolean} dragSync Optional flag to enable the drag sync UI.
  * @param {RegistryExportSettings[]} exports The export options available for this table.
  */
 export default function RegistryTableComponent(
@@ -146,6 +150,7 @@ export default function RegistryTableComponent(
             triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
             tableScrollDescriptor={tableScrollDescriptor}
+            dragSync={props.dragSync}
             message={dict.translate(props.message)}
           />}
       </div>
@@ -164,6 +169,7 @@ export default function RegistryTableComponent(
           accountType={props.accountType}
           tableScrollDescriptor={tableScrollDescriptor}
           addEntity={props.addEntity}
+          allowTaskPrioritisation={props.allowTaskPrioritisation}
         />
       )}
     </div>

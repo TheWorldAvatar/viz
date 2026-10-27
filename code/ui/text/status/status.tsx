@@ -3,7 +3,7 @@ import { Dictionary } from "@/types/dictionary";
 import { RegistryStatusMap } from "@/types/form";
 import { parseWordsForLabels } from "@/utils/client-utils";
 
-interface StatusComponentProps {
+export interface StatusComponentProps {
   status: string;
   size?: "sm" | "default";
 }

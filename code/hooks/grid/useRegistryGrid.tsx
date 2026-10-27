@@ -90,7 +90,7 @@ export function useRegistryGrid(
                 .every((filter) => (filter?.value as ColFilterValues[])?.values?.length == 0);
             setHasNoActiveFilters(noActiveFilters);
             if (noActiveFilters) {
-                localStorageManager.clear();
+                localStorageManager.remove(TASK_VIEWER_FILTER);
             } else {
                 localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
             }
@@ -102,7 +102,7 @@ export function useRegistryGrid(
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
-        localStorageManager.clear();
+        localStorageManager.remove(TASK_VIEWER_FILTER);
         setHasNoActiveFilters(true);
         setHasFiltersChanged(true);
         triggerRefresh();

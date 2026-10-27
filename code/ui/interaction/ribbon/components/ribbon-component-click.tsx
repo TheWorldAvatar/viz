@@ -16,7 +16,7 @@ interface RibbonComponentClickProps {
 
 export default function RibbonComponentClick(props: Readonly<RibbonComponentClickProps>) {
   return (
-    <Tooltip text={props.tooltip} placement="bottom-start">
+    <Tooltip text={props.tooltip} side="bottom" align="start">
       <div className={styles.ribbonComponent} onClick={props.action}>
         <div>
           <div className={styles.ribbonComponentInner}>

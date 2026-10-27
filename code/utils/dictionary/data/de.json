@@ -32,6 +32,8 @@
     "filterBy": "Filtern nach {replace}",
     "flag": "Flagge überfällig",
     "flagResolution": "Flag aufheben",
+    "priority": "Prioritäten setzen",
+    "priorityResolution": "Die Priorität herabsetzen",
     "search": "Suchen",
     "showAll": "Alles anzeigen",
     "show": "Zeigen",
@@ -42,6 +44,10 @@
     "viewTasks": "Aufträge anzeigen",
     "date": "Datum",
     "update": "Aktualisieren",
+    "cut": "Ausschneiden",
+    "paste": "Einfügen",
+    "insertAbove": "Oben einfügen",
+    "insertBelow": "Unten einfügen",
     "clear": "Zurücksetzen",
     "clearSort": "Sortierung löschen",
     "resetOrder": "Zeilen zurücksetzen",
@@ -176,6 +182,7 @@
     "rescheduleInstruction": "Änderung einer bereits geplanten Dienstleistung am {replace} beantragen",
     "offlineMode": "Offline-Modus",
     "offlineQueued": "Offline gespeichert. Ihre Änderungen werden automatisch synchronisiert, sobald Sie wieder eine Verbindung herstellen.",
+    "syncSuccess": "Deine Änderungen wurden erfolgreich synchronisiert!",
     "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
@@ -265,7 +272,8 @@
       "registry": "Register öffnen",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
-      "fileUpload": "Klicken Sie zum Hochladen einer Datei"
+      "fileUpload": "Klicken Sie zum Hochladen einer Datei",
+      "dailyPlanner": "Tagesplaner"
     }
   },
   "title": {
@@ -274,7 +282,9 @@
     "allCol": "Alle anzeigen",
     "amount": "Betrag",
     "blank": "(leer)",
+    "conditionalFormat": "Bedingte Formatierung",
     "customiseCol": "Spalten ein-/ausblenden",
+    "default": "Standard",
     "date": "Datum",
     "description": "Beschreibung",
     "eventId": "Ereignis ID",

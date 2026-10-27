@@ -30,7 +30,7 @@ export default function ViewAttachmentButton(
             placement="bottom-end"
             leftIcon={Paperclip}
             variant="ghost"
-            size={!!props.hideLabel ? "icon" : "md"}
+            size={!!props.hideLabel ? "icon" : "default"}
             className="w-full justify-start"
             label={!!props.hideLabel ? "" : dict.action.viewAttachment}
             isOpen={isAttachmentViewerOpen}

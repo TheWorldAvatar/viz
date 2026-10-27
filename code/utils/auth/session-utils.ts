@@ -2,7 +2,6 @@
  * Open full screen mode.
  */
 
-import { Routes } from "@/io/config/routes";
 import { HasPermissions, PermissionScheme } from "@/types/auth";
 
 const hasPermitionsInitial: HasPermissions = {
@@ -23,7 +22,6 @@ const hasPermitionsInitial: HasPermissions = {
 
 export function parsePermissions(roles: string[]): PermissionScheme {
   const permissionScheme: PermissionScheme = {
-    registryPageLink: null,
     hasPermissions: hasPermitionsInitial,
   };
   if (roles.length === 0) {
@@ -32,7 +30,6 @@ export function parsePermissions(roles: string[]): PermissionScheme {
 
   // Roles with access to only specific routes
   if (roles.includes("task-viewer")) {
-    permissionScheme.registryPageLink = Routes.REGISTRY_TASK_OUTSTANDING;
     permissionScheme.hasPermissions.registryFullAccess = false;
   }
   if (roles.includes("operations")) {

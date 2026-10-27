@@ -7,11 +7,11 @@ import {
   SparqlResponseField
 } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
-import { ColFilterValues, ComparisonOperatorMap } from "@/types/table";
+import { ColFilterValues, ComparisonOperatorMap, ConditionalFormatField, ConditionalFormatFieldOperator, ConditionalFormatFieldOperatorMap, ConditionalFormatSetting } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
-import StatusComponent from "@/ui/text/status/status";
+import StatusCell from "../cell/status-cell";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, LEXORANK_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
   ColumnDef,
   ColumnFilter,
@@ -19,6 +19,7 @@ import {
   SortingState,
   VisibilityState
 } from "@tanstack/react-table";
+import React from "react";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import ArrayTextCell from "../cell/array-text-cell";
@@ -26,6 +27,7 @@ import ArrayTextCell from "../cell/array-text-cell";
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
   dataType: string;
   stage: string;
+  getCellStyles: (value: string, currentConditionalFormatPreset: ConditionalFormatSetting) => React.CSSProperties;
 };
 
 /**
@@ -59,7 +61,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
  * @param {SortingState} sorting Current sorting state.
  * @param {ColumnDefinitionResponse[]} columns The list of columns.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState, columns: ColumnDefinitionResponse[]): FieldValues[] {
+export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState, columns: ColumnDefinitionResponse[], isPlanner: boolean): FieldValues[] {
   const data: FieldValues[] = [];
   if (instances?.length > 0) {
     instances.forEach(instance => {
@@ -67,10 +69,21 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       data.push(flatInstance);
     });
   }
-  const hasEventId: boolean = columns?.some(col => col?.value === "event_id");
-  const defaultSorting: SortingState = hasEventId
-    ? [{ id: "id", desc: false }, { id: "event_id", desc: false }]
-    : [{ id: "id", desc: false }];
+  // If this is the planner stage and every instance has a lexorank, sort by lexorank directly
+  if (isPlanner && data.every(instance => instance[LEXORANK_KEY] !== undefined && instance[LEXORANK_KEY] !== null)) {
+    return data.sort((a, b) => a[LEXORANK_KEY].localeCompare(b[LEXORANK_KEY]));
+  }
+  const defaultSorting: SortingState = [];
+  if (isPlanner) {
+    // Lexorank sorting will not have active sorting that affects it
+    // We should sort any existing lexorank if they exist
+    defaultSorting.push({ id: LEXORANK_KEY, desc: false });
+  }
+  defaultSorting.push({ id: "id", desc: false });
+  // If there is event_id
+  if (columns?.some(col => col?.value === "event_id")) {
+    defaultSorting.push({ id: "event_id", desc: false });
+  }
   // Always apply the default sorting to ensure stable sorting, even if the user has not specified any sorting
   // If sorting is specified, the default sorting is applied after the user-specified sorting
   const activeSorting: SortingState = [
@@ -153,6 +166,8 @@ export function parseColumnsMetadata(
   const results: EnhancedColumnDef<FieldValues>[] = [];
   // Create column definitions based on available columns
   for (const col of columns) {
+    // The high priority state is displayed through the row styling rather than as a column
+    if (col.value == PRIORITY_KEY || col.value == LEXORANK_KEY) continue;
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
     const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
     const isDateColumn: boolean = col.datatype === XSD_DATE;
@@ -169,13 +184,26 @@ export function parseColumnsMetadata(
     const columnOption: TableColumnOption | undefined = columnOptions?.find((item) => item.name === col.value);
     const configuredWidth: number | undefined = columnOption?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
-
     results.push({
       id: col.value,
       accessorKey: col.value,
       header: title,
-      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
+      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" || col.type == "virtual" ? col.type : col.datatype,
       stage: col.stage,
+      getCellStyles: (value: string, currentConditionalFormatPreset: ConditionalFormatSetting) => {
+        const styles: React.CSSProperties = {};
+        if (currentConditionalFormatPreset) {
+          const activeCondition: ConditionalFormatField = (currentConditionalFormatPreset[col.value] as ConditionalFormatField[])
+            ?.find(colCondition => matchesCondition(colCondition.operator, colCondition.value, value));
+          if (activeCondition) {
+            styles.background = activeCondition.background;
+            if (activeCondition.text) {
+              styles.color = activeCondition.text;
+            }
+          }
+        }
+        return styles;
+      },
       cell: ({ getValue }) => {
         if (col.value == FLAG_KEY) {
           if (getValue() == "true") {
@@ -205,7 +233,7 @@ export function parseColumnsMetadata(
         if (col.value === "scheduleType") {
           value = dict.form[value];
         } else if (col.value === "status") {
-          return <StatusComponent status={value} />;
+          return <StatusCell status={value} />;
         }
 
         return (
@@ -242,6 +270,43 @@ export function parseColumnsMetadata(
       const indexB: number = configuredColumnMap.get(accessorKeyB)?.order ?? Infinity;
       return indexA - indexB;
     })
+}
+
+/**
+ * Checks if the cell value matches the condition. String operators are case sensitive,
+ * and number operators never match a value that is not a number.
+ *
+ * @param {ConditionalFormatFieldOperator} operatorCondition The operator of the condition.
+ * @param {string} valueCondition The value matching the condition.
+ * @param {string | null} value The normalised cell value.
+ */
+function matchesCondition(operatorCondition: ConditionalFormatFieldOperator, valueCondition: string, value: string | null): boolean {
+  switch (operatorCondition) {
+    case ConditionalFormatFieldOperatorMap.EMPTY:
+      return !value;
+    case ConditionalFormatFieldOperatorMap.NOT_EMPTY:
+      return !!value;
+    case ConditionalFormatFieldOperatorMap.EQUALS:
+      return value === valueCondition;
+    case ConditionalFormatFieldOperatorMap.NOT_EQUALS:
+      return value !== valueCondition;
+    case ConditionalFormatFieldOperatorMap.CONTAINS:
+      return !!value && value.includes(valueCondition);
+  }
+  const numericValue: number = !value || value.trim() === "" ? Number.NaN : Number(value);
+  if (Number.isNaN(numericValue)) return false;
+  switch (operatorCondition) {
+    case ConditionalFormatFieldOperatorMap.GT:
+      return numericValue > Number(valueCondition);
+    case ConditionalFormatFieldOperatorMap.GTE:
+      return numericValue >= Number(valueCondition);
+    case ConditionalFormatFieldOperatorMap.LT:
+      return numericValue < Number(valueCondition);
+    case ConditionalFormatFieldOperatorMap.LTE:
+      return numericValue <= Number(valueCondition);
+    default:
+      return false;
+  }
 }
 
 /**

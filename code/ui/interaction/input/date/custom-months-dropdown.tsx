@@ -29,7 +29,6 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
             placement="bottom-start"
             rightIcon={ChevronDown}
             size="sm"
-            className="text-sm"
             label={selectedLabel}
             aria-label={`${dict.form.month}, ${selectedLabel}`}
             isOpen={isOpen}
@@ -48,7 +47,7 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
                             variant={isSelected ? "info" : "ghost"}
                             disabled={isDisabled}
                             onClick={() => selectMonth(Number(option.value))}
-                            className={`w-full min-w-12 min-h-12 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                            className={`w-full min-w-12 min-h-12 ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                         >
                             {option.label}
                         </Button>

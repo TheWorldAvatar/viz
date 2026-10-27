@@ -12,11 +12,17 @@ import {
 } from "@dnd-kit/sortable";
 
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { useConnected } from "@/hooks/useConnected";
 import { Dictionary } from "@/types/dictionary";
 import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
 import { RegistryExportSettings } from "@/types/settings";
+import { TableDensity } from "@/types/table";
 import Button from "@/ui/interaction/button";
+import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
+import { ArrowUp } from "lucide-react";
 import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -24,11 +30,6 @@ import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
-import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
-import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
-import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
-import { useConnected } from "@/hooks/useConnected";
-import { ArrowUp } from "lucide-react";
 
 interface RegistryTableProps {
   recordType: string;
@@ -41,7 +42,9 @@ interface RegistryTableProps {
   selectedDate?: DateRange;
   tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
+  allowTaskPrioritisation?: boolean;
   exports: RegistryExportSettings[];
+  tableDensity?: TableDensity;
 }
 
 /**
@@ -57,7 +60,9 @@ interface RegistryTableProps {
  * @param triggerRefresh A function to refresh the table when required.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
+ * @param {boolean} allowTaskPrioritisation Optional flag to enable the task prioritisation row action.
  * @param {RegistryExportSettings[]} exports The export options available for this table.
+ * @param {TableDensity} tableDensity Optional density of the table. "compact" uses less spacing and smaller text and buttons. Defaults to "default".
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -113,8 +118,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableDescriptor={props.tableDescriptor}
         tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
+        triggerRefresh={props.triggerRefresh}
         addEntity={props.addEntity}
+        allowTaskPrioritisation={props.allowTaskPrioritisation}
         pricingType={props.pricingType}
+        tableDensity={props.tableDensity}
       >
         <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div
@@ -181,12 +189,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           <div className="absolute bottom-16 right-6">
             <Button
               size="icon"
-              variant="secondary"
+              variant="outline"
+              shape="pill"
               leftIcon={ArrowUp}
               tooltipText={dict.action.backToTop}
               aria-label={dict.action.backToTop}
               onClick={() => scrollToTop(true)}
-              className="rounded-full! shadow-xs border border-border p-5.5"
+              className="shadow-xs p-5.5"
             />
           </div>
           <TablePagination />

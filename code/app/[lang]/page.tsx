@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import OptionalPages, { OptionalPage } from '@/io/config/optional-pages';
-import { Routes } from '@/io/config/routes';
+import { getRoute, Routes } from '@/io/config/routes';
 import SettingsStore from '@/io/config/settings';
 import { Dictionary } from '@/types/dictionary';
 import { UISettings } from '@/types/settings';
@@ -52,6 +52,6 @@ export default async function App(props: Readonly<{
       pages={pages}
     />);
   } else {
-    redirect(Routes.MAP);
+    redirect(getRoute(dict.lang, Routes.MAP));
   }
 }

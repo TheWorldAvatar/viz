@@ -1,13 +1,13 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "@/types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import { ColFilterValues } from "@/types/table";
 import {
   genSortParams,
   getInitialColumnVisibilityState,
   getInitialSortingState,
-  getInitialSortParams
+  getInitialSortParams,
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import {
@@ -26,20 +26,23 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { useTableData } from "./api/useTableData";
+import { ConditionalFormatPresetDescriptor, useConditionalFormatPresets } from "./settings/useConditionalFormatPresets";
 import { useTablePagination } from "./useTablePagination";
 import { useTableRowOrder } from "./useTableRowOrder";
 
-export interface TableDescriptor {
+export interface TableDescriptor extends ConditionalFormatPresetDescriptor {
   isLoading: boolean;
   isBackgroundLoading: boolean;
   isBulkDispatchEdit: boolean;
   setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
+  dirtyTasks: Record<string, FieldValues>;
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
-  hasCustomOrder: boolean;
-  saveOrder: (_rows: FieldValues[]) => void;
+  hasUpdatedOrder: boolean;
+  triggerBulkEdit: boolean;
+  syncOrder: (_rows: FieldValues[], _newIndex: number) => void;
   resetOrder: () => void;
   pagination: PaginationState,
   apiPagination: PaginationState,
@@ -50,6 +53,10 @@ export interface TableDescriptor {
   selectedRowIds: Set<string>;
   setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
   resetRowSelection: () => void;
+  syncTasks: (_id: string, _lexorank: string) => void;
+  saveTaskOrder: () => Promise<boolean>;
+  onSyncTasks: () => Promise<void>;
+  setTriggerBulkEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -77,10 +84,15 @@ export function useTable(
   const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
-  const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
-  const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
 
+  const { hasUpdatedOrder, triggerBulkEdit, dirtyTasks, applyOrder, syncOrder, syncTasks, resetOrder, saveTaskOrder, onSyncTasks, setTriggerBulkEdit } = useTableRowOrder();
+  const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination(lifecycleStage == LifecycleStageMap.PLANNER);
+  // Planner shares the conditional format presets of the outstanding tasks
+  const conditionalFormatResource: string = lifecycleStage == LifecycleStageMap.GENERAL ? entityType
+    : lifecycleStage == LifecycleStageMap.PLANNER ? LifecycleStageMap.OUTSTANDING
+      : lifecycleStage;
+  const conditionalFormatDescriptor: ConditionalFormatPresetDescriptor = useConditionalFormatPresets(conditionalFormatResource);
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
@@ -92,6 +104,7 @@ export function useTable(
     columnFilters,
     tableColumnOptions,
     pagination.pageSize,
+    syncTasks,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -103,8 +116,8 @@ export function useTable(
 
   useEffect(() => {
     const pageRows: FieldValues[] = data?.slice(startIndex, startIndex + pagination.pageSize);
-    setCurrentDataView(hasCustomOrder ? applyOrder(pageRows) : pageRows);
-  }, [data, pagination.pageIndex, hasCustomOrder]);
+    setCurrentDataView(applyOrder(pageRows));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -197,9 +210,11 @@ export function useTable(
     setIsBulkDispatchEdit,
     table,
     data: currentDataView,
+    dirtyTasks,
     setData: setCurrentDataView,
-    hasCustomOrder,
-    saveOrder,
+    hasUpdatedOrder,
+    triggerBulkEdit,
+    syncOrder,
     resetOrder,
     initialInstances,
     pagination,
@@ -211,5 +226,10 @@ export function useTable(
     selectedRowIds,
     setSelectedRows,
     resetRowSelection,
+    syncTasks,
+    saveTaskOrder,
+    onSyncTasks,
+    setTriggerBulkEdit,
+    ...conditionalFormatDescriptor,
   };
 }

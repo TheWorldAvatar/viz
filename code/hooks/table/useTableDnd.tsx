@@ -1,7 +1,7 @@
+import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
 import { DragEndEvent, KeyboardSensor, MouseSensor, SensorDescriptor, SensorOptions, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { FieldValues } from "react-hook-form";
-import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
 import { TableDescriptor } from "./useTable";
 
 export interface DragAndDropDescriptor {
@@ -42,7 +42,7 @@ export function useTableDnd(
         return;
       }
       const reordered: FieldValues[] = arrayMove(tableDescriptor.data, oldIndex, newIndex);
-      tableDescriptor.saveOrder(reordered);
+      tableDescriptor.syncOrder(reordered, newIndex);
       tableDescriptor.setData(reordered);
       // Hacky solution to reset pagination after reordering
       // A better solution is that pagination is stored in a state outside of this component and

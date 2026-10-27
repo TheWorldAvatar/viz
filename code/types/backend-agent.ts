@@ -23,7 +23,7 @@ export type AgentResponseDataPayload = {
 
 export type ColumnDefinitionResponse = {
   value: string;
-  type: "literal" | "uri" | "array";
+  type: "literal" | "uri" | "array" | "virtual";
   datatype: string;
   stage?: string;
 };
@@ -45,6 +45,7 @@ export const InternalApiIdentifierMap = {
   ADDRESS: "address",
   BILL: "bill",
   CONCEPT: "concept",
+  CONDITIONAL_FORMATTING: "conditional_format",
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",
   EVENT: EVENT_KEY,
@@ -58,6 +59,7 @@ export const InternalApiIdentifierMap = {
   INSTANCES: "instances",
   SCHEDULE: "schedule",
   TASKS: "tasks",
+  PLANNER: "planner",
   OUTSTANDING: "outstanding",
   SCHEDULED: "scheduled",
   CLOSED: "closed",

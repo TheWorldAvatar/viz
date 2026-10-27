@@ -75,7 +75,6 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     variant="outline"
                     onClick={() => router.back()}
                     size="icon"
-                    tooltipPosition="right"
                     tooltipText={interpolate(dict.action.backTo, FormTypeMap.INVOICE)}
                     aria-label={interpolate(dict.action.backTo, FormTypeMap.INVOICE)}
                 />

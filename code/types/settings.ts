@@ -33,6 +33,8 @@ export type UISettings = {
       url?: string;
       data?: string;
       settings?: string;
+      priority?: boolean;
+      dragSync?: boolean;
       paths?: ResourcesPathSettings[];
       exports?: RegistryExportSettings[];
     };
@@ -70,6 +72,7 @@ export interface ResourcesPathSettings {
 }
 
 export interface NavBarItemSettings {
+  id?: string;
   url: string;
   title: string;
   icon: string;

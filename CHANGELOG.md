@@ -2,6 +2,143 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.93.3
+
+### Changes
+
+- Added table density support to registry tables via the `useTableDensity` hook
+- Added a compact row density to the Planner mode table so more rows fit on screen
+
+## 5.93.2
+
+### Changes
+
+- Allowed reschedule in Planner mode
+
+## 5.93.1
+
+### Changes
+
+- Allowed conditional formatting in Planner mode - it uses the same conditional formating presets as the outstanding tasks
+- Allowed users to cancel an ongoing cut-and-paste operation by pressing the Escape key, resetting the operation without making changes
+
+## 5.93.0
+
+### Changes
+
+- Added conditional formatting capabilities integrated with backend agent
+- Bump min version of `VisBackend Agent` from `v1.72.1` to `v1.73.0`
+
+## 5.92.0
+
+### Changes
+
+- Added long range reorder via cut and paste in registry planner
+
+## 5.91.1
+
+### Changes
+
+- Added bulk task dispatch to the registry planner, automatically saving pending task order changes before opening the dispatch form
+- Kept standard planner order saves separate from inline bulk assignment
+
+## 5.91.0
+
+### Changes
+
+- Added a new `page` link type in `ui-settings.json` to display external web applications as an IFrame within the content pane, available at `/{lang}/page/{id}`
+- Added an optional `id` field to `links` in `ui-settings.json`, which is required for `page` links
+
+## 5.90.5
+
+### Bug fixes
+
+- Fixed drawer navigation checks for task action redirects due to presence of query parameters
+- Fixed navigation redirects in task view form to other task actions
+
+## 5.90.4
+
+### Changes
+
+- Replaced the old `Button` component with Base UI Button primitives
+- Installed `class-variance-authority` library
+- Button styles are now composed with `class-variance-authority` to allow for more flexible and consistent styling across the application
+
+## 5.90.3
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.72.0` to `v1.72.1`
+
+### Bug fix
+
+- Display of concepts on form quick view body
+
+## 5.90.2
+
+### Bug fix
+
+- Suppress hydration for aria-label of locale dates
+
+## 5.90.1
+
+### Bug fix
+
+- Fix to prevent route replacement if its the same url to prevent unexpected behavior
+
+## 5.90.0
+
+### Changes
+
+- Added new registry planner page with lexorank functionalities to save and reorder positions when assigning tasks
+- Bump min version of `VisBackend Agent` from `v1.71.0` to `v1.72.0`
+
+## 5.89.4
+
+### Changes
+
+- Added a loading indicator to dependent form dropdowns while their options are being synced. Options are shown once their first batch is stored, instead of waiting for the full sync to complete
+
+## 5.89.3
+
+### Bug fixes
+
+- Updated navigation urls to include locales for redirects as intercept routes do not work well with the latest nextjs changes
+
+## 5.89.2
+
+### Changes
+
+- Added an optional `disableHoverablePopup` prop to the `Tooltip` component, so tooltips close when the pointer leaves the trigger instead of staying open over the popup
+
+## 5.89.1
+
+### Chores
+
+- Dependabot updates #898
+
+## 5.89.0
+
+### Changes
+
+- Added task prioritisation for the outstanding and scheduled task tables from the row actions menu. High-priority rows are highlighted in the task tables.
+- Added an optional `priority` setting under `resources.registry` in `ui-settings.json` to enable the prioritisation row action. Defaults to `false`.
+- Updated min version of `VisBackend Agent` from `v1.69.2` to `v1.71.0`
+
+## 5.88.5
+
+### Changes
+
+- Installed Base UI component library
+- Replaced the old Tooltip component using Floating UI with Base UI primitives
+
+## 5.88.4
+
+### Changes
+
+- Disable virtual fields based on inputs from backend
+- Updated min version of `VisBackend Agent` from `v1.69.0` to `v1.69.2`
+
 ## 5.88.3
 
 ### Bug fixes
@@ -12,7 +149,7 @@
 
 ### Changes
 
-- Made time inputs in the forms optional 
+- Made time inputs in the forms optional
 
 ## 5.88.1
 

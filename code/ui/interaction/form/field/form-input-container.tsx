@@ -52,7 +52,7 @@ export default function FormInputContainer(
           <span className="text-lg font-semibold flex gap-1.5">
             {parseWordsForLabels(label)}
             {props.error && "*"}
-            <Tooltip text={description} placement="right">
+            <Tooltip text={description} side="right">
               <Info className="size-5.5" aria-hidden />
             </Tooltip>
           </span>
