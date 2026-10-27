@@ -12,7 +12,7 @@ export interface TableCellProps {
 }
 
 /**
- * This component renders a table cell. The padding and height follow the table density.
+ * This component renders a table cell.
  *
  * @param {number} width The width of the table cell.
  * @param {string} className Optional additional CSS classes for the cell.
