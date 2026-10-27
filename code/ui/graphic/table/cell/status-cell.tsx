@@ -1,5 +1,4 @@
-import useTableSession from "@/hooks/table/useTableSession";
-import { TableDensityMap } from "@/types/table";
+import useTableDensity from "@/hooks/table/useTableDensity";
 import StatusComponent from "@/ui/text/status/status";
 
 interface StatusCellProps {
@@ -12,6 +11,6 @@ interface StatusCellProps {
  * @param {string} status The status to display.
  */
 export default function StatusCell(props: Readonly<StatusCellProps>) {
-  const { tableDensity } = useTableSession();
-  return <StatusComponent size={tableDensity === TableDensityMap.COMPACT ? "sm" : "default"} status={props.status} />;
+  const { statusCellSize } = useTableDensity();
+  return <StatusComponent size={statusCellSize} status={props.status} />;
 }

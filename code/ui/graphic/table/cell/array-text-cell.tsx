@@ -1,6 +1,5 @@
 import { useState } from "react";
-import useTableSession from "@/hooks/table/useTableSession";
-import { TableDensityMap } from "@/types/table";
+import useTableDensity from "@/hooks/table/useTableDensity";
 import Button from "@/ui/interaction/button";
 import { parseWordsForLabels } from "@/utils/client-utils";
 import ExpandableTextCell from "./expandable-text-cell";
@@ -16,7 +15,7 @@ interface ArrayTextCellProps {
  * @param {Record<string, string>[]} fields A list of fields to display.
  */
 export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
-    const { tableDensity } = useTableSession();
+    const { iconButtonSize } = useTableDensity();
     const [currentFieldValue, setCurrentFieldValue] = useState<number>(0);
     const nestedFields: string[] = Object.keys(props.fields[currentFieldValue]);
     // Joined with newlines so that the collapsed clamp shows only the first field, and expanding
@@ -31,7 +30,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
             <Button
                 variant="info"
                 leftIcon={ChevronLeft}
-                size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon"}
+                size={iconButtonSize}
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -43,7 +42,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
             <Button
                 variant="info"
                 leftIcon={ChevronRight}
-                size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon"}
+                size={iconButtonSize}
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();

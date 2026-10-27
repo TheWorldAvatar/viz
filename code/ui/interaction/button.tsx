@@ -53,7 +53,7 @@ export const buttonVariants = cva(
 // cva also allows `null` for a variant (meaning "use the default"); only the named keys
 // are exposed so callers get a real value back
 export type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
-type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
+export type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
 type ButtonShape = NonNullable<VariantProps<typeof buttonVariants>["shape"]>;
 
 export interface ButtonProps extends Omit<ButtonPrimitive.Props, "className" | "ref"> {

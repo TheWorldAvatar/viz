@@ -1,6 +1,6 @@
 import React from "react";
-import useTableSession from "@/hooks/table/useTableSession";
-import { TableCellTag, TableCellTagMap, TableDensityMap } from "@/types/table";
+import useTableDensity from "@/hooks/table/useTableDensity";
+import { TableCellTag, TableCellTagMap } from "@/types/table";
 
 export interface TableCellProps {
   width?: number;
@@ -22,8 +22,7 @@ export interface TableCellProps {
  * @param {TableCellTag} as The HTML element to render, either "td" or "th". Defaults to "td".
  */
 export default function TableCell(props: Readonly<TableCellProps>) {
-  const { tableDensity } = useTableSession();
-  const isCompact: boolean = tableDensity === TableDensityMap.COMPACT;
+  const { cellPadding, cellTextSize, rowMinHeight } = useTableDensity();
   const CellTag: TableCellTag = props.as ?? TableCellTagMap.TD;
   return (
     <CellTag
@@ -33,10 +32,10 @@ export default function TableCell(props: Readonly<TableCellProps>) {
         ...props.style,
       }}
       onClick={props.onClick}
-      className={`border-r border-border border-b px-2 ${isCompact ? "text-base" : "p-1.5 text-lg"} text-left font-normal last:border-r-0 ${props.className ?? ""
+      className={`border-r border-border border-b ${cellPadding} ${cellTextSize} text-left font-normal last:border-r-0 ${props.className ?? ""
         }`}
     >
-      <div className={`grid ${isCompact ? "min-h-7" : "min-h-10"} items-center`}>{props.children}</div>
+      <div className={`grid ${rowMinHeight} items-center`}>{props.children}</div>
     </CellTag>
   );
 }
