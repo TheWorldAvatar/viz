@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.93.3
+
+### Changes
+
+- Added table density support to registry tables via the `useTableDensity` hook
+- Added a compact row density to the Planner mode table so more rows fit on screen
+
 ## 5.93.2
 
 ### Changes
