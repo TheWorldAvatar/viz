@@ -7,6 +7,7 @@ import useOperationStatus from "@/hooks/useOperationStatus";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
+import { TableDensityMap } from "@/types/table";
 import ReturnButton from "@/ui/interaction/action/redirect/return-button";
 import Button from "@/ui/interaction/button";
 import DateInput from "@/ui/interaction/input/date/date-input";
@@ -151,6 +152,7 @@ export default function RegistryPlannerTableComponent(
           recordType={props.entityType}
           exports={[]}
           lifecycleStage={LifecycleStageMap.PLANNER}
+          tableDensity={TableDensityMap.COMPACT}
           disableRowAction={true}
           selectedDate={selectedDateRange}
           tableDescriptor={tableDescriptor}

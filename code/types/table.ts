@@ -5,6 +5,13 @@ export const TableCellTagMap = {
 
 export type TableCellTag = typeof TableCellTagMap[keyof typeof TableCellTagMap];
 
+export const TableDensityMap = {
+    DEFAULT: "default",
+    COMPACT: "compact",
+} as const;
+
+export type TableDensity = typeof TableDensityMap[keyof typeof TableDensityMap];
+
 export interface ColFilterValues {
     isIncluded: boolean;
     values: string[];
