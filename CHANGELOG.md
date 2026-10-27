@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.93.5
+
+### Changes
+
+- Added an `InfoHint` component so informational icons can be tapped on mobile and tablet to open a popover, while desktop keeps the hover tooltip
+
 ## 5.93.4
 
 ### Changes
