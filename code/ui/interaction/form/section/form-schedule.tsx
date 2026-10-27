@@ -3,14 +3,13 @@ import { UseFormReturn } from "react-hook-form";
 
 import useFormSession from "@/hooks/form/useFormSession";
 import { useDictionary } from "@/hooks/useDictionary";
-import { browserStorageManager } from "@/state/browser-storage-manager";
 import { InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { FormFieldOptions, FormTypeMap, RegistryFieldValues, ShaclDefaultDateValueMap, SparqlResponseField } from "@/types/form";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import SimpleSelector from "@/ui/interaction/dropdown/simple-selector";
 import DateInput from "@/ui/interaction/input/date/date-input";
-import Tooltip from "@/ui/interaction/tooltip/tooltip";
+import InfoHint from "@/ui/interaction/tooltip/info-hint";
 import {
   getUTCDate,
   interpolate,
@@ -22,7 +21,6 @@ import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
 import SelectedDatesDisplay from "./selected-dates-display";
-import { Info } from "lucide-react";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -259,15 +257,12 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       {!isLoading && (
         <>
           <div className="flex flex-col w-full gap-2">
-            <label
-              className="text-lg font-bold flex gap-2"
-              htmlFor="select-input"
-            >
-              {parseWordsForLabels(dict.title.scheduleType)}
-              <Tooltip text={serviceDescription} side="right">
-                <Info className="size-5.5" aria-hidden />
-              </Tooltip>
-            </label>
+            <div className="flex items-center gap-2">
+              <label className="text-lg font-bold" htmlFor="select-input">
+                {parseWordsForLabels(dict.title.scheduleType)}
+              </label>
+              <InfoHint text={serviceDescription} />
+            </div>
             <SimpleSelector
               options={[
                 { label: singleService, value: singleService, disabled: false, },
@@ -289,12 +284,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           {selectedServiceOption === fixedService && (
             <div className="flex flex-col w-full space-y-4">
               <div className="flex flex-col gap-2">
-                <label className="text-lg font-bold flex gap-2">
-                  {dict.form.selectDates}
-                  <Tooltip text={dict.form.selectDatesDesc} side="right">
-                    <Info className="size-5.5" aria-hidden />
-                  </Tooltip>
-                </label>
+                <div className="flex items-center gap-2">
+                  <label className="text-lg font-bold">{dict.form.selectDates}</label>
+                  <InfoHint text={dict.form.selectDatesDesc} />
+                </div>
                 <DateInput
                   mode="multiple"
                   ariaLabel={dict.form.fixedService}

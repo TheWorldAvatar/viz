@@ -5,6 +5,7 @@
     "remove": "Remove",
     "addItem": "Add {replace}",
     "removeItem": "Remove {replace}",
+    "moreInfo": "More information",
     "adjustPricing": "Adjust pricing",
     "assign": "Assign",
     "applyFilter": "Apply filter",

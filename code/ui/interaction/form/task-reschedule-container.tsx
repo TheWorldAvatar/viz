@@ -21,8 +21,8 @@ import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { toast } from "../action/toast/toast";
 import DateInput from "../input/date/date-input";
-import Tooltip from "../tooltip/tooltip";
-import { Info, RefreshCw, SendHorizonal } from "lucide-react";
+import InfoHint from "../tooltip/info-hint";
+import { RefreshCw, SendHorizonal } from "lucide-react";
 
 
 /**
@@ -129,12 +129,10 @@ function TaskFormContents() {
         {(isFetching || refreshFlag) && <FormSkeleton />}
         {!(refreshFlag || isFetching) && (
           <div className="mt-8">
-            <label className="text-lg font-bold flex gap-2 mb-1">
-              {dict.form.rescheduleDate}
-              <Tooltip text={dict.form.rescheduleDateDesc} side="right">
-                <Info className="size-5.5" aria-hidden />
-              </Tooltip>
-            </label>
+            <div className="flex items-center gap-2 mb-1">
+              <label className="text-lg font-bold">{dict.form.rescheduleDate}</label>
+              <InfoHint text={dict.form.rescheduleDateDesc} />
+            </div>
             <DateInput
               mode="single"
               ariaLabel={dict.form.rescheduleDate}
