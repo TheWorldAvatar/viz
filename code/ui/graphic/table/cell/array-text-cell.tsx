@@ -31,7 +31,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
             <Button
                 variant="info"
                 leftIcon={ChevronLeft}
-                size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon-sm"}
+                size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon"}
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -43,7 +43,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
             <Button
                 variant="info"
                 leftIcon={ChevronRight}
-                size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon-sm"}
+                size={tableDensity === TableDensityMap.COMPACT ? "icon-xs" : "icon"}
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
