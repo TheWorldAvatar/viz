@@ -4,14 +4,13 @@ import {
   LifecycleStage,
   RegistryFieldValues,
   RegistryFlatFieldValues,
-  SparqlResponseField
 } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import { ColFilterValues, ComparisonOperatorMap, ConditionalFormatField, ConditionalFormatFieldOperator, ConditionalFormatFieldOperatorMap, ConditionalFormatSetting } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
-import StatusCell from "../cell/status-cell";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
 import { FLAG_EMOJI, FLAG_KEY, LEXORANK_KEY, PRIORITY_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { flattenInstance } from "@/utils/table/registry-data-utils";
 import {
   ColumnDef,
   ColumnFilter,
@@ -23,6 +22,7 @@ import React from "react";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import ArrayTextCell from "../cell/array-text-cell";
+import StatusCell from "../cell/status-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
   dataType: string;
@@ -126,28 +126,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
     // If all fields are equal, there is no need to reorder
     return 0;
   });
-}
-
-/**
- * Flattens the instance to a string instead of SparqlResponseField.
- *
- * @param {RegistryFieldValues} instance The original column definitions.
- */
-export function flattenInstance(instance: RegistryFieldValues): RegistryFlatFieldValues {
-  const flatInstance: RegistryFlatFieldValues = {};
-  const instanceFields: string[] = Object.keys(instance);
-
-  instanceFields.forEach((instanceField) => {
-    const instanceValue: SparqlResponseField | RegistryFieldValues[] = instance[instanceField];
-    if (Array.isArray(instanceValue)) {
-      // For array fields, only display array field, subfields need not be parsed
-      flatInstance[instanceField] = instanceValue.map((nestedFields) =>
-        flattenInstance(nestedFields)) as Record<string, string>[];
-    } else {
-      flatInstance[instanceField] = instanceValue?.value;
-    }
-  });
-  return flatInstance;
 }
 
 /**
