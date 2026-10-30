@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.93.6
+
+### Bug fixes
+
+- Fixed service worker registration by separating a dependent method into its own file to prevent importing the wrong bits
+
 ## 5.93.5
 
 ### Changes
