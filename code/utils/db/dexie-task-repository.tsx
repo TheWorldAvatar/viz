@@ -1,7 +1,7 @@
 import { AgentResponseBody, AgentResponseDataPayload, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { IndexedDbState, IndexedDbStateMap, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
-import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-utils";
 import { db, DynamicTask, IndexedDbMetadata } from "@/utils/db/db";
+import { flattenInstance } from "@/utils/table/registry-data-utils";
 import { EntityTable } from "dexie";
 import { FieldValues } from "react-hook-form";
 import { getId, getUTCDate } from "../client-utils";
