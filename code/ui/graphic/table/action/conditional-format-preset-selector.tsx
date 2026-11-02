@@ -1,21 +1,33 @@
+import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { ConditionalFormatPresetDescriptor } from "@/hooks/table/settings/useConditionalFormatPresets";
 import { useDictionary } from "@/hooks/useDictionary";
+import useOperationStatus from "@/hooks/useOperationStatus";
+import { Routes } from "@/io/config/routes";
+import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { ConditionalFormatSetting } from "@/types/table";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
-import { Check, TableCellsMerge } from "lucide-react";
+import { CELL_FORMAT_KEY, SUBJECT_KEY } from "@/utils/constants";
+import { Check, Plus, TableCellsMerge } from "lucide-react";
 import React from "react";
+
+interface ConditionalFormatPresetSelectorProps extends ConditionalFormatPresetDescriptor {
+  subject: string;
+}
 
 /**
  * An icon button that opens a menu to select the conditional formatting presets of a table.
  * The button is highlighted when active, so that no text is needed on the ribbon.
  */
-export default function ConditionalFormatPresetSelector(props: Readonly<ConditionalFormatPresetDescriptor>) {
+export default function ConditionalFormatPresetSelector(props: Readonly<ConditionalFormatPresetSelectorProps>) {
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const labelId: string = React.useId();
+
+  const { navigateToDrawer } = useDrawerNavigation();
+  const { resetFormSession } = useOperationStatus();
 
   const handleSelect = (preset: ConditionalFormatSetting | null): void => {
     props.updateCurrentConditionalFormatPreset(preset);
@@ -38,9 +50,22 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
         aria-labelledby={labelId}
         className="flex flex-col gap-1 min-w-56 max-h-80 overflow-y-auto"
       >
-        <p id={labelId} className="sticky top-0 z-10 bg-muted px-2 py-1 font-semibold">
-          {dict.title.conditionalFormat}
-        </p>
+        <div className="flex item-center">
+          <p id={labelId} className="sticky top-0 z-10 bg-muted px-2 py-1 font-semibold">
+            {dict.title.conditionalFormat}
+          </p>
+          <Button
+            size="icon"
+            variant="ghost"
+            leftIcon={Plus}
+            onClick={() => {
+              browserStorageManager.clear();
+              resetFormSession();
+              browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
+              navigateToDrawer(Routes.REGISTRY_ADD, CELL_FORMAT_KEY);
+            }}
+          />
+        </div>
         {/* The default option applies no conditional formats */}
         <CellFormatPreset
           label={dict.title.default}
