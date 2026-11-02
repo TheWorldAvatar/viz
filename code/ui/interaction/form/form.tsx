@@ -530,7 +530,7 @@ export function renderFormField(
       && billingParams.pricing != (field as PropertyShape).name?.[VALUE_KEY])
     );
 
-  if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+  if (field[TYPE_KEY]?.includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
 
     return (
