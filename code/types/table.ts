@@ -60,6 +60,7 @@ export interface ConditionalFormatField {
 }
 
 export interface ConditionalFormatSetting {
+    conditional_formatid: string;
     conditional_format: string;
     [key: string]: string | ConditionalFormatField[];
 }

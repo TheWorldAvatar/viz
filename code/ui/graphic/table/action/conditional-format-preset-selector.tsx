@@ -10,7 +10,7 @@ import PopoverActionButton from "@/ui/interaction/action/popover/popover-button"
 import Button from "@/ui/interaction/button";
 import { buildUrl } from "@/utils/client-utils";
 import { CELL_FORMAT_KEY, SUBJECT_KEY } from "@/utils/constants";
-import { Check, Plus, TableCellsMerge } from "lucide-react";
+import { Check, Edit, Plus, TableCellsMerge } from "lucide-react";
 import React from "react";
 
 interface ConditionalFormatPresetSelectorProps extends ConditionalFormatPresetDescriptor {
@@ -75,6 +75,11 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             label={preset.conditional_format}
             isActive={preset.conditional_format === props.currentConditionalFormatPreset?.conditional_format}
             onClick={() => handleSelect(preset)}
+            onEditClick={() => {
+              resetFormSession();
+              browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
+              window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_EDIT), CELL_FORMAT_KEY, preset.conditional_formatid);
+            }}
           />
         ))}
       </div>}
@@ -86,6 +91,7 @@ interface CellFormatPresetProps {
   label: string;
   isActive: boolean;
   onClick: () => void;
+  onEditClick?: () => void;
 }
 
 /**
@@ -94,21 +100,31 @@ interface CellFormatPresetProps {
  * @param {string} label The display name of the option.
  * @param {boolean} isActive Indicates if the option is the active selection.
  * @param onClick Click handler for the option.
+ * @param onEditClick Click handler for the edit button.
  */
 function CellFormatPreset(props: Readonly<CellFormatPresetProps>) {
   return (
-    <Button
-      variant="ghost"
-      className="w-full justify-start"
-      aria-pressed={props.isActive}
-      onClick={props.onClick}
-    >
-      <span className="flex w-full items-center gap-2">
-        {props.isActive
-          ? <Check className="size-4 shrink-0" aria-hidden="true" />
-          : <span className="size-4 shrink-0" aria-hidden="true" />}
-        <span className="truncate">{props.label}</span>
-      </span>
-    </Button>
+    <div className="flex justify-between">
+      <Button
+        variant="ghost"
+        className="flex-1 justify-start"
+        aria-pressed={props.isActive}
+        onClick={props.onClick}
+      >
+        <span className="flex w-full items-center gap-2">
+          {props.isActive
+            ? <Check className="size-4 shrink-0" aria-hidden="true" />
+            : <span className="size-4 shrink-0" aria-hidden="true" />}
+          <span className="truncate">{props.label}</span>
+        </span>
+      </Button>
+      {props.onEditClick && <Button
+        variant="ghost"
+        size="icon"
+        leftIcon={Edit}
+        aria-pressed={props.isActive}
+        onClick={props.onEditClick}
+      />}
+    </div>
   );
 }

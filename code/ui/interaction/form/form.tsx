@@ -340,6 +340,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "PUT",
             JSON.stringify(formData));
+        } else if (props.entityType == CELL_FORMAT_KEY) {
+          formData["rules"] = (formData.rules as FieldValues[]).map((rule, index) => {
+            return {
+              ...rule,
+              "rules order": index
+            }
+          })
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.SETTINGS, props.entityType, formData["id"]),
+            "PUT",
+            JSON.stringify(formData));
         } else {
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(
