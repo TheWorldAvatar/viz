@@ -195,7 +195,14 @@ export function makeInternalRegistryAPIwithParams(
         filters: params[6],
       });
       break;
+    case InternalApiIdentifierMap.SETTINGS:
+      searchParams = new URLSearchParams({
+        resource: params[0],
+        id: params[1],
+      })
+      break;
   }
+
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
 }
 

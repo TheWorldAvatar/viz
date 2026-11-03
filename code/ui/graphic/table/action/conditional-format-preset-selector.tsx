@@ -1,14 +1,14 @@
-import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { ConditionalFormatPresetDescriptor } from "@/hooks/table/settings/useConditionalFormatPresets";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { Routes } from "@/io/config/routes";
+import { getRoute, Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { ConditionalFormatSetting } from "@/types/table";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
+import { buildUrl } from "@/utils/client-utils";
 import { CELL_FORMAT_KEY, SUBJECT_KEY } from "@/utils/constants";
 import { Check, Plus, TableCellsMerge } from "lucide-react";
 import React from "react";
@@ -25,8 +25,6 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const labelId: string = React.useId();
-
-  const { navigateToDrawer } = useDrawerNavigation();
   const { resetFormSession } = useOperationStatus();
 
   const handleSelect = (preset: ConditionalFormatSetting | null): void => {
@@ -59,10 +57,9 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             variant="ghost"
             leftIcon={Plus}
             onClick={() => {
-              browserStorageManager.clear();
               resetFormSession();
               browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
-              navigateToDrawer(Routes.REGISTRY_ADD, CELL_FORMAT_KEY);
+              window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), CELL_FORMAT_KEY);
             }}
           />
         </div>

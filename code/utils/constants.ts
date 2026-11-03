@@ -7,6 +7,7 @@ export const XSD_STRING: string = "http://www.w3.org/2001/XMLSchema#string";
 
 export const BULK_IDENTIFIER: string = "bulk";
 export const CELL_FORMAT_KEY: string = "cell_format";
+export const COL_CELL_FORMAT_KEY: string = `_col_${CELL_FORMAT_KEY}`;
 export const DATE_KEY: string = "date";
 export const EVENT_KEY: string = "event";
 export const TASK_STATUS_KEY: string = "task_status";

@@ -33,7 +33,7 @@ import {
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
-import { DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
+import { CELL_FORMAT_KEY, DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
 import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
@@ -233,6 +233,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "POST",
+            JSON.stringify(formData));
+        } else if (props.entityType == CELL_FORMAT_KEY) {
+          formData["rules"] = (formData.rules as FieldValues[]).map((rule, index) => {
+            return {
+              ...rule,
+              "rules order": index
+            }
+          })
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.SETTINGS, props.entityType, formData["id"]),
+            "PUT",
             JSON.stringify(formData));
         } else {
           pendingResponse = await queryInternalApi(
