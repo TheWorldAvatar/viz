@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
+import { FieldValues, useFieldArray, UseFieldArrayRemove, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "@/hooks/useDictionary";
 import { browserStorageManager } from "@/state/browser-storage-manager";
@@ -10,7 +10,7 @@ import { translateLifecycleFields } from "@/ui/graphic/table/registry/registry-t
 import Button from "@/ui/interaction/button";
 import { interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { COL_CELL_FORMAT_KEY } from "@/utils/constants";
-import { Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { genEmptyArrayRow } from "../../form-utils";
 import { CellFormatDropdownField } from "../dropdown/cell-format-dropdown";
 import ColourInputField from "../input/colour-input";
@@ -28,6 +28,7 @@ interface CellFormatRuleProps {
   index: string;
   fields: PropertyShape[];
   form: UseFormReturn;
+  remove: UseFieldArrayRemove;
   options?: FormFieldOptions;
 }
 
@@ -35,11 +36,8 @@ interface CellFormatRuleProps {
  * This component renders the cell format rule array for a form.
  *
  * @param {string} fieldId The field ID for the array.
- * @param {number} minSize The minimum size of the array.
- * @param {number} maxSize The maximum size of the array.
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatRulesArrayProps>) {
@@ -64,6 +62,7 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
           fields={props.fieldConfigs}
           form={props.form}
           options={props.options}
+          remove={fields.length > 1 ? remove : null}
         />
         )}
       </div>
@@ -85,7 +84,20 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
 
 function FormCellFormatRule(props: CellFormatRuleProps) {
   const dict: Dictionary = useDictionary();
-  return <aside className="flex flex-col gap-6 p-3 rounded-lg border border-border">
+  return <aside className="flex flex-col gap-4 p-3 rounded-lg border border-border">
+    <div className="ml-auto">
+      {props.remove && <Button
+        variant="destructive"
+        size="icon"
+        leftIcon={Trash}
+        aria-label={interpolate(dict.action.removeItem, props.fieldId)}
+        tooltipText={interpolate(dict.action.removeItem, props.fieldId)}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+          event.preventDefault();
+          props.remove(parseInt(props.index));
+        }}
+      />}
+    </div>
     <div className="flex gap-6">
       <CellFormatDropdownField
         field={getNestedFieldConfig(props, "field")}
