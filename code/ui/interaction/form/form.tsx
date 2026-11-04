@@ -33,7 +33,7 @@ import {
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
-import { DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
+import { CELL_FORMAT_KEY, DATE_KEY, EVENT_KEY, SUBJECT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
 import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
@@ -121,6 +121,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
       if (!template) {
         return initialState;
+      }
+      // Filter out subject as it is not to be editable by users; subject will be added on loading the local storage
+      if (props.entityType == CELL_FORMAT_KEY) {
+        template.property = template.property.filter(shape => (shape as PropertyShape)?.name?.[VALUE_KEY] != SUBJECT_KEY);
       }
 
       if (props.additionalFields) {
@@ -234,6 +238,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "POST",
             JSON.stringify(formData));
+        } else if (props.entityType == CELL_FORMAT_KEY) {
+          formData["rules"] = (formData.rules as FieldValues[]).map((rule, index) => {
+            return {
+              ...rule,
+              "rules order": index
+            }
+          })
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.SETTINGS, props.entityType, formData["id"]),
+            "PUT",
+            JSON.stringify(formData));
         } else {
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
@@ -305,18 +320,25 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormTypeMap.DELETE: {
         // Delete entity via API route
-        pendingResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(
-          InternalApiIdentifierMap.INSTANCES,
-          props.entityType,
-          "false",
-          formData[FORM_STATES.ID],
-          null,
-          null,
-          null,
-          null,
-          null,
-          formData["branch_delete"]
-        ), "DELETE");
+        let url: string = "";
+        if (props.entityType == CELL_FORMAT_KEY) {
+          url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.SETTINGS, props.entityType, formData["id"]);
+        } else {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.INSTANCES,
+            props.entityType,
+            "false",
+            formData[FORM_STATES.ID],
+            null,
+            null,
+            null,
+            null,
+            null,
+            formData["branch_delete"]
+          );
+        }
+
+        pendingResponse = await queryInternalApi(url, "DELETE");
         break;
       }
       case FormTypeMap.EDIT: {
@@ -327,6 +349,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           }
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
+            "PUT",
+            JSON.stringify(formData));
+        } else if (props.entityType == CELL_FORMAT_KEY) {
+          formData["rules"] = (formData.rules as FieldValues[]).map((rule, index) => {
+            return {
+              ...rule,
+              "rules order": index
+            }
+          })
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.SETTINGS, props.entityType, formData["id"]),
             "PUT",
             JSON.stringify(formData));
         } else {
@@ -530,7 +563,7 @@ export function renderFormField(
       && billingParams.pricing != (field as PropertyShape).name?.[VALUE_KEY])
     );
 
-  if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+  if (field[TYPE_KEY]?.includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
 
     return (

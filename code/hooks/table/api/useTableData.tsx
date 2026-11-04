@@ -1,4 +1,5 @@
 import { useDictionary } from "@/hooks/useDictionary";
+import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
@@ -6,6 +7,7 @@ import { TableColumnOption } from "@/types/settings";
 import { ConditionalFormatSetting } from "@/types/table";
 import { EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "@/utils/client-utils";
+import { COL_CELL_FORMAT_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { genLexoRanks } from "@/utils/table/lexorank-utils";
 import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
@@ -113,6 +115,7 @@ export function useTableData(
         setData(parsedData);
         // Parse and set the column metadata only once, then retain it for subsequent
         // fetches. This keeps the header visible when a later response has no metadata
+        browserStorageManager.set(COL_CELL_FORMAT_KEY, JSON.stringify(res.data?.columns.map((col) => col.value)));
         setColumns(prevColumns => prevColumns.length > 0
           ? prevColumns
           : parseColumnsMetadata(res.data?.columns ?? [], columnOptions, dict));

@@ -64,6 +64,7 @@ export const InternalApiIdentifierMap = {
   SCHEDULED: "scheduled",
   CLOSED: "closed",
   INVOICEABLE: "invoice",
+  SETTINGS: "settings",
 } as const;
 export type InternalApiIdentifier = typeof InternalApiIdentifierMap[keyof typeof InternalApiIdentifierMap];
 

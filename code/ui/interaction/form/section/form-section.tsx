@@ -6,6 +6,8 @@ import { parseWordsForLabels } from "@/utils/client-utils";
 import FormArray from "../field/array/array";
 import { renderFormField } from "../form";
 import { useId } from "react";
+import FormCellFormatRulesArray from "../field/array/cell-format-rules";
+import { CELL_FORMAT_KEY } from "@/utils/constants";
 
 interface FormSectionProps {
   entityType: string;
@@ -35,23 +37,29 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
       <div className="space-y-4">
         {!props.group.maxCount ||
           (props.group.maxCount &&
-            parseInt(props.group.maxCount?.[VALUE_KEY]) > 1) ? (
-          <FormArray
+            parseInt(props.group.maxCount?.[VALUE_KEY]) > 1) ?
+          props.entityType != CELL_FORMAT_KEY ? (
+            <FormArray
+              fieldId={props.group.label[VALUE_KEY]}
+              minSize={parseInt(props.group.minCount?.[VALUE_KEY])}
+              maxSize={parseInt(props.group.maxCount?.[VALUE_KEY])}
+              fieldConfigs={props.group.property}
+              form={props.form}
+              billingStore={props.billingStore}
+              options={props.options}
+            />
+          ) : <FormCellFormatRulesArray
             fieldId={props.group.label[VALUE_KEY]}
-            minSize={parseInt(props.group.minCount?.[VALUE_KEY])}
-            maxSize={parseInt(props.group.maxCount?.[VALUE_KEY])}
-            fieldConfigs={props.group.property}
             form={props.form}
-            billingStore={props.billingStore}
+            fieldConfigs={props.group.property}
             options={props.options}
-          />
-        ) : (
-          props.group.property.map((field, index) =>
-            renderFormField(props.entityType, formType, field, props.form, index,
-              props.billingStore,
+          /> : (
+            props.group.property.map((field, index) =>
+              renderFormField(props.entityType, formType, field, props.form, index,
+                props.billingStore,
+              )
             )
-          )
-        )}
+          )}
       </div>
     </section>
   );
