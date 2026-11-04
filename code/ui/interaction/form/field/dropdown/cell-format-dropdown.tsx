@@ -1,6 +1,6 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
-import { PropertyShape, VALUE_KEY } from "@/types/form";
+import { FormFieldOptions, PropertyShape, VALUE_KEY } from "@/types/form";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { interpolate } from "@/utils/client-utils";
 import { Controller, UseFormReturn } from "react-hook-form";
@@ -8,14 +8,17 @@ import { Controller, UseFormReturn } from "react-hook-form";
 interface CellFormatDropdownFieldProps {
     field: PropertyShape;
     form: UseFormReturn;
-    options: SelectOptionType[];
+    dropdownOptions: SelectOptionType[];
+    options?: FormFieldOptions;
+
 }
 /**
  * This component renders a dropdown for cell format fields.
  *
  * @param {PropertyShape} field The field's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {SelectOptionType[]} options Options to render in the dropdown.
+ * @param {SelectOptionType[]} dropdownOptions Options to render in the dropdown.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export function CellFormatDropdownField(
     props: Readonly<CellFormatDropdownFieldProps>
@@ -31,7 +34,7 @@ export function CellFormatDropdownField(
             defaultValue={""}
             render={({ field: { onChange, value } }) => {
                 return <SimpleSelector
-                    options={props.options}
+                    options={props.dropdownOptions}
                     defaultVal={value}
                     onChange={(option) => {
                         onChange((option as SelectOptionType).value);
@@ -40,6 +43,7 @@ export function CellFormatDropdownField(
                     hasLimits={true}
                     reqNotApplicableOption={false}
                     noOptionMessage={dict.message.noOptions}
+                    isDisabled={props.options.disabled}
                 />
             }}
         />

@@ -66,7 +66,7 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
         />
         )}
       </div>
-      <Button
+      {!props.options.disabled && <Button
         variant="outline"
         className="w-full py-6"
         leftIcon={Plus}
@@ -77,7 +77,7 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
           event.preventDefault();
           append(emptyRow);
         }}
-      />
+      />}
     </>
   );
 }
@@ -102,23 +102,25 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
       <CellFormatDropdownField
         field={getNestedFieldConfig(props, "field")}
         form={props.form}
-        options={(JSON.parse(browserStorageManager.get(COL_CELL_FORMAT_KEY)) as string[]).map((field) => ({
+        dropdownOptions={(JSON.parse(browserStorageManager.get(COL_CELL_FORMAT_KEY)) as string[]).map((field) => ({
           label: parseWordsForLabels(field == "lastmodified" || field == "scheduleType"
             ? translateLifecycleFields(field, dict.title) : field),
           value: field,
           disabled: false,
         }))}
+        options={props.options}
       />
       <CellFormatDropdownField
         field={getNestedFieldConfig(props, "operator")}
         form={props.form}
-        options={Object.values(
+        dropdownOptions={Object.values(
           ConditionalFormatFieldOperatorMap
         ).map((value) => ({
           label: dict.title[value],
           value: value,
           disabled: false,
         }))}
+        options={props.options}
       />
       <TextInputField
         formType={FormTypeMap.ADD}
