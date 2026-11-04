@@ -77,7 +77,6 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             onClick={() => handleSelect(preset)}
             onEditClick={() => {
               resetFormSession();
-              browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
               window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_EDIT), CELL_FORMAT_KEY, preset.conditional_formatid);
             }}
           />
