@@ -33,7 +33,7 @@ import {
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
-import { CELL_FORMAT_KEY, DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
+import { CELL_FORMAT_KEY, DATE_KEY, EVENT_KEY, SUBJECT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
 import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
@@ -121,6 +121,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
       if (!template) {
         return initialState;
+      }
+      // Filter out subject as it is not to be editable by users; subject will be added on loading the local storage
+      if (props.entityType == CELL_FORMAT_KEY) {
+        template.property = template.property.filter(shape => (shape as PropertyShape)?.name?.[VALUE_KEY] != SUBJECT_KEY);
       }
 
       if (props.additionalFields) {

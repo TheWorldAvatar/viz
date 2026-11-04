@@ -58,6 +58,7 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             leftIcon={Plus}
             onClick={() => {
               resetFormSession();
+              // Storing the subject allows us to push it to the form data on loading even if there is no field
               browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
               window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), CELL_FORMAT_KEY);
             }}
