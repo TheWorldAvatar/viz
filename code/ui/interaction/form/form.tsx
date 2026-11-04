@@ -316,18 +316,25 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormTypeMap.DELETE: {
         // Delete entity via API route
-        pendingResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(
-          InternalApiIdentifierMap.INSTANCES,
-          props.entityType,
-          "false",
-          formData[FORM_STATES.ID],
-          null,
-          null,
-          null,
-          null,
-          null,
-          formData["branch_delete"]
-        ), "DELETE");
+        let url: string = "";
+        if (props.entityType == CELL_FORMAT_KEY) {
+          url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.SETTINGS, props.entityType, formData["id"]);
+        } else {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.INSTANCES,
+            props.entityType,
+            "false",
+            formData[FORM_STATES.ID],
+            null,
+            null,
+            null,
+            null,
+            null,
+            formData["branch_delete"]
+          );
+        }
+
+        pendingResponse = await queryInternalApi(url, "DELETE");
         break;
       }
       case FormTypeMap.EDIT: {

@@ -10,7 +10,7 @@ import PopoverActionButton from "@/ui/interaction/action/popover/popover-button"
 import Button from "@/ui/interaction/button";
 import { buildUrl } from "@/utils/client-utils";
 import { CELL_FORMAT_KEY, SUBJECT_KEY } from "@/utils/constants";
-import { Check, Edit, Plus, TableCellsMerge } from "lucide-react";
+import { Check, Edit, Plus, TableCellsMerge, Trash } from "lucide-react";
 import React from "react";
 
 interface ConditionalFormatPresetSelectorProps extends ConditionalFormatPresetDescriptor {
@@ -79,6 +79,10 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
               resetFormSession();
               window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_EDIT), CELL_FORMAT_KEY, preset.conditional_formatid);
             }}
+            onDeleteClick={() => {
+              resetFormSession();
+              window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_DELETE), CELL_FORMAT_KEY, preset.conditional_formatid);
+            }}
           />
         ))}
       </div>}
@@ -91,6 +95,7 @@ interface CellFormatPresetProps {
   isActive: boolean;
   onClick: () => void;
   onEditClick?: () => void;
+  onDeleteClick?: () => void;
 }
 
 /**
@@ -100,6 +105,7 @@ interface CellFormatPresetProps {
  * @param {boolean} isActive Indicates if the option is the active selection.
  * @param onClick Click handler for the option.
  * @param onEditClick Click handler for the edit button.
+ * @param onDeleteClick Click handler for the delete button.
  */
 function CellFormatPreset(props: Readonly<CellFormatPresetProps>) {
   return (
@@ -121,8 +127,13 @@ function CellFormatPreset(props: Readonly<CellFormatPresetProps>) {
         variant="ghost"
         size="icon"
         leftIcon={Edit}
-        aria-pressed={props.isActive}
         onClick={props.onEditClick}
+      />}
+      {props.onDeleteClick && <Button
+        variant="ghost"
+        size="icon"
+        leftIcon={Trash}
+        onClick={props.onDeleteClick}
       />}
     </div>
   );
