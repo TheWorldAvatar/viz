@@ -27,8 +27,8 @@ export default function ColourInputField(props: Readonly<ColourInputFieldProps>)
   const label: string = parseWordsForLabels(props.field.name[VALUE_KEY]);
 
   return (
-    <div role="group" aria-label={label} className="flex items-center gap-2">
-      <label htmlFor={props.field.fieldId}>{label}</label>
+    <div role="group" aria-label={label} className="flex items-center gap-2 w-full min-w-0">
+      <label htmlFor={props.field.fieldId} className="shrink-0 whitespace-nowrap">{label}</label>
       <Controller
         control={props.form.control}
         name={props.field.fieldId}
@@ -36,7 +36,7 @@ export default function ColourInputField(props: Readonly<ColourInputFieldProps>)
         render={({ field }) => {
           return (
             <>
-              <div className="border border-border rounded-md p-0.5 flex">
+              <div className="shrink-0 border border-border rounded-md p-0.5 flex">
                 <input
                   id={`${props.field.fieldId}-picker`}
                   type="color"
@@ -55,7 +55,7 @@ export default function ColourInputField(props: Readonly<ColourInputFieldProps>)
                 type="text"
                 inputMode={props.options?.disabled ? "none" : "text"}
                 maxLength={7}
-                className={`w-[calc(8ch+2rem)] ${props.options?.inputStyle?.join(" ")} ${props.options?.disabled
+                className={`flex-1 min-w-0 ${props.options?.inputStyle?.join(" ")} ${props.options?.disabled
                   ? "border border-border bg-muted cursor-not-allowed opacity-75 focus:outline-none"
                   : ""}`}
                 value={field.value || ""}

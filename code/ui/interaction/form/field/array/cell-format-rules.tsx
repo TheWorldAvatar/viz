@@ -136,7 +136,7 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         />
       </div>
     </div>
-    <div className="flex flex-col md:flex-row gap-8">
+    <div className="flex flex-col md:flex-row gap-6">
       <ColourInputField
         formType={FormTypeMap.ADD}
         field={getNestedFieldConfig(props, "background")}
