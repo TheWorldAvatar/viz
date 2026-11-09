@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { FieldValues, useFieldArray, UseFieldArrayRemove, UseFormReturn } from "react-hook-form";
+import React, { useEffect, useMemo } from "react";
+import { FieldValues, useFieldArray, UseFieldArrayRemove, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "@/hooks/useDictionary";
 import { browserStorageManager } from "@/state/browser-storage-manager";
@@ -85,6 +85,18 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
 function FormCellFormatRule(props: CellFormatRuleProps) {
   const dict: Dictionary = useDictionary();
   const valueField: PropertyShape = getNestedFieldConfig(props, "value");
+  const valueFieldId: string = valueField?.fieldId;
+  const operator: string = useWatch({ control: props.form.control, name: getNestedFieldConfig(props, "operator")?.fieldId });
+  const showValueInput: boolean = operator !== ConditionalFormatFieldOperatorMap.EMPTY && operator !== ConditionalFormatFieldOperatorMap.NOT_EMPTY;
+
+  // Clear any stale value when the value input is hidden
+  const { setValue } = props.form;
+  useEffect(() => {
+    if (!showValueInput) {
+      setValue(valueFieldId, "");
+    }
+  }, [showValueInput, valueFieldId, setValue]);
+
   return <aside className="flex flex-col gap-4 p-3 rounded-lg border border-border">
     <div className="ml-auto">
       {props.remove && <Button
@@ -123,7 +135,7 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         }))}
         options={props.options}
       />
-      <div className="flex flex-col gap-2 w-full">
+      {showValueInput && <div className="flex flex-col gap-2 w-full">
         <label htmlFor={valueField.fieldId}>{parseWordsForLabels(valueField.name[VALUE_KEY])}</label>
         <TextInputField
           formType={FormTypeMap.ADD}
@@ -134,7 +146,7 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
             inputStyle: ["w-full h-[2.75rem] max-w-none py-2 px-4 rounded-lg border border-border bg-muted text-foreground focus-visible:outline-[2px] focus-visible:outline-focus"],
           }}
         />
-      </div>
+      </div>}
     </div>
     <div className="flex flex-col md:flex-row gap-6">
       <ColourInputField
