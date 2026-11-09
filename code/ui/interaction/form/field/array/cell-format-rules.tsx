@@ -98,7 +98,7 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         }}
       />}
     </div>
-    <div className="flex gap-6">
+    <div className="flex flex-col md:flex-row gap-6">
       <CellFormatDropdownField
         field={getNestedFieldConfig(props, "field")}
         form={props.form}
@@ -132,7 +132,7 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         }}
       />
     </div>
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col md:flex-row gap-8">
       <ColourInputField
         formType={FormTypeMap.ADD}
         field={getNestedFieldConfig(props, "background")}
