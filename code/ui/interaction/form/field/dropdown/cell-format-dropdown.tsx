@@ -2,7 +2,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "@/types/form";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
-import { interpolate } from "@/utils/client-utils";
+import { interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { Controller, UseFormReturn } from "react-hook-form";
 
 interface CellFormatDropdownFieldProps {
@@ -27,7 +27,8 @@ export function CellFormatDropdownField(
     const label: string = props.field.name[VALUE_KEY];
     const dict: Dictionary = useDictionary();
 
-    return <div className="w-full">
+    return <div className="flex flex-col gap-2 w-full">
+        <label>{parseWordsForLabels(label)}</label>
         <Controller
             name={fieldName}
             control={props.form.control}

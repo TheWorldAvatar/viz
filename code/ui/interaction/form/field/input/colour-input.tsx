@@ -4,7 +4,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { FormFieldOptions, FormType, PropertyShape, VALUE_KEY } from "@/types/form";
-import { parseWordsForLabels } from "@/utils/client-utils";
+import { interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { getRegisterOptions } from "../../form-utils";
 
 export interface ColourInputFieldProps {
@@ -24,9 +24,11 @@ export interface ColourInputFieldProps {
  */
 export default function ColourInputField(props: Readonly<ColourInputFieldProps>) {
   const dict: Dictionary = useDictionary();
+  const label: string = parseWordsForLabels(props.field.name[VALUE_KEY]);
+
   return (
-    <div className="flex items-center gap-2">
-      <label>{parseWordsForLabels(props.field.name[VALUE_KEY])}</label>
+    <div role="group" aria-label={label} className="flex items-center gap-2">
+      <label htmlFor={props.field.fieldId}>{label}</label>
       <Controller
         control={props.form.control}
         name={props.field.fieldId}
@@ -36,8 +38,9 @@ export default function ColourInputField(props: Readonly<ColourInputFieldProps>)
             <>
               <div className="border border-border rounded-md p-0.5 flex">
                 <input
-                  id={props.field.fieldId}
+                  id={`${props.field.fieldId}-picker`}
                   type="color"
+                  aria-label={interpolate(dict.action.pickColour, label)}
                   value={field.value || "#000000"}
                   onChange={(e) => field.onChange(e.target.value)}
                   onBlur={field.onBlur}
@@ -49,7 +52,6 @@ export default function ColourInputField(props: Readonly<ColourInputFieldProps>)
                 id={props.field.fieldId}
                 placeholder={props.options?.disabled ? "" : "#000000"}
                 readOnly={props.options?.disabled}
-                aria-label={props.field.name[VALUE_KEY]}
                 type="text"
                 inputMode={props.options?.disabled ? "none" : "text"}
                 maxLength={7}
@@ -64,6 +66,6 @@ export default function ColourInputField(props: Readonly<ColourInputFieldProps>)
           )
         }}
       />
-    </div >
+    </div>
   );
 }

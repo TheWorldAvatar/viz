@@ -84,6 +84,7 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
 
 function FormCellFormatRule(props: CellFormatRuleProps) {
   const dict: Dictionary = useDictionary();
+  const valueField: PropertyShape = getNestedFieldConfig(props, "value");
   return <aside className="flex flex-col gap-4 p-3 rounded-lg border border-border">
     <div className="ml-auto">
       {props.remove && <Button
@@ -122,15 +123,18 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         }))}
         options={props.options}
       />
-      <TextInputField
-        formType={FormTypeMap.ADD}
-        field={getNestedFieldConfig(props, "value")}
-        form={props.form}
-        options={{
-          ...props.options,
-          inputStyle: ["w-full h-[2.75rem] max-w-none py-2 px-4 rounded-lg border border-border bg-muted text-foreground focus-visible:outline-[2px] focus-visible:outline-focus"],
-        }}
-      />
+      <div className="flex flex-col gap-2 w-full">
+        <label htmlFor={valueField.fieldId}>{parseWordsForLabels(valueField.name[VALUE_KEY])}</label>
+        <TextInputField
+          formType={FormTypeMap.ADD}
+          field={valueField}
+          form={props.form}
+          options={{
+            ...props.options,
+            inputStyle: ["w-full h-[2.75rem] max-w-none py-2 px-4 rounded-lg border border-border bg-muted text-foreground focus-visible:outline-[2px] focus-visible:outline-focus"],
+          }}
+        />
+      </div>
     </div>
     <div className="flex flex-col md:flex-row gap-8">
       <ColourInputField
