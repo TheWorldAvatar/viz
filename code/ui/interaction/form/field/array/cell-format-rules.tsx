@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { FieldValues, useFieldArray, UseFieldArrayRemove, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "@/hooks/useDictionary";
@@ -85,17 +85,8 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
 function FormCellFormatRule(props: CellFormatRuleProps) {
   const dict: Dictionary = useDictionary();
   const valueField: PropertyShape = getNestedFieldConfig(props, "value");
-  const valueFieldId: string = valueField?.fieldId;
   const operator: string = useWatch({ control: props.form.control, name: getNestedFieldConfig(props, "operator")?.fieldId });
   const showValueInput: boolean = operator !== ConditionalFormatFieldOperatorMap.EMPTY && operator !== ConditionalFormatFieldOperatorMap.NOT_EMPTY;
-
-  // Clear any stale value when the value input is hidden
-  const { setValue } = props.form;
-  useEffect(() => {
-    if (!showValueInput) {
-      setValue(valueFieldId, "");
-    }
-  }, [showValueInput, valueFieldId, setValue]);
 
   return <aside className="flex flex-col gap-4 p-3 rounded-lg border border-border">
     <div className="ml-auto">
@@ -134,6 +125,13 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
           disabled: false,
         }))}
         options={props.options}
+        onChange={(selected) => {
+          // Clear any stale value when the value input is hidden
+          if (selected === ConditionalFormatFieldOperatorMap.EMPTY
+            || selected === ConditionalFormatFieldOperatorMap.NOT_EMPTY) {
+            props.form.setValue(valueField.fieldId, "");
+          }
+        }}
       />
       {showValueInput && <div className="flex flex-col gap-2 w-full">
         <label htmlFor={valueField.fieldId}>{parseWordsForLabels(valueField.name[VALUE_KEY])}</label>
