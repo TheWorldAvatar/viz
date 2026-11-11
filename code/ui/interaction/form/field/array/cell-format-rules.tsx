@@ -134,7 +134,7 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         }}
       />
       {showValueInput && <div className="flex flex-col gap-2 w-full">
-        <label htmlFor={valueField.fieldId}>{parseWordsForLabels(valueField.name[VALUE_KEY])}</label>
+        <label htmlFor={valueField?.fieldId}>{parseWordsForLabels(valueField?.name[VALUE_KEY])}</label>
         <TextInputField
           formType={FormTypeMap.ADD}
           field={valueField}
