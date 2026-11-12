@@ -56,7 +56,7 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
     <>
       <div className="flex flex-col gap-8 w-full rounded-lg">
         {fields?.map((_field, index) => <FormCellFormatRule
-          key={index}
+          key={_field.id}
           fieldId={props.fieldId}
           index={String(index)}
           fields={props.fieldConfigs}
