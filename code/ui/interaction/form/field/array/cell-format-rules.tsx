@@ -84,9 +84,9 @@ export default function FormCellFormatRulesArray(props: Readonly<FormCellFormatR
 
 function FormCellFormatRule(props: CellFormatRuleProps) {
   const dict: Dictionary = useDictionary();
-  const valueField: PropertyShape = getNestedFieldConfig(props, "value");
-  const operator: string = useWatch({ control: props.form.control, name: getNestedFieldConfig(props, "operator")?.fieldId });
-  const showValueInput: boolean = operator !== ConditionalFormatFieldOperatorMap.EMPTY && operator !== ConditionalFormatFieldOperatorMap.NOT_EMPTY;
+  const operatorShape: PropertyShape = getNestedFieldConfig(props, "operator");
+  const operator: string = useWatch({ control: props.form.control, name: operatorShape?.fieldId });
+  const valueShape: PropertyShape = getNestedFieldConfig(props, "value");
 
   return <aside className="flex flex-col gap-4 p-3 rounded-lg border border-border">
     <div className="ml-auto">
@@ -114,8 +114,8 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
         }))}
         options={props.options}
       />
-      <CellFormatDropdownField
-        field={getNestedFieldConfig(props, "operator")}
+      {!!operatorShape && <CellFormatDropdownField
+        field={operatorShape}
         form={props.form}
         dropdownOptions={Object.values(
           ConditionalFormatFieldOperatorMap
@@ -129,22 +129,23 @@ function FormCellFormatRule(props: CellFormatRuleProps) {
           // Clear any stale value when the value input is hidden
           if (selected === ConditionalFormatFieldOperatorMap.EMPTY
             || selected === ConditionalFormatFieldOperatorMap.NOT_EMPTY) {
-            props.form.setValue(valueField.fieldId, "");
+            props.form.setValue(valueShape.fieldId, "");
           }
         }}
-      />
-      {showValueInput && <div className="flex flex-col gap-2 w-full">
-        <label htmlFor={valueField?.fieldId}>{parseWordsForLabels(valueField?.name[VALUE_KEY])}</label>
-        <TextInputField
-          formType={FormTypeMap.ADD}
-          field={valueField}
-          form={props.form}
-          options={{
-            ...props.options,
-            inputStyle: ["w-full h-[2.75rem] max-w-none py-2 px-4 rounded-lg border border-border bg-muted text-foreground focus-visible:outline-[2px] focus-visible:outline-focus"],
-          }}
-        />
-      </div>}
+      />}
+      {operator !== ConditionalFormatFieldOperatorMap.EMPTY && operator !== ConditionalFormatFieldOperatorMap.NOT_EMPTY &&
+        !!valueShape && <div className="flex flex-col gap-2 w-full">
+          <label htmlFor={valueShape?.fieldId}>{parseWordsForLabels(valueShape?.name[VALUE_KEY])}</label>
+          <TextInputField
+            formType={FormTypeMap.ADD}
+            field={valueShape}
+            form={props.form}
+            options={{
+              ...props.options,
+              inputStyle: ["w-full h-[2.75rem] max-w-none py-2 px-4 rounded-lg border border-border bg-muted text-foreground focus-visible:outline-[2px] focus-visible:outline-focus"],
+            }}
+          />
+        </div>}
     </div>
     <div className="flex flex-col md:flex-row gap-6">
       <ColourInputField
