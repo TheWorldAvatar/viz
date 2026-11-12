@@ -487,8 +487,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           // Redirect to invoice page on success
           // Need window.location.href to ensure the page is fully reloaded to fetch the new invoice data from the table
           window.location.href = buildUrl(getRoute(dict.lang, Routes.BILLING_INVOICE));
-        }
-        else {
+        } else if (props.entityType === CELL_FORMAT_KEY) {
+          window.location.href = document.referrer;
+        } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
         }
