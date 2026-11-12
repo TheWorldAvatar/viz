@@ -31,6 +31,11 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
     props.updateCurrentConditionalFormatPreset(preset);
     setIsOpen(false);
   };
+
+  const updateStoredSubject = (): void => {
+    browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
+  };
+
   return (
     <PopoverActionButton
       placement="bottom-end"
@@ -59,7 +64,7 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             onClick={() => {
               resetFormSession();
               // Storing the subject allows us to push it to the form data on loading even if there is no field
-              browserStorageManager.set(`_form_${CELL_FORMAT_KEY}`, JSON.stringify({ [SUBJECT_KEY]: props.subject }));
+              updateStoredSubject();
               window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_ADD), CELL_FORMAT_KEY);
             }}
           />
@@ -78,6 +83,8 @@ export default function ConditionalFormatPresetSelector(props: Readonly<Conditio
             onClick={() => handleSelect(preset)}
             onEditClick={() => {
               resetFormSession();
+              // Storing the subject allows us to push it to the form data on loading even if there is no field
+              updateStoredSubject();
               window.location.href = buildUrl(getRoute(dict.lang, Routes.REGISTRY_EDIT), CELL_FORMAT_KEY, preset.conditional_formatid);
             }}
             onDeleteClick={() => {
