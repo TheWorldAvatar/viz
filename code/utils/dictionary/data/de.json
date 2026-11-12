@@ -332,7 +332,7 @@
     "user": "Benutzer",
     "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
     "loading": "Laden",
-    "contain": "Enthält",
+    "contains": "Enthält",
     "empty": "Ist leer",
     "notEmpty": "Ist nicht leer",
     "equal": "Gleich",
