@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.94.0
+
+### Changes
+
+- Allow users to create their own cell condition rules
+- Added color input fields
+- Abstracted the text input field into its own component
+- Fixed existing rule logic
+- Bump min version of `VisBackend Agent` from `v1.73.0` to `v1.73.3`
+
 ## 5.93.6
 
 ### Bug fixes
