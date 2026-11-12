@@ -126,6 +126,7 @@ export default function RegistryPlannerTableComponent(
             variant="outline"
           />
           <ConditionalFormatPresetSelector
+            subject={LifecycleStageMap.OUTSTANDING}
             conditionalFormatPresets={tableDescriptor.conditionalFormatPresets}
             currentConditionalFormatPreset={tableDescriptor.currentConditionalFormatPreset}
             updateCurrentConditionalFormatPreset={tableDescriptor.updateCurrentConditionalFormatPreset}

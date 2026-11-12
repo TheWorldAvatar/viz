@@ -259,7 +259,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               width={cell.column.getSize()}
               className="cursor-pointer"
               style={(cell.column.columnDef as EnhancedColumnDef<FieldValues>)
-                .getCellStyles(String(cell.getValue()), tableDescriptor.currentConditionalFormatPreset)}
+                .getCellStyles(cell.getValue() == null ? null : String(cell.getValue()), tableDescriptor.currentConditionalFormatPreset)}
               onClick={
                 tableDescriptor.isBulkDispatchEdit ? undefined : () => {
                   if (lifecycleStage == LifecycleStageMap.BILLABLE) {

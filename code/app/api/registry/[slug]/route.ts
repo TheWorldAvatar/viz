@@ -1,8 +1,8 @@
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
+import { getBackendApi } from "@/utils/backend-api-services";
 import { buildUrl } from "@/utils/client-utils";
 import { FLAG_KEY, LEXORANK_KEY, SYNC_KEY } from "@/utils/constants";
-import { getBackendApi } from "@/utils/backend-api-services";
 import { logColours } from "@/utils/logColours";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -500,6 +500,13 @@ function makeExternalEndpoint(
       const sortBy: string = searchParams.get("sort_by");
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+    }
+    case InternalApiIdentifierMap.SETTINGS: {
+      const resource: string = searchParams.get("resource");
+      const identifier: string = searchParams.get("id");
+      if (resource) {
+        return `${agentBaseApi}/rules/${identifier}`;
+      }
     }
     default:
       return null;

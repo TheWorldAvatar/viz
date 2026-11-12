@@ -277,6 +277,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="destructive"
           />
           <ConditionalFormatPresetSelector
+            subject={props.lifecycleStage != LifecycleStageMap.GENERAL ? props.lifecycleStage : props.entityType}
             conditionalFormatPresets={props.tableDescriptor.conditionalFormatPresets}
             currentConditionalFormatPreset={props.tableDescriptor.currentConditionalFormatPreset}
             updateCurrentConditionalFormatPreset={props.tableDescriptor.updateCurrentConditionalFormatPreset}

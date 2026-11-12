@@ -10,6 +10,7 @@ import {
 } from "@/ui/interaction/form/form-utils";
 import FormInputContainer from "./form-input-container";
 import NumericInputField from "./input/numeric-input";
+import TextInputField from "./input/text-input";
 
 export interface InputFieldProps {
   field: PropertyShape;
@@ -27,15 +28,6 @@ export interface InputFieldProps {
 export default function FormInputField(props: Readonly<InputFieldProps>) {
   const dict = useDictionary();
   const inputClassNames: string = props.options?.inputStyle?.join(" ");
-  // Disabled inputs should provide only text input
-  const inputMode: "none" | "text" | "numeric" | "decimal" = props.options
-    ?.disabled
-    ? "none"
-    : props.field.datatype === "string"
-      ? "text"
-      : props.field.datatype === "integer"
-        ? "numeric"
-        : "decimal";
 
   const { formType } = useFormSession();
 
@@ -75,12 +67,12 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
             rows={4}
             className={`${inputClassNames} min-h-[6rem] max-h-[20rem] md:min-h-[10rem] md:max-h-[30rem] ${disabledClassName}`}
           />
-          : <input
-            {...commonProps}
-            type="text"
-            inputMode={inputMode}
-            className={`${inputClassNames} ${disabledClassName}`}
-          />
+          : <div className="relative inline-block w-full">
+            <TextInputField
+              formType={formType}
+              {...props}
+            />
+          </div>
       }
     </FormInputContainer>
   );

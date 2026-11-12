@@ -6,6 +6,8 @@ export const XSD_INTEGER: string = "http://www.w3.org/2001/XMLSchema#integer";
 export const XSD_STRING: string = "http://www.w3.org/2001/XMLSchema#string";
 
 export const BULK_IDENTIFIER: string = "bulk";
+export const CELL_FORMAT_KEY: string = "cell_format";
+export const COL_CELL_FORMAT_KEY: string = `_col_${CELL_FORMAT_KEY}`;
 export const DATE_KEY: string = "date";
 export const EVENT_KEY: string = "event";
 export const TASK_STATUS_KEY: string = "task_status";
@@ -16,6 +18,7 @@ export const PREV_SESSION_KEY: string = "previous_session";
 export const ADD_LINKED_FORM_KEY: string = "add_linked_form";
 export const FLAG_EMOJI: string = "🚩";
 export const SYNC_KEY: string = "sync";
+export const SUBJECT_KEY: string = "subject";
 export const TASK_VIEWER_FILTER: string = "task_view";
 
 export const YEARS_PER_PAGE: number = 12;
