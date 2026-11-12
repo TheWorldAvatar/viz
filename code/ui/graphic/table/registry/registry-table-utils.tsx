@@ -265,11 +265,11 @@ function matchesCondition(operatorCondition: ConditionalFormatFieldOperator, val
     case ConditionalFormatFieldOperatorMap.NOT_EMPTY:
       return !!value;
     case ConditionalFormatFieldOperatorMap.EQUALS:
-      return value === valueCondition;
+      return value.toLowerCase() === valueCondition.toLowerCase();
     case ConditionalFormatFieldOperatorMap.NOT_EQUALS:
-      return value !== valueCondition;
+      return value.toLowerCase() !== valueCondition.toLowerCase();
     case ConditionalFormatFieldOperatorMap.CONTAINS:
-      return !!value && value.includes(valueCondition);
+      return !!value && value.toLowerCase().includes(valueCondition.toLowerCase());
   }
   const numericValue: number = !value || value.trim() === "" ? Number.NaN : Number(value);
   if (Number.isNaN(numericValue)) return false;
