@@ -262,7 +262,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
                 .getCellStyles(cell.getValue() == null ? null : String(cell.getValue()), tableDescriptor.currentConditionalFormatPreset)}
               onClick={
                 tableDescriptor.isBulkDispatchEdit ? undefined : () => {
-                  if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+                  if (lifecycleStage == LifecycleStageMap.BILLABLE || lifecycleStage == LifecycleStageMap.PLANNER) {
                     const isSelected: boolean = props.row.getIsSelected();
                     tableDescriptor.setSelectedRows(
                       getId(props.row.getValue("event_id")), isSelected);
